@@ -6,12 +6,14 @@
     <title>Niveus Knowledge Base</title>
     <link rel="stylesheet" href="style.css" />
 
-    <!-- Firebase scripts -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
     <script>
+      // WARNING: Hardcoding API keys directly in client-side code is generally
+      // not recommended for production applications due to security risks.
+      // Consider using environment variables or backend configuration.
       const firebaseConfig = {
-        apiKey: "AIzaSyCbHWUEzqGjzeanOiMG0Z5Lb4wIjWWEMUQ",
+        apiKey: "AIzaSyCbHWUEzqGjzeanOiMG0Z5Lb4wIjWWEMUQ", // Replace with your actual API key if this is a placeholder
         authDomain: "docnest-f85e2.firebaseapp.com",
         projectId: "docnest-f85e2",
         storageBucket: "docnest-f85e2.appspot.com",
@@ -20,13 +22,17 @@
         measurementId: "G-YRMBR8BVSE",
       };
 
+      // Initialize Firebase
       firebase.initializeApp(firebaseConfig);
       const auth = firebase.auth();
 
       // Redirect to login.html if not authenticated
       auth.onAuthStateChanged((user) => {
         if (!user) {
-          window.location.href = "login.html";
+          // Ensure this page is not login.html itself to avoid redirect loop
+          if (window.location.pathname !== "/login.html" && window.location.pathname !== "/login") {
+               window.location.href = "login.html";
+          }
         }
       });
     </script>
@@ -56,24 +62,24 @@
               </table>
             </div>
           </li>
-          <span class="toggle-item sub-item">Sub Point 1.2</span>
-          <div class="table-container">
-            <table>
-              <thead>
-                <tr>
-                  <th>Header 1.2.X</th>
-                  <th>Header 1.2.Y</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Info 1.2.X1</td>
-                  <td>Info 1.2.Y1</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </ul>
+          <li> <span class="toggle-item sub-item">Sub Point 1.2</span>
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Header 1.2.X</th>
+                    <th>Header 1.2.Y</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Info 1.2.X1</td>
+                    <td>Info 1.2.Y1</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </li> </ul>
       </li>
       <li>
         <span class="toggle-item main-item">Main Point 2</span>
