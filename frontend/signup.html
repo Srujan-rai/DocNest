@@ -3,14 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login - My App</title>
+    <title>Sign Up - My App</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
       rel="stylesheet"
     />
-
     <style>
       :root {
         --primary-color: #4285f4;
@@ -35,7 +34,7 @@
         color: var(--text-color);
       }
 
-      .login-container {
+      .signup-container {
         background-color: var(--container-bg);
         padding: 40px 50px;
         border-radius: 12px;
@@ -57,24 +56,23 @@
         }
       }
 
-      .login-container h1 {
+      .signup-container h1 {
         margin-bottom: 15px;
         font-weight: 500;
       }
 
-      .login-container p {
+      .signup-container p {
         margin-bottom: 30px;
         color: #666;
         font-size: 0.95em;
       }
 
-      #googleSignInBtn {
+      #googleSignUpBtn {
         display: inline-flex;
         align-items: center;
         justify-content: center;
         width: 100%;
         padding: 12px 20px;
-        margin-top: 10px;
         background-color: var(--primary-color);
         color: white;
         border: none;
@@ -86,18 +84,19 @@
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       }
 
-      #googleSignInBtn:hover {
+      #googleSignUpBtn:hover {
         background-color: var(--button-hover);
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
       }
 
-      #googleSignInBtn img {
+      #googleSignUpBtn img {
         margin-right: 12px;
         height: 20px;
         width: 20px;
         background-color: #fff;
         border-radius: 2px;
         padding: 2px;
+        vertical-align: middle;
       }
 
       #message {
@@ -110,7 +109,6 @@
       .error {
         color: var(--error-color);
       }
-
       .success {
         color: var(--success-color);
       }
@@ -125,22 +123,23 @@
     </style>
   </head>
   <body>
-    <div class="login-container">
+    <div class="signup-container">
       <div class="logo"></div>
-      <h1>Login</h1>
-      <p>Use your Google account to continue</p>
+      <h1>Create Account</h1>
+      <p>Continue with your Google account</p>
 
-      <button id="googleSignInBtn">
+      <button id="googleSignUpBtn">
         <img
           src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
           alt="Google icon"
         />
-        Sign in with Google
+        Sign up with Google
       </button>
 
       <p id="message"></p>
     </div>
 
+    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
 
@@ -157,7 +156,7 @@
 
       firebase.initializeApp(firebaseConfig);
       const auth = firebase.auth();
-      const googleSignInBtn = document.getElementById("googleSignInBtn");
+      const googleSignUpBtn = document.getElementById("googleSignUpBtn");
       const messageElement = document.getElementById("message");
       const LANDING_PAGE_URL = "index.html";
 
@@ -167,24 +166,25 @@
         }
       });
 
-      googleSignInBtn.addEventListener("click", () => {
+      googleSignUpBtn.addEventListener("click", () => {
         const provider = new firebase.auth.GoogleAuthProvider();
-        googleSignInBtn.disabled = true;
-        setMessage("Signing in...", "success");
+        googleSignUpBtn.disabled = true;
+        showMessage("Signing you up...", "success");
 
         auth
           .signInWithPopup(provider)
-          .then(() => {
+          .then((result) => {
+            console.log("User signed up:", result.user.email);
             window.location.href = LANDING_PAGE_URL;
           })
           .catch((error) => {
-            googleSignInBtn.disabled = false;
-            setMessage(error.message, "error");
-            console.error(error);
+            googleSignUpBtn.disabled = false;
+            console.error("Sign-up error:", error);
+            showMessage(error.message || "Sign-up failed.", "error");
           });
       });
 
-      function setMessage(msg, type = "error") {
+      function showMessage(msg, type = "success") {
         messageElement.textContent = msg;
         messageElement.className = type;
       }

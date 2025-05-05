@@ -1,135 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Niveus Knowledge Base</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-
-    <h1>Interactive List</h1>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <h1>Interactive Knowledge Base</h1>
 
     <ul class="main-list">
-        <li>
-            <span class="toggle-item main-item">UDP</span>
-            <ul class="sub-list">
-                <li>
-                    <span class="toggle-item sub-item">All Niveus</span>
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Description</th>
-                                    <th>Link</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Data 1.1.A1</td>
-                                    <td>Data 1.1.B1</td>
-                                </tr>
-                                <tr>
-                                    <td>Data 1.1.A2</td>
-                                    <td>Data 1.1.B2</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </li>
-                <li>
-                    <span class="toggle-item sub-item">Sub Point 1.2</span>
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Header 1.2.X</th>
-                                    <th>Header 1.2.Y</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Info 1.2.X1</td>
-                                    <td>Info 1.2.Y1</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </li>
-            </ul>
-        </li>
-        <li>
-            <span class="toggle-item main-item">Main Point 2</span>
-            <ul class="sub-list">
-                <li>
-                    <span class="toggle-item sub-item">Sub Point 2.1</span>
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Category 2.1</th>
-                                    <th>Value 2.1</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Alpha</td>
-                                    <td>100</td>
-                                </tr>
-                                <tr>
-                                    <td>Beta</td>
-                                    <td>250</td>
-                                </tr>
-                                 <tr>
-                                    <td>Gamma</td>
-                                    <td>300</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </li>
-            </ul>
-        </li>
-        <li>
-            <span class="toggle-item main-item">Main Point 3</span>
-             <ul class="sub-list">
-                <li>
-                    <span class="toggle-item sub-item">Sub Point 3.1</span>
-                     <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Name</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>001</td>
-                                    <td>Item One</td>
-                                    <td>Active</td>
-                                </tr>
-                                <tr>
-                                    <td>002</td>
-                                    <td>Item Two</td>
-                                    <td>Inactive</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </li>
-                 <li>
-                    <span class="toggle-item sub-item">Sub Point 3.2</span>
-                    <div class="table-container">
-                       <p>No table for this one, just text content.</p>
-                    </div>
-                </li>
-            </ul>
-        </li>
+      <li>
+        <span class="toggle-item main-item">UDP</span>
+        <ul class="sub-list">
+            <li data-category="All Niveus">
+                <span class="toggle-item sub-item">All Niveus</span>
+                <div class="table-container">
+                  <div class="loading" style="display: none">Loading...</div>
+                  <table data-sheet-url="https://docs.google.com/spreadsheets/d/1ge9cMNSosIZ7xenEguTdcnGwjor6skfqxiaD5qo-vsg/export?format=csv">
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Link</th>
+                      </tr>
+                    </thead>
+                    <tbody></tbody>
+                  </table>
+                </div>
+              </li>
+            <span class="toggle-item sub-item">Sub Point 1.2</span>
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Header 1.2.X</th>
+                    <th>Header 1.2.Y</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Info 1.2.X1</td>
+                    <td>Info 1.2.Y1</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <span class="toggle-item main-item">Main Point 2</span>
+        <ul class="sub-list">
+          <li data-category="Sub Point 2.1">
+            <span class="toggle-item sub-item">Sub Point 2.1</span>
+            <div class="table-container">
+              <div class="loading" style="display: none">Loading...</div>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Link</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <span class="toggle-item main-item">Main Point 3</span>
+        <ul class="sub-list">
+          <li data-category="Sub Point 3.1">
+            <span class="toggle-item sub-item">Sub Point 3.1</span>
+            <div class="table-container">
+              <div class="loading" style="display: none">Loading...</div>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Link</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </li>
+          <li>
+            <span class="toggle-item sub-item">Sub Point 3.2</span>
+            <div class="table-container">
+              <p>No table for this one, just text content.</p>
+            </div>
+          </li>
+        </ul>
+      </li>
     </ul>
 
     <script src="script.js"></script>
-</body>
+  </body>
 </html>

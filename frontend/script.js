@@ -47,3 +47,70 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+    const tables = document.querySelectorAll("table[data-sheet-url]");
+  
+    tables.forEach((table) => {
+      const url = table.dataset.sheetUrl;
+      if (!url) return;
+  
+      fetch(url)
+        .then((response) => {
+          if (!response.ok) throw new Error(`Failed to fetch ${url}`);
+          return response.text();
+        })
+        .then((csvText) => {
+          const rows = csvText
+            .trim()
+            .split("\n")
+            .map((row) => row.split(","));
+  
+          renderTable(table, rows);
+        })
+        .catch((err) => {
+          table.innerHTML = `<tbody><tr><td colspan="99" style="color:red;">${err.message}</td></tr></tbody>`;
+          console.error(err);
+        });
+    });
+  
+    function renderTable(table, rows) {
+      if (!rows.length) return;
+  
+      // Clear existing table content
+      table.innerHTML = "";
+  
+      const thead = document.createElement("thead");
+      const headRow = document.createElement("tr");
+      rows[0].forEach((cell) => {
+        const th = document.createElement("th");
+        th.textContent = cell.trim();
+        headRow.appendChild(th);
+      });
+      thead.appendChild(headRow);
+      table.appendChild(thead);
+  
+      const tbody = document.createElement("tbody");
+      rows.slice(1).forEach((row) => {
+        const tr = document.createElement("tr");
+        row.forEach((cell, index) => {
+          const td = document.createElement("td");
+          if (
+            rows[0][index].toLowerCase().includes("link") &&
+            cell.trim().startsWith("http")
+          ) {
+            const a = document.createElement("a");
+            a.href = cell.trim();
+            a.textContent = "Open";
+            a.target = "_blank";
+            td.appendChild(a);
+          } else {
+            td.textContent = cell.trim();
+          }
+          tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+      });
+      table.appendChild(tbody);
+    }
+  });
