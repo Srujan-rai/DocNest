@@ -25,16 +25,6 @@
       // Initialize Firebase
       firebase.initializeApp(firebaseConfig);
       const auth = firebase.auth();
-
-      // Redirect to login.html if not authenticated
-      auth.onAuthStateChanged((user) => {
-        if (!user) {
-          // Ensure this page is not login.html itself to avoid redirect loop
-          if (window.location.pathname !== "/login.html" && window.location.pathname !== "/login") {
-               window.location.href = "login.html";
-          }
-        }
-      });
     </script>
   </head>
   <body>
@@ -62,7 +52,8 @@
               </table>
             </div>
           </li>
-          <li> <span class="toggle-item sub-item">Sub Point 1.2</span>
+          <li>
+            <span class="toggle-item sub-item">Sub Point 1.2</span>
             <div class="table-container">
               <table>
                 <thead>
@@ -79,7 +70,8 @@
                 </tbody>
               </table>
             </div>
-          </li> </ul>
+          </li>
+        </ul>
       </li>
       <li>
         <span class="toggle-item main-item">Main Point 2</span>
