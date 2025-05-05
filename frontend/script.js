@@ -5,34 +5,33 @@ document.addEventListener('DOMContentLoaded', () => {
     const subItems = document.querySelectorAll('.sub-item');
 
     // Add click listener for Main Points
-    mainItems.forEach(item => {
+    mainItems.forEach(item => { // 'item' is the clicked span here
         item.addEventListener('click', (event) => {
             // Find the closest parent 'li'
-            const parentLi = event.target.closest('li');
-            if (!parentLi) return; // Should not happen, but safety check
+            // Using event.currentTarget is often safer as it always refers to the element the listener is attached to (the span)
+            const parentLi = event.currentTarget.closest('li');
+            if (!parentLi) return;
 
             // Find the sub-list directly inside this 'li'
-            const subList = parentLi.querySelector(':scope > .sub-list'); // ':scope >' ensures it's a direct child
+            const subList = parentLi.querySelector(':scope > .sub-list');
 
             if (subList) {
                 // Toggle the 'visible' class on the sub-list
                 subList.classList.toggle('visible');
-                clickedItem.classList.toggle('active', subList.classList.contains('visible'));
-
-                // Optional: Add an indicator (e.g., change text or add an arrow)
-                // event.target.classList.toggle('active'); // Example class for styling
+                // *** FIX: Use 'item' (the loop variable) instead of undefined 'clickedItem' ***
+                item.classList.toggle('active', subList.classList.contains('visible'));
             }
         });
     });
 
     // Add click listener for Sub Points
-    subItems.forEach(item => {
+    subItems.forEach(item => { // 'item' is the clicked span here
         item.addEventListener('click', (event) => {
             // Stop the click from bubbling up to the main item's listener
             event.stopPropagation();
 
             // Find the closest parent 'li'
-            const parentLi = event.target.closest('li');
+            const parentLi = event.currentTarget.closest('li');
             if (!parentLi) return;
 
             // Find the table container directly inside this 'li'
@@ -41,8 +40,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (tableContainer) {
                 // Toggle the 'visible' class on the table container
                 tableContainer.classList.toggle('visible');
-                 // Optional: Add an indicator
-                // event.target.classList.toggle('active'); // Example class for styling
+                // *** FIX: Add the active toggle here too, using 'item' ***
+                item.classList.toggle('active', tableContainer.classList.contains('visible'));
             }
         });
     });
