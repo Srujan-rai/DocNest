@@ -161,10 +161,13 @@
       const messageElement = document.getElementById("message");
       const LANDING_PAGE_URL = "index.html";
 
-      auth.onAuthStateChanged((user) => {
-        if (user) {
-          window.location.href = LANDING_PAGE_URL;
-        }
+      window.addEventListener("load", () => {
+        auth.onAuthStateChanged((user) => {
+          if (user) {
+            console.log("User already signed in:", user.displayName);
+            window.location.href = LANDING_PAGE_URL;
+          }
+        });
       });
 
       googleSignInBtn.addEventListener("click", () => {
