@@ -5,6 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Niveus Knowledge Base</title>
     <link rel="stylesheet" href="style.css" />
+
+    <!-- Firebase scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyCbHWUEzqGjzeanOiMG0Z5Lb4wIjWWEMUQ",
+        authDomain: "docnest-f85e2.firebaseapp.com",
+        projectId: "docnest-f85e2",
+        storageBucket: "docnest-f85e2.appspot.com",
+        messagingSenderId: "102395439437",
+        appId: "1:102395439437:web:84e6676388b5d54395af04",
+        measurementId: "G-YRMBR8BVSE",
+      };
+
+      firebase.initializeApp(firebaseConfig);
+      const auth = firebase.auth();
+
+      // Redirect to login.html if not authenticated
+      auth.onAuthStateChanged((user) => {
+        if (!user) {
+          window.location.href = "login.html";
+        }
+      });
+    </script>
   </head>
   <body>
     <h1>Interactive Knowledge Base</h1>
@@ -13,40 +38,41 @@
       <li>
         <span class="toggle-item main-item">UDP</span>
         <ul class="sub-list">
-            <li data-category="All Niveus">
-                <span class="toggle-item sub-item">All Niveus</span>
-                <div class="table-container">
-                  <div class="loading" style="display: none">Loading...</div>
-                  <table data-sheet-url="https://docs.google.com/spreadsheets/d/1ge9cMNSosIZ7xenEguTdcnGwjor6skfqxiaD5qo-vsg/export?format=csv">
-                    <thead>
-                      <tr>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th>Link</th>
-                      </tr>
-                    </thead>
-                    <tbody></tbody>
-                  </table>
-                </div>
-              </li>
-            <span class="toggle-item sub-item">Sub Point 1.2</span>
+          <li data-category="All Niveus">
+            <span class="toggle-item sub-item">All Niveus</span>
             <div class="table-container">
-              <table>
+              <div class="loading" style="display: none">Loading...</div>
+              <table
+                data-sheet-url="https://docs.google.com/spreadsheets/d/1ge9cMNSosIZ7xenEguTdcnGwjor6skfqxiaD5qo-vsg/export?format=csv"
+              >
                 <thead>
                   <tr>
-                    <th>Header 1.2.X</th>
-                    <th>Header 1.2.Y</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Link</th>
                   </tr>
                 </thead>
-                <tbody>
-                  <tr>
-                    <td>Info 1.2.X1</td>
-                    <td>Info 1.2.Y1</td>
-                  </tr>
-                </tbody>
+                <tbody></tbody>
               </table>
             </div>
           </li>
+          <span class="toggle-item sub-item">Sub Point 1.2</span>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Header 1.2.X</th>
+                  <th>Header 1.2.Y</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Info 1.2.X1</td>
+                  <td>Info 1.2.Y1</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </ul>
       </li>
       <li>
