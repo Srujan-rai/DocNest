@@ -8,10 +8,12 @@
 
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
-
     <script>
+      // WARNING: Hardcoding API keys directly in client-side code is generally
+      // not recommended for production applications due to security risks.
+      // Consider using environment variables or backend configuration.
       const firebaseConfig = {
-        apiKey: "AIzaSyCbHWUEzqGjzeanOiMG0Z5Lb4wIjWWEMUQ",
+        apiKey: "AIzaSyCbHWUEzqGjzeanOiMG0Z5Lb4wIjWWEMUQ", // Replace with your actual API key if this is a placeholder
         authDomain: "docnest-f85e2.firebaseapp.com",
         projectId: "docnest-f85e2",
         storageBucket: "docnest-f85e2.appspot.com",
@@ -20,31 +22,21 @@
         measurementId: "G-YRMBR8BVSE",
       };
 
+      // Initialize Firebase
       firebase.initializeApp(firebaseConfig);
       const auth = firebase.auth();
 
-      // Block rendering until auth is checked
-      document.addEventListener("DOMContentLoaded", () => {
-        const body = document.body;
-        const originalContent = body.innerHTML;
-
-        // Hide content initially
-        body.innerHTML =
-          "<p style='text-align:center;'>Checking authentication...</p>";
-
-        auth.onAuthStateChanged((user) => {
-          if (user) {
-            console.log("✅ User is signed in:", user.email);
-            body.innerHTML = originalContent;
-            // Load script after auth
-            const script = document.createElement("script");
-            script.src = "script.js";
-            document.body.appendChild(script);
-          } else {
-            console.warn("⛔ Not authenticated. Redirecting...");
+      // Redirect to login.html if not authenticated
+      auth.onAuthStateChanged((user) => {
+        if (!user) {
+          // Ensure this page is not login.html itself to avoid redirect loop
+          if (
+            window.location.pathname !== "/login.html" &&
+            window.location.pathname !== "/login"
+          ) {
             window.location.href = "login.html";
           }
-        });
+        }
       });
     </script>
   </head>
@@ -143,5 +135,7 @@
         </ul>
       </li>
     </ul>
+
+    <script src="script.js"></script>
   </body>
 </html>
