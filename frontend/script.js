@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (subList) {
                 // Toggle the 'visible' class on the sub-list
                 subList.classList.toggle('visible');
+                clickedItem.classList.toggle('active', subList.classList.contains('visible'));
 
                 // Optional: Add an indicator (e.g., change text or add an arrow)
                 // event.target.classList.toggle('active'); // Example class for styling

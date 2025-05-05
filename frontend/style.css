@@ -1,71 +1,206 @@
+/* --- CSS Variables --- */
+:root {
+    --primary-font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+    --primary-text-color: #333;
+    --secondary-text-color: #555;
+    --accent-color: #007bff;
+    --border-color: #dee2e6;
+    --bg-light: #f8f9fa;
+    --bg-hover: #e9ecef;
+    --table-header-bg: #f1f3f5;
+    --table-row-even-bg: #f8f9fa;
+    --table-row-hover-bg: #e9ecef;
+    --box-shadow-light: 0 1px 3px rgba(0,0,0,0.1);
+    --transition-speed: 0.35s;
+    --max-height-reveal: 600px; /* Adjust if content might be taller */
+}
+
+/* --- General Styles --- */
 body {
-    font-family: sans-serif;
+    font-family: var(--primary-font);
     line-height: 1.6;
-    padding: 20px;
+    padding: 25px;
+    color: var(--primary-text-color);
+    background-color: #fff; /* Or a very light grey like #fdfdfd */
 }
 
 h1 {
     text-align: center;
-    margin-bottom: 30px;
+    margin-bottom: 40px;
+    color: var(--secondary-text-color);
+    font-weight: 300; /* Lighter heading */
 }
 
-ul {
-    list-style-type: none; /* Remove default bullets if desired */
-    padding-left: 20px;
+/* --- List Structure --- */
+.main-list {
+    list-style-type: none;
+    padding-left: 0; /* Remove default padding */
 }
 
-li {
-    margin-bottom: 10px;
+.main-list li {
+    margin-bottom: 8px; /* Slightly reduced margin */
+    background-color: #ffffff;
+    border-radius: 4px;
+    /* Add subtle border or shadow for separation */
+    /* border: 1px solid var(--border-color); */
+    box-shadow: var(--box-shadow-light);
+    overflow: hidden; /* Contain children */
 }
 
-/* Style the clickable items */
+/* --- Toggle Items (Clickable Spans) --- */
 .toggle-item {
+    display: flex; /* Use flex for alignment */
+    align-items: center; /* Vertically center icon and text */
     cursor: pointer;
-    padding: 5px;
-    display: inline-block; /* Allows padding */
-    border-bottom: 1px dashed #ccc; /* Indicate clickability */
-    user-select: none; /* Prevent text selection on double click */
+    padding: 12px 15px; /* More padding */
+    user-select: none;
+    transition: background-color var(--transition-speed) ease;
+    font-weight: 500; /* Make titles slightly bolder */
+    width: 100%; /* Ensure it takes full width of li */
+    box-sizing: border-box; /* Include padding in width */
+    border: none; /* Remove the dashed border */
+    border-bottom: 1px solid var(--border-color); /* Add bottom border inside li */
+}
+/* Remove bottom border from last li's toggle item if desired */
+.main-list > li:last-child > .toggle-item {
+   /* border-bottom: none; */ /* Optional: Keep border for consistency */
 }
 
-.toggle-item:hover {
-    background-color: #f0f0f0;
-    border-bottom-style: solid;
+
+/* Add indicator arrow */
+.toggle-item::before {
+    content: '\25B8'; /* Right-pointing triangle/arrow */
+    display: inline-block;
+    margin-right: 10px;
+    font-size: 0.7em;
+    color: var(--secondary-text-color);
+    transition: transform var(--transition-speed) ease-in-out;
+    transform-origin: center;
 }
 
-/* Initially hide sub-lists and table containers */
+/* Rotate indicator when active */
+.toggle-item.active::before {
+    transform: rotate(90deg);
+}
+
+.toggle-item:hover,
+.toggle-item:focus {
+    background-color: var(--bg-hover);
+    outline: none; /* Remove default focus outline if customizing */
+}
+/* Optional: Add custom focus style */
+.toggle-item:focus-visible {
+     box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.5); /* Example focus ring */
+     z-index: 1; /* Ensure focus ring is visible */
+     position: relative;
+}
+
+
+/* --- Collapsible Containers (.sub-list, .table-container) --- */
 .sub-list,
 .table-container {
-    display: none; /* Hide them by default */
-    margin-left: 25px; /* Indent nested content */
-    margin-top: 10px;
-    padding-left: 15px;
-    border-left: 1px solid #eee;
+    /* Initial hidden state for animation */
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden; /* Important for max-height transition */
+    margin: 0; /* Remove margin when hidden */
+    padding: 0 15px 0 40px; /* Indent content, no top/bottom padding */
+    border-top: 1px solid var(--border-color); /* Separator line */
+    background-color: var(--bg-light); /* Slightly different background */
+    transition: max-height var(--transition-speed) ease-in-out,
+                opacity var(--transition-speed) ease-in-out,
+                padding var(--transition-speed) ease-in-out,
+                margin var(--transition-speed) ease-in-out;
+    visibility: hidden; /* Hide from accessibility tree when closed */
+}
+/* Remove border-top for nested sub-list's container */
+.sub-list > li > .table-container {
+    border-top: none;
+    background-color: #fff; /* Match li background maybe */
+    padding-left: 25px; /* Adjust nested indent */
 }
 
-/* Class to show the hidden elements */
-.visible {
-    display: block;
+
+/* --- Visible State for Collapsible Containers --- */
+/* Apply directly to the element when JS adds 'visible' */
+.sub-list.visible,
+.table-container.visible {
+    max-height: var(--max-height-reveal); /* Reveal height */
+    opacity: 1;
+    padding: 15px 15px 15px 40px; /* Add padding back */
+    margin-bottom: 0; /* Ensure no extra space at bottom */
+    visibility: visible; /* Make accessible again */
+}
+.sub-list.visible > li > .table-container.visible {
+     padding-left: 25px; /* Adjust nested indent */
 }
 
-/* Basic table styling */
+
+/* --- Table Styling --- */
 table {
     border-collapse: collapse;
-    width: 90%; /* Adjust as needed */
-    margin-top: 10px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    width: 100%; /* Use full width of container */
+    margin-top: 0; /* Reset margin */
+    margin-bottom: 10px; /* Space at bottom */
+    box-shadow: none; /* Remove shadow, container has it */
+    border: 1px solid var(--border-color); /* Add border to table itself */
+    border-radius: 3px; /* Slight rounding */
+    overflow: hidden; /* Ensure border-radius clips content */
 }
 
 th, td {
-    border: 1px solid #ddd;
-    padding: 8px;
+    border: none; /* Remove individual cell borders */
+    border-bottom: 1px solid var(--border-color); /* Use row separators */
+    padding: 10px 12px; /* Adjust padding */
     text-align: left;
+    vertical-align: middle; /* Align cell content vertically */
+}
+/* Remove bottom border from last row */
+tbody tr:last-child td {
+    border-bottom: none;
 }
 
 th {
-    background-color: #f2f2f2;
-    font-weight: bold;
+    background-color: var(--table-header-bg);
+    font-weight: 600; /* Slightly bolder headers */
+    color: var(--secondary-text-color);
+    font-size: 0.9em;
+    text-transform: uppercase; /* Optional */
+    letter-spacing: 0.5px; /* Optional */
 }
 
-tr:nth-child(even) {
-    background-color: #f9f9f9;
+tbody tr {
+    background-color: #fff;
+    transition: background-color var(--transition-speed) ease;
+}
+
+tbody tr:nth-child(even) {
+    background-color: var(--table-row-even-bg);
+}
+
+tbody tr:hover {
+    background-color: var(--table-row-hover-bg);
+}
+
+/* Link styling within table */
+td a {
+    color: var(--accent-color);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+td a:hover,
+td a:focus {
+    color: darken(var(--accent-color), 10%);
+    text-decoration: underline;
+}
+
+
+/* --- Helper/Placeholder Styles --- */
+#niveus-table-body i { /* Style for "Loading..." text */
+    color: var(--secondary-text-color);
+    display: block;
+    padding: 20px;
+    text-align: center;
+    font-style: normal;
 }
