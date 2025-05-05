@@ -165,13 +165,8 @@
       window.addEventListener("load", () => {
         auth.onAuthStateChanged((user) => {
           if (user) {
-            console.log("✅ Already signed in:", user.displayName);
-            // Set session restored flag
-            localStorage.setItem("session_restored", "yes");
+            console.log("User already signed in:", user.displayName);
             window.location.href = LANDING_PAGE_URL;
-          } else {
-            // Clear flag to avoid false positive
-            localStorage.removeItem("session_restored");
           }
         });
       });
