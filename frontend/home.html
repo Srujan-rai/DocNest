@@ -27,6 +27,17 @@
       const auth = firebase.auth();
 
       // Redirect to login.html if not authenticated
+      auth.onAuthStateChanged((user) => {
+        if (!user) {
+          // Ensure this page is not login.html itself to avoid redirect loop
+          if (
+            window.location.pathname !== "/login.html" &&
+            window.location.pathname !== "/login"
+          ) {
+            window.location.href = "login.html";
+          }
+        }
+      });
     </script>
   </head>
   <body>
