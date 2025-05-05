@@ -1,9 +1,5 @@
 {
-    "rewrites": [
-      { "source": "/", "destination": "/login.html" }
-    ],
-    "redirects": [
-      { "source": "/home.html", "destination": "/login.html", "permanent": false }
-    ]
-  }
-  
+  "rewrites": [
+    { "source": "/", "destination": "/login.html" }
+  ]
+}
