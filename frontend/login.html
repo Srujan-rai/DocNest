@@ -10,7 +10,6 @@
       href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
       rel="stylesheet"
     />
-
     <style>
       :root {
         --primary-color: #4285f4;
@@ -141,6 +140,7 @@
       <p id="message"></p>
     </div>
 
+    <!-- Firebase scripts -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
 
@@ -161,6 +161,7 @@
       const messageElement = document.getElementById("message");
       const LANDING_PAGE_URL = "index.html";
 
+      // ✅ Check for existing session on page load
       window.addEventListener("load", () => {
         auth.onAuthStateChanged((user) => {
           if (user) {
@@ -170,13 +171,15 @@
         });
       });
 
+      // ✅ Set persistence & sign in
       googleSignInBtn.addEventListener("click", () => {
         const provider = new firebase.auth.GoogleAuthProvider();
         googleSignInBtn.disabled = true;
         setMessage("Signing in...", "success");
 
         auth
-          .signInWithPopup(provider)
+          .setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+          .then(() => auth.signInWithPopup(provider))
           .then(() => {
             window.location.href = LANDING_PAGE_URL;
           })
