@@ -9,9 +9,8 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
     <script>
-      // WARNING: Hardcoding API keys... (Keep your existing warning)
       const firebaseConfig = {
-        apiKey: "AIzaSyCbHWUEzqGjzeanOiMG0Z5Lb4wIjWWEMUQ", // Use environment variables in production
+        apiKey: "AIzaSyCbHWUEzqGjzeanOiMG0Z5Lb4wIjWWEMUQ", // Use environment variables
         authDomain: "docnest-f85e2.firebaseapp.com",
         projectId: "docnest-f85e2",
         storageBucket: "docnest-f85e2.appspot.com",
@@ -20,53 +19,51 @@
         measurementId: "G-YRMBR8BVSE",
       };
 
-      // Initialize Firebase
       firebase.initializeApp(firebaseConfig);
       const auth = firebase.auth();
+      const LOGIN_PAGE_PATH = "login.html"; // The RELATIVE path or filename
 
-      // --- MODIFIED AUTH CHECK ---
-      let authInitialized = false; // Flag to track if the listener has run at least once
-
+      // --- AUTH CHECK ---
       auth.onAuthStateChanged((user) => {
-        authInitialized = true; // Mark that the check has completed
+        console.log("Home Page: Auth state change detected.");
+        const currentPath = window.location.pathname; // Gets the path part of the URL (e.g., /folder/home.html)
+        const currentPage = currentPath.substring(
+          currentPath.lastIndexOf("/") + 1
+        ); // Gets the filename (e.g., home.html)
 
         if (!user) {
           // User is NOT signed in AFTER the initial check.
-          // Redirect to login page, ensuring we are not already there.
+          console.log("Home Page: No user session found.");
+          console.log(`Home Page: Current page filename: ${currentPage}`);
           console.log(
-            "Auth state checked: No user found. Redirecting to login."
+            `Home Page: Comparing against login page: ${LOGIN_PAGE_PATH}`
           );
-          // Check pathname carefully - adjust if your login page is named differently or has no extension
-          if (
-            window.location.pathname !== "/login.html" &&
-            window.location.pathname !== "/login"
-          ) {
-            window.location.href = "login.html";
+
+          // Redirect to login only if we are NOT already on the login page.
+          // Compare filenames to be more robust against different base paths.
+          if (currentPage !== LOGIN_PAGE_PATH) {
+            console.log("Home Page: Redirecting to login page...");
+            window.location.href = LOGIN_PAGE_PATH; // Use relative path
+          } else {
+            console.log(
+              "Home Page: Already on login page (or filename matches), not redirecting."
+            );
+            // If somehow this code runs on login.html and user is null, show the body
+            document.body.style.display = "";
           }
         } else {
           // User IS signed in.
-          console.log("Auth state checked: User found.", user.displayName);
-          // Good place to hide any loading spinners and show the main content
-          document.body.style.display = ""; // Show body content if hidden initially
-          // Initialize your application logic here (like loading tables)
+          console.log("Home Page: User session found:", user.displayName);
+          // Show the main content
+          document.body.style.display = "";
+          // Initialize your application logic here (like loading tables from script.js)
+          // Make sure script.js is either loaded defer/async or called from here
+          if (typeof initializeTables === "function") {
+            // Example check
+            // initializeTables(); // Call function from script.js if needed
+          }
         }
       });
-
-      // Optional: Hide body until auth check is complete to prevent flashing
-      // Add this CSS or inline style: body { display: none; }
-      // Then use document.body.style.display = ''; in the `else` block above.
-
-      // Optional: Timeout fallback (less common now, but can handle edge cases)
-      // setTimeout(() => {
-      //   if (!authInitialized) {
-      //      console.warn("Firebase auth check timed out.");
-      //      // Decide fallback behavior - maybe redirect anyway?
-      //      if (!auth.currentUser && window.location.pathname !== "/login.html" && window.location.pathname !== "/login") {
-      //         console.log("Timeout fallback: No user. Redirecting.");
-      //         window.location.href = "login.html";
-      //      }
-      //   }
-      // }, 5000); // e.g., 5 seconds timeout
     </script>
   </head>
   <body>
