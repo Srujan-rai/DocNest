@@ -9,11 +9,9 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
     <script>
-      // WARNING: Hardcoding API keys directly in client-side code is generally
-      // not recommended for production applications due to security risks.
-      // Consider using environment variables or backend configuration.
+      // WARNING: Hardcoding API keys... (Keep your existing warning)
       const firebaseConfig = {
-        apiKey: "AIzaSyCbHWUEzqGjzeanOiMG0Z5Lb4wIjWWEMUQ", // Replace with your actual API key if this is a placeholder
+        apiKey: "AIzaSyCbHWUEzqGjzeanOiMG0Z5Lb4wIjWWEMUQ", // Use environment variables in production
         authDomain: "docnest-f85e2.firebaseapp.com",
         projectId: "docnest-f85e2",
         storageBucket: "docnest-f85e2.appspot.com",
@@ -26,18 +24,49 @@
       firebase.initializeApp(firebaseConfig);
       const auth = firebase.auth();
 
-      // Redirect to login.html if not authenticated
+      // --- MODIFIED AUTH CHECK ---
+      let authInitialized = false; // Flag to track if the listener has run at least once
+
       auth.onAuthStateChanged((user) => {
+        authInitialized = true; // Mark that the check has completed
+
         if (!user) {
-          // Ensure this page is not login.html itself to avoid redirect loop
+          // User is NOT signed in AFTER the initial check.
+          // Redirect to login page, ensuring we are not already there.
+          console.log(
+            "Auth state checked: No user found. Redirecting to login."
+          );
+          // Check pathname carefully - adjust if your login page is named differently or has no extension
           if (
             window.location.pathname !== "/login.html" &&
             window.location.pathname !== "/login"
           ) {
             window.location.href = "login.html";
           }
+        } else {
+          // User IS signed in.
+          console.log("Auth state checked: User found.", user.displayName);
+          // Good place to hide any loading spinners and show the main content
+          document.body.style.display = ""; // Show body content if hidden initially
+          // Initialize your application logic here (like loading tables)
         }
       });
+
+      // Optional: Hide body until auth check is complete to prevent flashing
+      // Add this CSS or inline style: body { display: none; }
+      // Then use document.body.style.display = ''; in the `else` block above.
+
+      // Optional: Timeout fallback (less common now, but can handle edge cases)
+      // setTimeout(() => {
+      //   if (!authInitialized) {
+      //      console.warn("Firebase auth check timed out.");
+      //      // Decide fallback behavior - maybe redirect anyway?
+      //      if (!auth.currentUser && window.location.pathname !== "/login.html" && window.location.pathname !== "/login") {
+      //         console.log("Timeout fallback: No user. Redirecting.");
+      //         window.location.href = "login.html";
+      //      }
+      //   }
+      // }, 5000); // e.g., 5 seconds timeout
     </script>
   </head>
   <body>
