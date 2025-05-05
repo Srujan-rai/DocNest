@@ -161,16 +161,6 @@
       const messageElement = document.getElementById("message");
       const LANDING_PAGE_URL = "home.html";
 
-      // ✅ Check for existing session on page load
-      window.addEventListener("load", () => {
-        auth.onAuthStateChanged((user) => {
-          if (user) {
-            console.log("User already signed in:", user.displayName);
-            window.location.href = LANDING_PAGE_URL;
-          }
-        });
-      });
-
       // ✅ Set persistence & sign in
       googleSignInBtn.addEventListener("click", () => {
         const provider = new firebase.auth.GoogleAuthProvider();
