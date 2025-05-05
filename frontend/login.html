@@ -162,6 +162,19 @@
       const LANDING_PAGE_URL = "home.html";
 
       // ✅ Check for existing session on page load
+      window.addEventListener("load", () => {
+        auth.onAuthStateChanged((user) => {
+          if (user) {
+            console.log("✅ Already signed in:", user.displayName);
+            // Set session restored flag
+            localStorage.setItem("session_restored", "yes");
+            window.location.href = LANDING_PAGE_URL;
+          } else {
+            // Clear flag to avoid false positive
+            localStorage.removeItem("session_restored");
+          }
+        });
+      });
 
       // ✅ Set persistence & sign in
       googleSignInBtn.addEventListener("click", () => {

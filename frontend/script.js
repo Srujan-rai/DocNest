@@ -113,3 +113,32 @@ document.addEventListener("DOMContentLoaded", () => {
       table.appendChild(tbody);
     }
   });
+
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+
+  document.addEventListener("DOMContentLoaded", () => {
+    // Hide content until auth is confirmed
+    document.body.style.display = "none";
+
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        document.body.style.display = "block";
+        console.log("✅ Welcome", user.displayName);
+      } else {
+        console.warn("⛔ No user signed in");
+
+        // ONLY redirect if login previously attempted
+        if (localStorage.getItem("session_restored") === "yes") {
+          window.location.href = "login.html";
+        } else {
+          // Wait — maybe session isn't ready yet
+          setTimeout(() => {
+            if (!auth.currentUser) {
+              window.location.href = "login.html";
+            }
+          }, 1500); // delay for session hydration
+        }
+      }
+    });
+  });
