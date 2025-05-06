@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin UI - DocNest</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 2rem;
+        background: #f5f5f5;
+      }
+      h1,
+      h2 {
+        color: #222;
+      }
+      form,
+      .tree-container {
+        background: white;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        border-radius: 6px;
+        box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
+      }
+      input,
+      select,
+      textarea {
+        padding: 0.5rem;
+        margin-top: 0.3rem;
+        margin-bottom: 1rem;
+        width: 100%;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+      }
+      button {
+        background: #007bff;
+        color: white;
+        padding: 0.6rem 1.2rem;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      button:hover {
+        background: #0056b3;
+      }
+      .node {
+        margin-left: 1.2rem;
+        cursor: pointer;
+      }
+      .plus {
+        color: green;
+        font-weight: bold;
+        cursor: pointer;
+        margin-left: 0.5rem;
+      }
+      .form-inline {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+        margin-left: 2rem;
+      }
+      .form-inline input,
+      .form-inline select {
+        width: 60%;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>📂 Admin Panel - DocNest</h1>
+
+    <div class="tree-container">
+      <h2>
+        📁 Folder Structure
+        <span class="plus" onclick="promptNewRoot()">[ + ]</span>
+      </h2>
+      <div id="tree"></div>
+    </div>
+
+    <form id="createNode">
+      <h2>Create Folder / Vertical</h2>
+      <label>Name</label>
+      <input type="text" id="nodeName" required />
+
+      <label>Type</label>
+      <select id="nodeType">
+        <option value="VERTICAL">VERTICAL</option>
+        <option value="SUBVERTICAL">SUBVERTICAL</option>
+        <option value="FOLDER">FOLDER</option>
+        <option value="SUBFOLDER">SUBFOLDER</option>
+      </select>
+
+      <label>Parent Node ID (optional)</label>
+      <input type="number" id="parentId" placeholder="null for top-level" />
+
+      <button type="submit">Create Node</button>
+    </form>
+
+    <form id="createArtifact">
+      <h2>Create File / Artifact</h2>
+      <label>Title</label>
+      <input type="text" id="artifactTitle" required />
+
+      <label>Description</label>
+      <textarea id="artifactDesc" required></textarea>
+
+      <label>Link</label>
+      <input type="url" id="artifactLink" required />
+
+      <label>Parent Node ID</label>
+      <input type="number" id="artifactNodeId" required />
+
+      <button type="submit">Add File</button>
+    </form>
+
+    <form id="grantAccess">
+      <h2>Grant Access</h2>
+      <label>Email</label>
+      <input type="email" id="email" required />
+
+      <label>Node ID</label>
+      <input type="number" id="accessNodeId" required />
+
+      <label>Role</label>
+      <select id="role">
+        <option value="EDITOR">EDITOR</option>
+        <option value="VIEWER">VIEWER</option>
+      </select>
+
+      <button type="submit">Grant Access</button>
+    </form>
+
+    <script>
+      const BASE = "http://localhost:8000";
+
+      async function fetchTree() {
+        const res = await fetch(`${BASE}/api/tree`);
+        const data = await res.json();
+        document.getElementById("tree").innerHTML = renderTree(data);
+      }
+
+      function renderTree(nodes) {
+        return nodes
+          .map((n) => {
+            const children = n.children ? renderTree(n.children) : "";
+            const artifacts = n.artifacts
+              ? n.artifacts
+                  .map((a) => `<div class='node'>🧾 ${a.title}</div>`)
+                  .join("")
+              : "";
+            return `
+          <div class="node">
+            📁 ${n.name} (id: ${n.id})
+            <span class="plus" onclick="showInlineForm(${n.id})">[ + ]</span>
+            <div id="form-${n.id}" class="form-inline" style="display:none">
+              <input placeholder="Name" id="name-${n.id}" />
+              <select id="type-${n.id}">
+                <option value="FOLDER">FOLDER</option>
+                <option value="SUBFOLDER">SUBFOLDER</option>
+                <option value="FILE">FILE</option>
+              </select>
+              <input placeholder="Link (if file)" id="link-${n.id}" />
+              <button onclick="submitInlineForm(${n.id})">Add</button>
+            </div>
+            ${children}
+            ${artifacts}
+          </div>
+        `;
+          })
+          .join("");
+      }
+
+      function showInlineForm(id) {
+        document.querySelector(`#form-${id}`).style.display = "flex";
+      }
+
+      async function submitInlineForm(parentId) {
+        const name = document.getElementById(`name-${parentId}`).value;
+        const type = document.getElementById(`type-${parentId}`).value;
+        const link = document.getElementById(`link-${parentId}`).value;
+        if (!name) return alert("Name is required.");
+
+        if (type === "FILE") {
+          await fetch(`${BASE}/api/artifacts`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              title: name,
+              description: "",
+              link,
+              nodeId: parentId,
+            }),
+          });
+        } else {
+          await fetch(`${BASE}/api/nodes`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, type, parentId }),
+          });
+        }
+
+        fetchTree();
+      }
+
+      function promptNewRoot() {
+        const name = prompt("Enter new vertical name:");
+        if (!name) return;
+        fetch(`${BASE}/api/nodes`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, type: "VERTICAL", parentId: null }),
+        }).then(() => fetchTree());
+      }
+
+      document
+        .getElementById("createNode")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          await fetch(`${BASE}/api/nodes`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              name: document.getElementById("nodeName").value,
+              type: document.getElementById("nodeType").value,
+              parentId: document.getElementById("parentId").value || null,
+            }),
+          });
+          alert("Node Created! ✅");
+          fetchTree();
+        });
+
+      document
+        .getElementById("createArtifact")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          await fetch(`${BASE}/api/artifacts`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              title: document.getElementById("artifactTitle").value,
+              description: document.getElementById("artifactDesc").value,
+              link: document.getElementById("artifactLink").value,
+              nodeId: parseInt(document.getElementById("artifactNodeId").value),
+            }),
+          });
+          alert("File Created! ✅");
+          fetchTree();
+        });
+
+      document
+        .getElementById("grantAccess")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          await fetch(`${BASE}/api/access`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email: document.getElementById("email").value,
+              nodeId: parseInt(document.getElementById("accessNodeId").value),
+              role: document.getElementById("role").value,
+            }),
+          });
+          alert("Access Granted! ✅");
+        });
+
+      fetchTree();
+    </script>
+  </body>
+</html>
