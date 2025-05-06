@@ -43,3 +43,12 @@ async def create_artifact(payload: ArtifactCreate, user=Depends(get_current_user
     )
 
     return artifact
+
+@router.delete("/api/artifacts/{artifact_id}")
+async def delete_artifact(artifact_id: int):
+    artifact = await db.artifact.find_unique(where={"id": artifact_id})
+    if not artifact:
+        raise HTTPException(status_code=404, detail="Artifact not found")
+    
+    await db.artifact.delete(where={"id": artifact_id})
+    return {"message": f"Artifact {artifact_id} deleted."}

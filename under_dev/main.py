@@ -1,8 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routes import nodes, artifacts, tree, access
+from routes import nodes, artifacts, tree, access ,users,uploads
 from db import db
-
 
 app = FastAPI()
 
@@ -26,3 +25,5 @@ app.include_router(tree.router)
 app.include_router(nodes.router)
 app.include_router(artifacts.router)
 app.include_router(access.router)
+app.include_router(users.router)
+app.include_router(uploads.router)
