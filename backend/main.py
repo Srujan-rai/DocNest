@@ -1,8 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routes import nodes, artifacts, tree, access, users, uploads
+from routes import nodes, artifacts, tree, access, users, uploads,auth_routes
 from db import db
 from contextlib import asynccontextmanager
+from firebase_setup import *
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -35,3 +36,4 @@ app.include_router(artifacts.router)
 app.include_router(access.router)
 app.include_router(users.router)
 app.include_router(uploads.router)
+app.include_router(auth_routes.router)

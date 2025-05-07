@@ -1,0 +1,58 @@
+[33ma7dbaa8[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m HEAD@{0}: reset: moving to HEAD~1
+[33m69e4665[m HEAD@{1}: reset: moving to HEAD~1
+[33maf53c9b[m HEAD@{2}: reset: moving to HEAD~1
+[33me604672[m HEAD@{3}: reset: moving to HEAD~1
+[33mea7ddd5[m[33m ([m[1;31morigin/srujan[m[33m, [m[1;31morigin/main[m[33m, [m[1;32msrujan[m[33m)[m HEAD@{4}: reset: moving to HEAD~1
+[33mcb2f880[m HEAD@{5}: commit: user.html/ buggy -- under_Dev
+[33mea7ddd5[m[33m ([m[1;31morigin/srujan[m[33m, [m[1;31morigin/main[m[33m, [m[1;32msrujan[m[33m)[m HEAD@{6}: merge srujan: Fast-forward
+[33m736bae0[m HEAD@{7}: pull origin main: Fast-forward
+[33m69e4665[m HEAD@{8}: checkout: moving from srujan to main
+[33mea7ddd5[m[33m ([m[1;31morigin/srujan[m[33m, [m[1;31morigin/main[m[33m, [m[1;32msrujan[m[33m)[m HEAD@{9}: commit: signup-code added
+[33me604672[m HEAD@{10}: commit (merge): signup-code added
+[33maf53c9b[m HEAD@{11}: commit: signup-code added
+[33m69e4665[m HEAD@{12}: checkout: moving from main to srujan
+[33m69e4665[m HEAD@{13}: commit: signup-code added
+[33ma7dbaa8[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m HEAD@{14}: pull: Merge made by the 'ort' strategy.
+[33mede8ed2[m HEAD@{15}: commit: signup-code added
+[33mefae41e[m HEAD@{16}: reset: moving to HEAD~1
+[33m0f73b3a[m HEAD@{17}: reset: moving to HEAD~1
+[33m14bd46c[m HEAD@{18}: reset: moving to HEAD~1
+[33m85e3e28[m HEAD@{19}: commit: signup-code added
+[33m14bd46c[m HEAD@{20}: pull: Fast-forward
+[33m0f73b3a[m HEAD@{21}: commit: workin code - auth remaining
+[33mefae41e[m HEAD@{22}: commit: workin code - auth remaining
+[33mde1da9b[m HEAD@{23}: commit: workin code - auth remaining
+[33mf496c6c[m HEAD@{24}: commit: code push - W
+[33me540f2f[m HEAD@{25}: commit: code push - W
+[33m32bdf3a[m HEAD@{26}: commit: almost working
+[33m97e5c94[m HEAD@{27}: commit: new code push
+[33m74c8b6e[m HEAD@{28}: commit: backend migrated to python
+[33mcad24d0[m HEAD@{29}: commit: nfejnfe
+[33m478bcb2[m HEAD@{30}: commit: nfejnfe
+[33m06d64a8[m HEAD@{31}: commit: nfejnfe
+[33m9d7f490[m HEAD@{32}: commit: nfejnfe
+[33m31d10bb[m HEAD@{33}: commit: nfejnfe
+[33mf01ccca[m HEAD@{34}: commit: nfejnfe
+[33m98b19fd[m HEAD@{35}: commit: nfejnfe
+[33m6355ea3[m HEAD@{36}: commit: nfejnfe
+[33m69bc89d[m HEAD@{37}: commit: nfejnfe
+[33m1946f3a[m HEAD@{38}: commit: nfejnfe
+[33m350579f[m HEAD@{39}: commit: nfejnfe
+[33mc7095ca[m HEAD@{40}: commit: nfejnfe
+[33maf6c2eb[m HEAD@{41}: commit: nfejnfe
+[33m2d2f320[m HEAD@{42}: commit: nfejnfe
+[33m2c5b7b0[m HEAD@{43}: commit: nfejnfe
+[33md5fc0ce[m HEAD@{44}: commit: nfejnfe
+[33me7803f8[m HEAD@{45}: commit: nfejnfe
+[33m946e9b5[m HEAD@{46}: commit: nfejnfe
+[33m2b9f17f[m HEAD@{47}: pull: Fast-forward
+[33m15083d2[m HEAD@{48}: commit: nfejnfe
+[33mc2006b3[m HEAD@{49}: pull: Merge made by the 'ort' strategy.
+[33m47e6430[m HEAD@{50}: commit: nfejnfe
+[33maa08147[m HEAD@{51}: commit: nfejnfe
+[33m60c11b9[m HEAD@{52}: pull: Fast-forward
+[33mc953c99[m HEAD@{53}: pull: Fast-forward
+[33m2a4cd93[m HEAD@{54}: commit: foler
+[33mb9635ff[m HEAD@{55}: commit: foler
+[33mfb4b330[m HEAD@{56}: commit: foler
+[33m30d5d8f[m HEAD@{57}: commit (initial): resume added
