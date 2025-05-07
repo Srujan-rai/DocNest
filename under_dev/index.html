@@ -30,12 +30,9 @@
         --bg-selected-node: #2a2a2a;
         --bg-modal-overlay: rgba(0, 0, 0, 0.7);
         --bg-modal-content: #1f2937; /* gray-800 like */
-        --bg-access-item-even: rgba(
-          255,
-          255,
-          255,
-          0.03
-        ); /* Subtle for dark theme */
+        --bg-access-item-even: rgba(255, 255, 255, 0.03);
+        --bg-toast-success: #2f5c3b; /* Darker green */
+        --bg-toast-error: #5c2f2f; /* Darker red */
 
         --text-primary: #e0e0e0;
         --text-secondary: #bbb;
@@ -43,7 +40,7 @@
         --text-placeholder: #888;
         --text-button-primary: #111;
         --text-button-destructive: #ffffff;
-        --text-button-secondary: #e2e8f0; /* gray-200 like */
+        --text-button-secondary: #e2e8f0;
         --text-card-header: #f0f0f0;
         --text-link-hover: #0095ff;
         --text-action-icon: #999;
@@ -51,6 +48,7 @@
         --text-green-accent: #4ade80;
         --text-red-accent: #f87171;
         --text-yellow-accent: #facc15;
+        --text-toast: #ffffff;
 
         --border-primary: #333;
         --border-input: #555;
@@ -63,11 +61,14 @@
         --border-tree-children: rgba(107, 114, 128, 0.3);
         --border-tree-line: #444;
         --border-preview: #555;
+        --border-toast-success: #38a169; /* green-600 */
+        --border-toast-error: #e53e3e; /* red-600 */
 
         --shadow-card: 0 8px 20px rgba(0, 0, 0, 0.3);
         --shadow-input-focus: 0 0 0 3px rgba(0, 122, 204, 0.3);
         --shadow-selected-node: inset 2px 0 0 var(--border-selected-node);
         --shadow-modal: 0 10px 25px rgba(0, 0, 0, 0.5);
+        --shadow-toast: 0 4px 12px rgba(0, 0, 0, 0.4);
 
         --scrollbar-thumb: #4a4a4a;
         --scrollbar-track: #1e1e1e;
@@ -83,8 +84,8 @@
         --bg-button-primary-hover: #18181b;
         --bg-button-destructive: #ef4444;
         --bg-button-destructive-hover: #dc2626;
-        --bg-button-secondary: #e5e7eb; /* gray-200 */
-        --bg-button-secondary-hover: #d1d5db; /* gray-300 */
+        --bg-button-secondary: #e5e7eb;
+        --bg-button-secondary-hover: #d1d5db;
         --bg-action-icon-hover: #e5e7eb;
         --bg-user-list-item: #f9fafb;
         --bg-user-list-item-hover: #f3f4f6;
@@ -92,7 +93,9 @@
         --bg-selected-node: #dbeafe;
         --bg-modal-overlay: rgba(0, 0, 0, 0.3);
         --bg-modal-content: #ffffff;
-        --bg-access-item-even: #f3f4f6; /* gray-100 for light theme */
+        --bg-access-item-even: #f3f4f6;
+        --bg-toast-success: #c6f6d5; /* Lighter green */
+        --bg-toast-error: #fed7d7; /* Lighter red */
 
         --text-primary: #18181b;
         --text-secondary: #52525b;
@@ -100,7 +103,7 @@
         --text-placeholder: #a1a1aa;
         --text-button-primary: #ffffff;
         --text-button-destructive: #ffffff;
-        --text-button-secondary: #1f2937; /* gray-800 */
+        --text-button-secondary: #1f2937;
         --text-card-header: #1f2937;
         --text-link-hover: #2563eb;
         --text-action-icon: #71717a;
@@ -108,6 +111,7 @@
         --text-green-accent: #16a34a;
         --text-red-accent: #dc2626;
         --text-yellow-accent: #ca8a04;
+        --text-toast: #1a202c; /* Dark text for light toasts */
 
         --border-primary: #d1d5db;
         --border-input: #d1d5db;
@@ -120,11 +124,14 @@
         --border-tree-children: rgba(209, 213, 219, 0.5);
         --border-tree-line: #ccc;
         --border-preview: #d1d5db;
+        --border-toast-success: #68d391; /* green-400 */
+        --border-toast-error: #fc8181; /* red-400 */
 
         --shadow-card: 0 4px 15px rgba(0, 0, 0, 0.07);
         --shadow-input-focus: 0 0 0 3px rgba(37, 99, 235, 0.2);
         --shadow-selected-node: inset 2px 0 0 var(--border-selected-node);
         --shadow-modal: 0 10px 25px rgba(0, 0, 0, 0.1);
+        --shadow-toast: 0 4px 12px rgba(0, 0, 0, 0.15);
 
         --scrollbar-thumb: #a1a1aa;
         --scrollbar-track: #e5e7eb;
@@ -157,7 +164,6 @@
       #tree-container,
       #access-management-modal-current-access,
       #artifact-details-modal-description {
-        /* Added artifact modal desc */
         max-height: 70vh;
         overflow-y: auto;
         scrollbar-width: thin;
@@ -198,6 +204,9 @@
         transition: background-color 0.2s ease-in-out,
           transform 0.1s ease-in-out, border-color 0.2s ease-in-out;
         box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
       }
       .submit-button:hover {
         background-color: var(--bg-button-primary-hover);
@@ -222,6 +231,32 @@
       }
       .submit-button.secondary:hover {
         background-color: var(--bg-button-secondary-hover);
+      }
+      .submit-button:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+      }
+      .spinner {
+        animation: spin 1s linear infinite;
+        border: 2px solid var(--text-button-primary);
+        border-top-color: transparent;
+        border-radius: 50%;
+        width: 1em;
+        height: 1em;
+        margin-right: 0.5em;
+      }
+      .light-theme .submit-button .spinner {
+        border: 2px solid var(--text-button-primary);
+        border-top-color: transparent;
+      }
+      .submit-button.secondary .spinner,
+      .submit-button.destructive .spinner {
+        border: 2px solid var(--text-button-secondary);
+        border-top-color: transparent;
+      }
+      .light-theme .submit-button.secondary .spinner {
+        border: 2px solid var(--text-button-secondary);
+        border-top-color: transparent;
       }
 
       .input-field,
@@ -302,10 +337,10 @@
         background-color: var(--border-tree-line);
       }
       .tree-node:last-child::before {
-        height: 12px;
+        height: 13px;
       }
       .tree-artifact-wrapper:last-child::before {
-        height: 12px;
+        height: 13px;
       }
       .tree-root > .tree-node::before,
       .tree-root > .tree-artifact-wrapper::before {
@@ -326,6 +361,23 @@
       .tree-children-container {
         margin-left: 20px;
       }
+      .tree-children-container.collapsed {
+        display: none;
+      }
+      .tree-toggle-icon {
+        cursor: pointer;
+        width: 1.25rem;
+        height: 1.25rem;
+        margin-right: 0.25rem;
+        color: var(--text-tertiary);
+        transition: transform 0.2s ease-in-out;
+        display: inline-flex; /* For centering icon */
+        align-items: center;
+        justify-content: center;
+      }
+      .tree-toggle-icon.collapsed svg {
+        transform: rotate(-90deg);
+      }
 
       .tree-node-text,
       .tree-artifact-text {
@@ -335,9 +387,6 @@
       }
       .tree-node-text {
         color: var(--text-primary);
-      }
-      .tree-node-text:hover {
-        color: var(--text-link-hover);
       }
       .tree-artifact-text {
         color: var(--text-tertiary);
@@ -354,7 +403,6 @@
         color: var(--text-tertiary);
       }
       .artifact-preview-container {
-        /* No longer used for inline previews */
         display: none;
       }
 
@@ -459,7 +507,8 @@
         justify-content: center;
         opacity: 0;
         visibility: hidden;
-        transition: opacity 0.3s ease, visibility 0.3s ease;
+        transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+          visibility 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         z-index: 1000;
       }
       .modal-overlay.active {
@@ -475,11 +524,14 @@
         max-width: 600px;
         max-height: 90vh;
         overflow-y: auto;
-        transform: scale(0.95);
-        transition: transform 0.3s ease;
+        transform: scale(0.95) translateY(10px);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+          opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        opacity: 0;
       }
       .modal-overlay.active .modal-content {
-        transform: scale(1);
+        transform: scale(1) translateY(0);
+        opacity: 1;
       }
       .modal-header {
         display: flex;
@@ -524,9 +576,56 @@
       .hidden-node {
         display: none !important;
       }
+
+      /* Toast Notification Styles */
+      #toast-container {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 2000;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      .toast {
+        padding: 1rem 1.5rem;
+        border-radius: 0.5rem;
+        color: var(--text-toast);
+        box-shadow: var(--shadow-toast);
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.3s ease, transform 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+      .toast.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .toast.success {
+        background-color: var(--bg-toast-success);
+        border: 1px solid var(--border-toast-success);
+      }
+      .toast.error {
+        background-color: var(--bg-toast-error);
+        border: 1px solid var(--border-toast-error);
+      }
+      .toast-icon {
+        flex-shrink: 0;
+      }
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
     </style>
   </head>
   <body>
+    <div id="toast-container"></div>
     <div class="container mx-auto p-4 md:p-8">
       <header
         class="mb-6 flex flex-col sm:flex-row justify-between items-center gap-4"
@@ -628,7 +727,7 @@
                 </select>
               </div>
               <button type="submit" class="submit-button w-full sm:w-auto">
-                Add User
+                <span class="button-text">Add User</span>
               </button>
             </form>
           </div>
@@ -695,12 +794,12 @@
             type="submit"
             class="submit-button secondary w-full sm:w-auto"
           >
-            Grant Access
+            <span class="button-text">Grant Access</span>
           </button>
         </form>
         <div class="mt-6 text-right">
           <button class="submit-button secondary" onclick="closeAccessModal()">
-            Close
+            <span class="button-text">Close</span>
           </button>
         </div>
       </div>
@@ -754,7 +853,7 @@
             class="submit-button secondary"
             onclick="closeArtifactDetailsModal()"
           >
-            Close
+            <span class="button-text">Close</span>
           </button>
         </div>
       </div>
@@ -794,6 +893,80 @@
       ).matches;
       applyTheme(savedTheme || (prefersDark ? "dark" : "dark"));
       // --- End Theme Toggle ---
+
+      // --- Toast Notification System ---
+      const toastContainer = document.getElementById("toast-container");
+
+      window.showNotification = function (
+        message,
+        type = "success",
+        duration = 3000
+      ) {
+        // Attached to window
+        const toast = document.createElement("div");
+        toast.classList.add("toast", type);
+
+        let iconHtml = "";
+        if (type === "success") {
+          iconHtml = `<svg class="toast-icon h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
+        } else if (type === "error") {
+          iconHtml = `<svg class="toast-icon h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
+        }
+
+        toast.innerHTML = `${iconHtml}<span>${message}</span>`;
+        toastContainer.appendChild(toast);
+
+        toast.offsetHeight;
+
+        toast.classList.add("show");
+
+        setTimeout(() => {
+          toast.classList.remove("show");
+          setTimeout(() => {
+            toast.remove();
+          }, 300);
+        }, duration);
+      };
+      // --- End Toast Notification System ---
+
+      // --- Button Loading State Helper ---
+      window.setButtonLoading = function (
+        button,
+        isLoading,
+        originalText = null
+      ) {
+        // Attached to window
+        if (!(button instanceof HTMLElement)) {
+          console.error(
+            "setButtonLoading: button argument is not an HTMLElement",
+            button
+          );
+          return;
+        }
+        const buttonTextSpan = button.querySelector(".button-text");
+        if (isLoading) {
+          button.disabled = true;
+          if (buttonTextSpan) {
+            if (originalText !== null)
+              buttonTextSpan.dataset.originalText = buttonTextSpan.innerHTML; // Store only if originalText is provided
+            buttonTextSpan.innerHTML = `<span class="spinner"></span>Processing...`;
+          } else {
+            if (originalText !== null)
+              button.dataset.originalText = button.innerHTML;
+            button.innerHTML = `<span class="spinner"></span>Processing...`;
+          }
+        } else {
+          button.disabled = false;
+          if (buttonTextSpan) {
+            buttonTextSpan.innerHTML =
+              buttonTextSpan.dataset.originalText || originalText || "Submit";
+          } else {
+            button.innerHTML =
+              button.dataset.originalText || originalText || "Submit";
+          }
+        }
+      };
+      // --- End Button Loading State ---
 
       function escapeJSString(str) {
         if (typeof str !== "string") return "";
@@ -909,9 +1082,24 @@
         }
       }
 
+      function toggleTreeNode(nodeId) {
+        const childrenContainer = document.getElementById(`children-${nodeId}`);
+        const toggleIcon = document.getElementById(`toggle-icon-${nodeId}`);
+        if (childrenContainer && toggleIcon) {
+          const isCollapsed = childrenContainer.classList.toggle("collapsed");
+          toggleIcon.classList.toggle("collapsed", isCollapsed);
+          toggleIcon.innerHTML = isCollapsed
+            ? `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>`
+            : `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" /></svg>`;
+        }
+      }
+
       function renderTree(nodes) {
         return nodes
           .map((n) => {
+            const hasChildren =
+              (n.children && n.children.length > 0) ||
+              (n.artifacts && n.artifacts.length > 0);
             const childrenHTML = n.children ? renderTree(n.children) : "";
             const artifactsHTML = n.artifacts
               ? n.artifacts
@@ -953,8 +1141,15 @@
               n.name
             )}" data-node-type="NODE">
                         <div class="node-content group hover:bg-[var(--bg-card-hover)] rounded-md px-1 py-0.5">
-                            <span class="font-medium tree-node-text cursor-default flex items-center flex-grow">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 tree-node-icon flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" /></svg>
+                            <span class="font-medium tree-node-text cursor-pointer flex items-center flex-grow" onclick="toggleTreeNode(${
+                              n.id
+                            })">
+                                ${
+                                  hasChildren
+                                    ? `<span id="toggle-icon-${n.id}" class="tree-toggle-icon"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" /></svg></span>`
+                                    : '<span class="tree-toggle-icon"></span>'
+                                }
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1 tree-node-icon flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" /></svg>
                                 <span>${escapeJSString(
                                   n.name
                                 )}</span> <span class="text-xs text-[var(--text-tertiary)] ml-1.5">(ID: ${
@@ -1022,9 +1217,13 @@
                             </div>
                             <button onclick="submitInlineForm(${
                               n.id
-                            })" class="submit-button text-sm w-full py-2">Add Item</button>
+                            }, this)" class="submit-button text-sm w-full py-2">
+                                <span class="button-text">Add Item</span>
+                            </button>
                         </div>
-                        <div class="tree-children-container">
+                        <div class="tree-children-container" id="children-${
+                          n.id
+                        }">
                             ${childrenHTML}
                             ${artifactsHTML}
                         </div>
@@ -1146,12 +1345,15 @@
             method: "DELETE",
           });
           if (!res.ok) throw new Error(`HTTP error! status: ${res.statusText}`);
-          alert("User deleted successfully. ✅");
+          window.showNotification("User deleted successfully. ✅", "success");
           fetchUsers();
           fetchTree();
         } catch (error) {
           console.error("Failed to delete user:", error);
-          alert(`Error deleting user: ${error.message}`);
+          window.showNotification(
+            `Error deleting user: ${error.message}`,
+            "error"
+          );
         }
       }
 
@@ -1207,15 +1409,20 @@
         }
       }
 
-      async function submitInlineForm(parentId) {
+      async function submitInlineForm(parentId, buttonElement) {
         const name = document.getElementById(`name-${parentId}`).value.trim();
         const type = document.getElementById(`type-${parentId}`).value;
         const description = document
           .getElementById(`description-${parentId}`)
           .value.trim();
+        const originalButtonText =
+          buttonElement.querySelector(".button-text")?.textContent ||
+          buttonElement.textContent;
+        window.setButtonLoading(buttonElement, true, originalButtonText);
 
         if (!name) {
-          alert("Name is required.");
+          window.showNotification("Name is required.", "error");
+          window.setButtonLoading(buttonElement, false, originalButtonText);
           return;
         }
 
@@ -1230,7 +1437,15 @@
                 .getElementById(`link-${parentId}`)
                 .value.trim();
               if (!link) {
-                alert("Link is required when 'Enter Link' is selected.");
+                window.showNotification(
+                  "Link is required when 'Enter Link' is selected.",
+                  "error"
+                );
+                window.setButtonLoading(
+                  buttonElement,
+                  false,
+                  originalButtonText
+                );
                 return;
               }
               response = await fetch(`${BASE}/api/artifacts`, {
@@ -1249,7 +1464,15 @@
               );
               const file = fileInput.files[0];
               if (!file) {
-                alert("Please select a file to upload.");
+                window.showNotification(
+                  "Please select a file to upload.",
+                  "error"
+                );
+                window.setButtonLoading(
+                  buttonElement,
+                  false,
+                  originalButtonText
+                );
                 return;
               }
 
@@ -1280,7 +1503,7 @@
               `Failed to add item: ${errorData.message || response.statusText}`
             );
           }
-          alert("Item added successfully! ✅");
+          window.showNotification("Item added successfully! ✅", "success");
           fetchTree();
 
           const formElement = document.getElementById(`form-${parentId}`);
@@ -1295,7 +1518,9 @@
           toggleFileInput(parentId);
         } catch (error) {
           console.error("Error submitting inline form:", error);
-          alert(`Error: ${error.message}`);
+          window.showNotification(`Error: ${error.message}`, "error");
+        } finally {
+          window.setButtonLoading(buttonElement, false, originalButtonText);
         }
       }
 
@@ -1317,11 +1542,11 @@
                 response.statusText
               }`
             );
-          alert("Folder deleted successfully. ✅");
+          window.showNotification("Folder deleted successfully. ✅", "success");
           fetchTree();
         } catch (error) {
           console.error("Error deleting node:", error);
-          alert(`Error: ${error.message}`);
+          window.showNotification(`Error: ${error.message}`, "error");
         }
       }
 
@@ -1343,11 +1568,11 @@
                 response.statusText
               }`
             );
-          alert("File deleted successfully. ✅");
+          window.showNotification("File deleted successfully. ✅", "success");
           fetchTree();
         } catch (error) {
           console.error("Error deleting artifact:", error);
-          alert(`Error: ${error.message}`);
+          window.showNotification(`Error: ${error.message}`, "error");
         }
       }
 
@@ -1373,11 +1598,11 @@
                 response.statusText
               }`
             );
-          alert("New root folder created! ✅");
+          window.showNotification("New root folder created! ✅", "success");
           fetchTree();
         } catch (error) {
           console.error("Error creating new root:", error);
-          alert(`Error: ${error.message}`);
+          window.showNotification(`Error: ${error.message}`, "error");
         }
       }
 
@@ -1385,6 +1610,12 @@
         .getElementById("addUserForm")
         .addEventListener("submit", async (e) => {
           e.preventDefault();
+          const submitButton = e.target.querySelector('button[type="submit"]');
+          const originalButtonText =
+            submitButton.querySelector(".button-text")?.textContent ||
+            submitButton.textContent;
+          window.setButtonLoading(submitButton, true, originalButtonText);
+
           const email = document.getElementById("newUserEmail").value;
           const globalRole = document.getElementById("newUserRole").value;
           const selectedNodeIdForAccess =
@@ -1392,8 +1623,14 @@
           const selectedNodeRoleForAccess =
             document.getElementById("newUserNodeRole").value;
 
-          if (!email || !globalRole)
-            return alert("Email and Global Role are required.");
+          if (!email || !globalRole) {
+            window.showNotification(
+              "Email and Global Role are required.",
+              "error"
+            );
+            window.setButtonLoading(submitButton, false, originalButtonText);
+            return;
+          }
 
           try {
             let response = await fetch(`${BASE}/api/users`, {
@@ -1431,16 +1668,21 @@
                 successMessage += `\n⚠️ Could not grant initial node access: ${
                   errorData.message || response.statusText
                 }`;
+                window.showNotification(successMessage, "error");
               } else {
                 successMessage += ` Initial node access granted.`;
+                window.showNotification(successMessage, "success");
               }
+            } else {
+              window.showNotification(successMessage, "success");
             }
-            alert(successMessage);
             fetchUsers();
             document.getElementById("addUserForm").reset();
           } catch (error) {
             console.error("Error in add user process:", error);
-            alert(`Error: ${error.message}`);
+            window.showNotification(`Error: ${error.message}`, "error");
+          } finally {
+            window.setButtonLoading(submitButton, false, originalButtonText);
           }
         });
 
@@ -1551,12 +1793,12 @@
                 response.statusText
               }`
             );
-          alert("Access updated successfully! ✅");
+          window.showNotification("Access updated successfully! ✅", "success");
           selectElement.dataset.originalRole = newRole;
           fetchUsers();
         } catch (error) {
           console.error("Error updating access from modal:", error);
-          alert(`Error: ${error.message}`);
+          window.showNotification(`Error: ${error.message}`, "error");
           selectElement.value = originalRole;
         }
       }
@@ -1581,12 +1823,12 @@
                 response.statusText
               }`
             );
-          alert("Access revoked successfully! ✅");
+          window.showNotification("Access revoked successfully! ✅", "success");
           loadUserAccessRolesForModal(email);
           fetchUsers();
         } catch (error) {
           console.error("Error revoking access from modal:", error);
-          alert(`Error: ${error.message}`);
+          window.showNotification(`Error: ${error.message}`, "error");
         }
       }
 
@@ -1594,12 +1836,22 @@
         .getElementById("grantNewAccessForm")
         .addEventListener("submit", async (e) => {
           e.preventDefault();
+          const submitButton = e.target.querySelector('button[type="submit"]');
+          const originalButtonText =
+            submitButton.querySelector(".button-text")?.textContent ||
+            submitButton.textContent;
+          window.setButtonLoading(submitButton, true, originalButtonText);
+
           const email = modalEditingUserEmailHidden.value;
           const nodeId = document.getElementById("modalNodeSelect").value;
           const role = document.getElementById("modalNodeRoleSelect").value;
 
           if (!email || !nodeId || !role) {
-            alert("Please select a user, node, and role to grant access.");
+            window.showNotification(
+              "Please select a user, node, and role to grant access.",
+              "error"
+            );
+            window.setButtonLoading(submitButton, false, originalButtonText);
             return;
           }
           try {
@@ -1615,13 +1867,18 @@
                   response.statusText
                 }`
               );
-            alert("Access granted successfully! ✅");
+            window.showNotification(
+              "Access granted successfully! ✅",
+              "success"
+            );
             loadUserAccessRolesForModal(email);
             fetchUsers();
             document.getElementById("grantNewAccessForm").reset();
           } catch (error) {
             console.error("Error granting new access from modal:", error);
-            alert(`Error: ${error.message}`);
+            window.showNotification(`Error: ${error.message}`, "error");
+          } finally {
+            window.setButtonLoading(submitButton, false, originalButtonText);
           }
         });
 
@@ -1649,7 +1906,10 @@
           console.error(
             "Artifact details modal elements could not be found. Check HTML IDs."
           );
-          alert("Error: Cannot display artifact details.");
+          window.showNotification(
+            "Error: Cannot display artifact details.",
+            "error"
+          );
           return;
         }
 
