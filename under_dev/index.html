@@ -30,6 +30,12 @@
         --bg-selected-node: #2a2a2a;
         --bg-modal-overlay: rgba(0, 0, 0, 0.7);
         --bg-modal-content: #1f2937; /* gray-800 like */
+        --bg-access-item-even: rgba(
+          255,
+          255,
+          255,
+          0.03
+        ); /* Subtle for dark theme */
 
         --text-primary: #e0e0e0;
         --text-secondary: #bbb;
@@ -55,6 +61,7 @@
         --border-button-secondary: #4a5568;
         --border-selected-node: #007acc;
         --border-tree-children: rgba(107, 114, 128, 0.3);
+        --border-tree-line: #444;
 
         --shadow-card: 0 8px 20px rgba(0, 0, 0, 0.3);
         --shadow-input-focus: 0 0 0 3px rgba(0, 122, 204, 0.3);
@@ -84,6 +91,7 @@
         --bg-selected-node: #dbeafe;
         --bg-modal-overlay: rgba(0, 0, 0, 0.3);
         --bg-modal-content: #ffffff;
+        --bg-access-item-even: #f3f4f6; /* gray-100 for light theme */
 
         --text-primary: #18181b;
         --text-secondary: #52525b;
@@ -109,6 +117,7 @@
         --border-button-secondary: #d1d5db;
         --border-selected-node: #2563eb;
         --border-tree-children: rgba(209, 213, 219, 0.5);
+        --border-tree-line: #ccc;
 
         --shadow-card: 0 4px 15px rgba(0, 0, 0, 0.07);
         --shadow-input-focus: 0 0 0 3px rgba(37, 99, 235, 0.2);
@@ -132,7 +141,8 @@
         box-shadow: var(--shadow-selected-node);
       }
       .form-inline input,
-      .form-inline select {
+      .form-inline select,
+      .form-inline textarea {
         margin-bottom: 0.75rem;
       }
       .node-item:hover .actions,
@@ -163,7 +173,7 @@
         border-radius: 3px;
       }
       #access-management-modal-current-access {
-        max-height: 250px; /* For modal content scroll */
+        max-height: 250px;
       }
 
       .submit-button {
@@ -202,7 +212,8 @@
         background-color: var(--bg-button-secondary-hover);
       }
 
-      .input-field {
+      .input-field,
+      textarea.input-field {
         margin-top: 0.25rem;
         display: block;
         width: 100%;
@@ -215,10 +226,15 @@
         transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out,
           background-color 0.2s ease;
       }
-      .input-field::placeholder {
+      textarea.input-field {
+        min-height: 60px;
+      }
+      .input-field::placeholder,
+      textarea.input-field::placeholder {
         color: var(--text-placeholder);
       }
-      .input-field:focus {
+      .input-field:focus,
+      textarea.input-field:focus {
         border-color: var(--border-input-focus);
         outline: none;
         box-shadow: var(--shadow-input-focus);
@@ -245,6 +261,60 @@
       .card-header {
         color: var(--text-card-header);
         font-weight: 600;
+      }
+
+      /* Tree Styling with Connection Lines */
+      .tree-node,
+      .tree-artifact {
+        position: relative;
+        padding-left: 20px; /* Space for lines */
+      }
+      .tree-node::before,
+      .tree-artifact::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 8px; /* Adjust left for line position */
+        width: 1px;
+        height: 100%;
+        background-color: var(--border-tree-line);
+      }
+      .tree-node > .node-content::before,
+      .tree-artifact > .node-content::before {
+        /* Horizontal part of L */
+        content: "";
+        position: absolute;
+        top: 12px; /* Align with text/icon */
+        left: -11px; /* Connect to vertical line */
+        width: 12px;
+        height: 1px;
+        background-color: var(--border-tree-line);
+      }
+      .tree-node:last-child::before {
+        height: 12px; /* Shorten line for last item in a level */
+      }
+      .tree-artifact:last-child::before {
+        height: 12px;
+      }
+      .tree-root > .tree-node::before,
+      .tree-root > .tree-artifact::before {
+        display: none;
+      } /* No line for top-level items */
+      .tree-root > .tree-node > .node-content::before,
+      .tree-root > .tree-artifact > .node-content::before {
+        display: none;
+      }
+
+      .node-content {
+        /* Wrapper for the actual text/icon part of the node */
+        position: relative; /* For pseudo-elements */
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 2px 0; /* Adjust vertical padding */
+      }
+      .tree-children-container {
+        margin-left: 20px; /* Indent children further */
       }
 
       .tree-node-text,
@@ -289,8 +359,9 @@
       .user-role-text {
         color: var(--text-secondary);
       }
-      .user-node-role-text {
+      .user-node-role-summary {
         color: var(--text-tertiary);
+        font-size: 0.8rem;
       }
 
       .action-icon-btn {
@@ -387,7 +458,7 @@
         width: 90%;
         max-width: 600px;
         max-height: 90vh;
-        overflow-y: auto; /* For overall modal scroll if content too long */
+        overflow-y: auto;
         transform: scale(0.95);
         transition: transform 0.3s ease;
       }
@@ -416,14 +487,23 @@
       .modal-close-btn:hover {
         color: var(--text-primary);
       }
+      .access-item:nth-child(even) {
+        background-color: var(--bg-access-item-even);
+      }
 
       /* Search Bar */
       #search-tree-input {
         width: 100%;
-        max-width: 400px; /* Or adjust as needed */
+        max-width: 400px;
         padding: 0.6rem 1rem;
         font-size: 0.9rem;
-        margin-bottom: 1.5rem; /* Space below search bar */
+      }
+      .header-controls {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        width: 100%;
+        max-width: 500px;
       }
       .hidden-node {
         display: none !important;
@@ -440,16 +520,16 @@
         >
           📂 Niveus KB Admin
         </h1>
-        <div class="flex items-center gap-3">
+        <div class="header-controls">
           <input
             type="search"
             id="search-tree-input"
-            class="input-field"
+            class="input-field flex-grow"
             placeholder="Search folders/files..."
           />
           <button
             id="theme-toggle-button"
-            class="p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--border-input-focus)]"
+            class="p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--border-input-focus)] flex-shrink-0"
             title="Toggle Theme"
           ></button>
         </div>
@@ -482,7 +562,7 @@
               </button>
             </div>
             <div id="tree-container">
-              <div id="tree" class="space-y-1"></div>
+              <div id="tree" class="tree-root space-y-0.5"></div>
             </div>
           </div>
         </div>
@@ -563,9 +643,9 @@
         </h4>
         <div
           id="access-management-modal-current-access"
-          class="mb-6 space-y-2 border border-[var(--border-primary)] p-3 rounded-md"
+          class="mb-6 space-y-0 border border-[var(--border-primary)] rounded-md"
         >
-          <p class="text-[var(--text-tertiary)]">
+          <p class="text-[var(--text-tertiary)] p-3">
             No specific node access granted.
           </p>
         </div>
@@ -612,9 +692,9 @@
 
     <script>
       const BASE = "http://localhost:8000";
-      let currentlySelectedElementForAccess = null; // For tree selection visual, might remove if not used
-      let fullTreeData = []; // To store the original tree data for filtering and dropdowns
-      let flatNodeList = []; // For populating select dropdowns
+      let currentlySelectedElementForAccess = null;
+      let fullTreeData = [];
+      let flatNodeList = [];
 
       // --- Theme Toggle Functionality ---
       const themeToggleButton = document.getElementById("theme-toggle-button");
@@ -657,45 +737,50 @@
       const searchTreeInput = document.getElementById("search-tree-input");
       searchTreeInput.addEventListener("input", (e) => {
         const searchTerm = e.target.value.toLowerCase();
-        filterTree(searchTerm);
+        filterTreeDOM(searchTerm);
       });
 
-      function filterTree(searchTerm) {
+      function filterTreeDOM(searchTerm) {
         const treeElement = document.getElementById("tree");
-        const allNodesAndArtifacts = treeElement.querySelectorAll(
-          ".node-item-selectable, .artifact-item"
-        );
+        if (!treeElement) return;
 
-        allNodesAndArtifacts.forEach((el) => {
-          // Check self
-          const nameElement = el.querySelector(
-            ".tree-node-text > span:not(.text-xs), .tree-artifact-text > span:not(.text-xs)"
-          ); // Get main name/title span
-          const textContent = nameElement
-            ? nameElement.textContent.toLowerCase()
-            : el.textContent.toLowerCase();
-
-          let isMatch = textContent.includes(searchTerm);
-
-          if (el.classList.contains("node-item-selectable")) {
-            // If a folder matches, all its children should be visible IF the folder itself is visible
-            // If a child of a folder matches, the folder should be visible
-            // This simple hide/show might not perfectly handle nested visibility for children if parent is hidden due to no match
-            // A more robust solution would rebuild a filtered tree or use recursive visibility checks.
-            // For now, this provides basic filtering.
-            const childArtifacts = el.querySelectorAll(".artifact-item");
-            childArtifacts.forEach((child) => {
-              const childText = child.textContent.toLowerCase();
-              if (childText.includes(searchTerm)) isMatch = true; // If any child artifact matches, parent folder is relevant
-              child.classList.toggle(
-                "hidden-node",
-                !childText.includes(searchTerm) && searchTerm
-              );
-            });
+        function checkVisibility(element, term) {
+          let directMatch = false;
+          // Check the element's own name/title
+          const nodeName = (element.dataset.nodeName || "").toLowerCase();
+          if (nodeName.includes(term)) {
+            directMatch = true;
           }
 
-          el.classList.toggle("hidden-node", !isMatch && searchTerm);
-        });
+          let childrenMatch = false;
+          // If it's a folder, check its children recursively
+          if (element.classList.contains("tree-node")) {
+            // Check if it's a folder representation
+            const childrenContainer = element.querySelector(
+              ".tree-children-container"
+            );
+            if (childrenContainer) {
+              const childrenElements = childrenContainer.children;
+              for (const child of childrenElements) {
+                if (checkVisibility(child, term)) {
+                  childrenMatch = true; // If any child is visible, this parent should be too
+                }
+              }
+            }
+          }
+
+          const shouldBeVisible = directMatch || childrenMatch;
+          element.classList.toggle(
+            "hidden-node",
+            !shouldBeVisible && term.length > 0
+          );
+          return shouldBeVisible;
+        }
+
+        const topLevelNodes = treeElement.children;
+        for (const node of topLevelNodes) {
+          checkVisibility(node, searchTerm);
+        }
       }
 
       // --- Node List for Dropdowns ---
@@ -712,12 +797,8 @@
               list.push({
                 id: artifact.id,
                 name: `${"—".repeat(level + 1)} ${artifact.title} (File)`,
-                type: "ARTIFACT", // We need to distinguish for API calls if necessary
-                nodeId: artifact.id, // For artifacts, the 'nodeId' for access is usually the artifact ID itself
-                // Or, if access is always on parent folder, this needs adjustment.
-                // Assuming access can be granted to files directly.
-                // For simplicity, I'll use artifact.id as the target for access.
-                // If API expects parent node ID for file access, adjust accordingly.
+                type: "ARTIFACT",
+                nodeId: artifact.id,
               });
             });
           }
@@ -735,16 +816,11 @@
         const newUserNodeSelect = document.getElementById("newUserNodeAccess");
         const modalNodeSelect = document.getElementById("modalNodeSelect");
 
-        // Clear existing options except the first "None" or "-- Select --"
         newUserNodeSelect.length = 1;
         modalNodeSelect.length = 1;
 
         flatNodeList.forEach((item) => {
-          // For "Add User", we grant access to a NODE (folder or file's parent node)
-          // The 'item.id' from flatNodeList is the ID of the folder or file.
-          // Access API usually takes a nodeId. For files, this might be the file's ID or its parent folder's ID.
-          // Let's assume for now the access API takes the ID of the item itself (folder ID or file ID).
-          const option = new Option(item.name, item.id); // Value is the ID of the folder/file
+          const option = new Option(item.name, item.id);
           newUserNodeSelect.add(option.cloneNode(true));
           modalNodeSelect.add(option);
         });
@@ -754,9 +830,9 @@
         try {
           const res = await fetch(`${BASE}/api/tree`);
           if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-          fullTreeData = await res.json(); // Store full data
+          fullTreeData = await res.json();
           document.getElementById("tree").innerHTML = renderTree(fullTreeData);
-          populateNodeDropdowns(); // Populate dropdowns after tree is fetched
+          populateNodeDropdowns();
         } catch (error) {
           console.error("Failed to fetch tree:", error);
           document.getElementById(
@@ -766,30 +842,31 @@
       }
 
       function renderTree(nodes) {
-        // Simplified renderTree, click on node does not populate forms anymore
         return nodes
           .map((n) => {
-            const children = n.children ? renderTree(n.children) : "";
-            const artifacts = n.artifacts
+            const childrenHTML = n.children ? renderTree(n.children) : "";
+            const artifactsHTML = n.artifacts
               ? n.artifacts
                   .map(
                     (a) => `
-                    <div class="artifact-item ml-6 group relative flex items-center justify-between py-1 px-2 rounded-md hover:bg-[var(--bg-card-hover)] transition-all" 
+                    <div class="tree-artifact" 
                          data-artifact-id="${a.id}" data-node-id="${
                       a.id
                     }" data-node-name="${escapeJSString(
                       a.title
                     )}" data-node-type="ARTIFACT" data-parent-node-id="${n.id}">
-                        <span class="tree-artifact-text cursor-default flex items-center text-sm"> 
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 tree-artifact-icon flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
-                            <span>${escapeJSString(a.title)}</span>
-                        </span>
-                        <div class="actions opacity-0 group-hover:opacity-100 transition-opacity">
-                            <button title="Delete file" class="action-icon-btn delete" onclick="event.stopPropagation(); deleteArtifact(${
-                              a.id
-                            })">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                            </button>
+                        <div class="node-content group hover:bg-[var(--bg-card-hover)] rounded-md px-1 py-0.5">
+                            <span class="tree-artifact-text cursor-default flex items-center text-sm flex-grow"> 
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 tree-artifact-icon flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+                                <span>${escapeJSString(a.title)}</span>
+                            </span>
+                            <div class="actions opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button title="Delete file" class="action-icon-btn delete" onclick="event.stopPropagation(); deleteArtifact(${
+                                  a.id
+                                })">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 `
@@ -798,14 +875,14 @@
               : "";
 
             return `
-                    <div class="node-item-selectable py-1.5 px-2 rounded-md border border-transparent hover:border-[var(--border-primary)] transition-all" 
+                    <div class="tree-node" 
                          data-node-id="${
                            n.id
                          }" data-node-name="${escapeJSString(
               n.name
             )}" data-node-type="NODE">
-                        <div class="flex items-center justify-between group">
-                            <span class="font-medium tree-node-text cursor-default flex items-center">
+                        <div class="node-content group hover:bg-[var(--bg-card-hover)] rounded-md px-1 py-0.5">
+                            <span class="font-medium tree-node-text cursor-default flex items-center flex-grow">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 tree-node-icon flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" /></svg>
                                 <span>${escapeJSString(
                                   n.name
@@ -828,27 +905,57 @@
                         </div>
                         <div id="form-${
                           n.id
-                        }" class="form-inline mt-3 ml-8 p-4 bg-[var(--bg-inline-form)] rounded-lg border border-[var(--border-primary)] shadow-md" style="display:none;">
+                        }" class="form-inline mt-2 ml-5 p-4 bg-[var(--bg-inline-form)] rounded-lg border border-[var(--border-primary)] shadow-md" style="display:none;">
                             <input type="text" placeholder="Name (Folder/File)" id="name-${
                               n.id
-                            }" class="input-field text-sm mb-3">
+                            }" class="input-field text-sm">
                             <select id="type-${
                               n.id
-                            }" class="input-field text-sm mb-3">
+                            }" class="input-field text-sm" onchange="toggleFileInput(${
+              n.id
+            })">
                                 <option value="FOLDER">FOLDER</option>
                                 <option value="SUBFOLDER">SUBFOLDER</option>
                                 <option value="FILE">FILE</option>
                             </select>
-                            <input type="text" placeholder="Link (if file)" id="link-${
+                            <textarea placeholder="Description (Optional)" id="description-${
                               n.id
-                            }" class="input-field text-sm mb-3">
+                            }" class="input-field text-sm" rows="2"></textarea>
+
+                            <div id="file-method-options-${
+                              n.id
+                            }" style="display:none;">
+                                <div class="mb-2">
+                                    <label class="label-text text-xs">File Source:</label>
+                                    <select id="file-source-${
+                                      n.id
+                                    }" class="input-field text-xs py-1" onchange="toggleLinkOrUpload(${
+              n.id
+            })">
+                                        <option value="link">Enter Link</option>
+                                        <option value="upload">Upload File</option>
+                                    </select>
+                                </div>
+                                <div id="link-input-container-${n.id}">
+                                    <input type="text" placeholder="Link (e.g., https://...)" id="link-${
+                                      n.id
+                                    }" class="input-field text-sm">
+                                </div>
+                                <div id="upload-input-container-${
+                                  n.id
+                                }" style="display:none;">
+                                    <input type="file" id="file-upload-${
+                                      n.id
+                                    }" class="input-field text-sm p-2">
+                                </div>
+                            </div>
                             <button onclick="submitInlineForm(${
                               n.id
                             })" class="submit-button text-sm w-full py-2">Add Item</button>
                         </div>
-                        <div class="children ml-5 pl-5 border-l-2 border-[var(--border-tree-children)] space-y-0.5 mt-1">
-                            ${children}
-                            ${artifacts}
+                        <div class="tree-children-container">
+                            ${childrenHTML}
+                            ${artifactsHTML}
                         </div>
                     </div>
                 `;
@@ -857,17 +964,46 @@
       }
 
       async function fetchNodeName(nodeId) {
-        // Used by user list and modal
-        const node = flatNodeList.find((n) => n.id == nodeId);
-        if (node) return `${node.name.replace(/—/g, "").trim()}`; // Return cleaned name
-        // Fallback if not in flat list (shouldn't happen if list is comprehensive)
+        if (
+          !nodeId ||
+          String(nodeId).toLowerCase() === "null" ||
+          typeof nodeId === "undefined"
+        ) {
+          return "Global / Unspecified Node";
+        }
+        const localNode = flatNodeList.find(
+          (n) => String(n.id) === String(nodeId)
+        );
+        if (localNode) {
+          let cleanedName = localNode.name.replace(/—/g, "").trim();
+          return `${cleanedName} (ID: ${nodeId})`;
+        }
         try {
-          const res = await fetch(`${BASE}/api/nodes/${nodeId}`); // This might be for folders only
-          if (!res.ok) return `Item ${nodeId}`;
+          const res = await fetch(`${BASE}/api/nodes/${nodeId}`);
+          if (!res.ok) {
+            console.warn(
+              `API fetch failed for node ID ${nodeId}, status: ${res.status}. Trying as artifact.`
+            );
+            const artifactRes = await fetch(`${BASE}/api/artifacts/${nodeId}`);
+            if (artifactRes.ok) {
+              const artifactData = await artifactRes.json();
+              return artifactData.title
+                ? `${artifactData.title} (File) (ID: ${artifactData.id})`
+                : `Item ${nodeId}`;
+            }
+            console.warn(
+              `API fetch also failed for artifact ID ${nodeId}. Returning generic name.`
+            );
+            return `Item ${nodeId}`;
+          }
           const data = await res.json();
-          return data.name ? `${data.name} (ID: ${data.id})` : `Item ${nodeId}`;
+          const itemName = data.name || data.title;
+          const itemType = data.name ? "Folder" : data.title ? "File" : "Item";
+          return itemName
+            ? `${itemName} (${itemType}) (ID: ${data.id})`
+            : `Item ${nodeId}`;
         } catch (error) {
-          console.error(`Error fetching node/artifact ${nodeId}:`, error);
+          console.error(`Error fetching details for ID ${nodeId}:`, error);
           return `Item ${nodeId}`;
         }
       }
@@ -879,17 +1015,11 @@
           const users = await res.json();
 
           const userListPromises = users.map(async (u) => {
-            let roleDisplay = "No specific node roles assigned.";
+            let nodeAccessSummary = "No specific node roles.";
             if (u.roles && u.roles.length > 0) {
-              const roleDetails = await Promise.all(
-                u.roles.map(async (r) => {
-                  const nodeName = await fetchNodeName(r.nodeId);
-                  return `<span class="user-node-role-text block text-xs">${
-                    r.role
-                  } on: ${escapeJSString(nodeName)}</span>`;
-                })
-              );
-              roleDisplay = roleDetails.join("");
+              nodeAccessSummary = `Node Access: ${u.roles.length} role${
+                u.roles.length > 1 ? "s" : ""
+              }`;
             }
 
             return `
@@ -903,7 +1033,7 @@
                                     ? `Global: ${u.role}`
                                     : "No Global Role"
                                 }</span>
-                                <div class="mt-1">${roleDisplay}</div>
+                                <span class="user-node-role-summary block mt-1">${nodeAccessSummary}</span>
                             </div>
                             <div class="user-actions space-x-2 flex-shrink-0 mt-3 sm:mt-0">
                                 <button class="user-action-button manage-access" title="Manage User Access" 
@@ -947,7 +1077,7 @@
           if (!res.ok) throw new Error(`HTTP error! status: ${res.statusText}`);
           alert("User deleted successfully. ✅");
           fetchUsers();
-          fetchTree(); // Tree data might not change, but good practice if roles affected views
+          fetchTree();
         } catch (error) {
           console.error("Failed to delete user:", error);
           alert(`Error deleting user: ${error.message}`);
@@ -957,36 +1087,120 @@
       function showInlineForm(parentId, buttonElement) {
         const form = document.getElementById(`form-${parentId}`);
         if (form) {
-          form.style.display =
-            form.style.display === "block" ? "none" : "block";
-          if (form.style.display === "block")
-            form.querySelector("input, select")?.focus();
+          const isVisible = form.style.display === "block";
+          form.style.display = isVisible ? "none" : "block";
+          if (!isVisible) {
+            form.querySelector('input[type="text"], select')?.focus();
+            toggleFileInput(parentId);
+          }
+        }
+      }
+
+      function toggleFileInput(parentId) {
+        const typeSelect = document.getElementById(`type-${parentId}`);
+        const fileMethodOptionsDiv = document.getElementById(
+          `file-method-options-${parentId}`
+        );
+        const descriptionTextarea = document.getElementById(
+          `description-${parentId}`
+        );
+
+        if (typeSelect.value === "FILE") {
+          fileMethodOptionsDiv.style.display = "block";
+          descriptionTextarea.placeholder = "Description (Optional for File)";
+          document.getElementById(`file-source-${parentId}`).value = "link";
+          toggleLinkOrUpload(parentId);
+        } else {
+          fileMethodOptionsDiv.style.display = "none";
+          descriptionTextarea.placeholder = "Description (Optional for Folder)";
+        }
+      }
+
+      function toggleLinkOrUpload(parentId) {
+        const fileSource = document.getElementById(
+          `file-source-${parentId}`
+        ).value;
+        const linkInputContainer = document.getElementById(
+          `link-input-container-${parentId}`
+        );
+        const uploadInputContainer = document.getElementById(
+          `upload-input-container-${parentId}`
+        );
+
+        if (fileSource === "link") {
+          linkInputContainer.style.display = "block";
+          uploadInputContainer.style.display = "none";
+        } else {
+          linkInputContainer.style.display = "none";
+          uploadInputContainer.style.display = "block";
         }
       }
 
       async function submitInlineForm(parentId) {
         const name = document.getElementById(`name-${parentId}`).value.trim();
         const type = document.getElementById(`type-${parentId}`).value;
-        const link =
-          document.getElementById(`link-${parentId}`)?.value.trim() || "";
+        const description = document
+          .getElementById(`description-${parentId}`)
+          .value.trim();
 
-        if (!name) return alert("Name is required.");
-        if (type === "FILE" && !link)
-          return alert("Link is required for files.");
+        if (!name) {
+          alert("Name is required.");
+          return;
+        }
 
         try {
-          const endpoint =
-            type === "FILE" ? `${BASE}/api/artifacts` : `${BASE}/api/nodes`;
-          const body =
-            type === "FILE"
-              ? { title: name, description: "", link, nodeId: parentId }
-              : { name, type, parentId };
+          let response;
+          if (type === "FILE") {
+            const fileSource = document.getElementById(
+              `file-source-${parentId}`
+            ).value;
+            if (fileSource === "link") {
+              const link = document
+                .getElementById(`link-${parentId}`)
+                .value.trim();
+              if (!link) {
+                alert("Link is required when 'Enter Link' is selected.");
+                return;
+              }
+              response = await fetch(`${BASE}/api/artifacts`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  title: name,
+                  description,
+                  link,
+                  nodeId: parentId,
+                }),
+              });
+            } else {
+              const fileInput = document.getElementById(
+                `file-upload-${parentId}`
+              );
+              const file = fileInput.files[0];
+              if (!file) {
+                alert("Please select a file to upload.");
+                return;
+              }
 
-          const response = await fetch(endpoint, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(body),
-          });
+              const formData = new FormData();
+              formData.append("file", file);
+              formData.append("title", name);
+              formData.append("description", description);
+              formData.append("nodeId", parentId);
+
+              response = await fetch(`${BASE}/api/upload`, {
+                method: "POST",
+                body: formData,
+              });
+            }
+          } else {
+            response = await fetch(`${BASE}/api/nodes`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ name, type, parentId, description }),
+            });
+          }
+
           if (!response.ok) {
             const errorData = await response
               .json()
@@ -997,7 +1211,17 @@
           }
           alert("Item added successfully! ✅");
           fetchTree();
-          document.getElementById(`form-${parentId}`).style.display = "none";
+
+          const formElement = document.getElementById(`form-${parentId}`);
+          formElement.style.display = "none";
+          document.getElementById(`name-${parentId}`).value = "";
+          document.getElementById(`description-${parentId}`).value = "";
+          document.getElementById(`type-${parentId}`).value = "FOLDER";
+          if (document.getElementById(`link-${parentId}`))
+            document.getElementById(`link-${parentId}`).value = "";
+          if (document.getElementById(`file-upload-${parentId}`))
+            document.getElementById(`file-upload-${parentId}`).value = null;
+          toggleFileInput(parentId);
         } catch (error) {
           console.error("Error submitting inline form:", error);
           alert(`Error: ${error.message}`);
@@ -1101,7 +1325,6 @@
             return alert("Email and Global Role are required.");
 
           try {
-            // 1. Add user with global role
             let response = await fetch(`${BASE}/api/users`, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
@@ -1120,10 +1343,9 @@
 
             let successMessage = "User added successfully! ✅";
 
-            // 2. If a node was selected for initial access, grant it
             if (selectedNodeIdForAccess) {
               response = await fetch(`${BASE}/api/access`, {
-                method: "PUT", // Or POST, depending on your API for granting initial access
+                method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                   email,
@@ -1135,7 +1357,6 @@
                 const errorData = await response
                   .json()
                   .catch(() => ({ message: response.statusText }));
-                // User was added, but initial access grant failed. Inform user.
                 successMessage += `\n⚠️ Could not grant initial node access: ${
                   errorData.message || response.statusText
                 }`;
@@ -1167,41 +1388,35 @@
         modalEditingUserEmailHidden.value = email;
         accessModal.classList.add("active");
         await loadUserAccessRolesForModal(email);
-        // Dropdown for granting new access should already be populated by populateNodeDropdowns()
       }
 
       function closeAccessModal() {
         accessModal.classList.remove("active");
-        modalCurrentAccessDiv.innerHTML = `<p class="text-[var(--text-tertiary)]">Loading access...</p>`; // Reset
+        modalCurrentAccessDiv.innerHTML = `<p class="text-[var(--text-tertiary)] p-3">Loading access...</p>`;
       }
 
       async function loadUserAccessRolesForModal(email) {
-        modalCurrentAccessDiv.innerHTML = `<p class="text-[var(--text-tertiary)]">Loading access...</p>`;
+        modalCurrentAccessDiv.innerHTML = `<p class="text-[var(--text-tertiary)] p-3">Loading access...</p>`;
         try {
-          // Assuming your /api/users/:email endpoint returns detailed roles
-          // Or you have a specific /api/access/:email endpoint
-          const res = await fetch(`${BASE}/api/users`); // Fetch all users again to find the specific one
+          const res = await fetch(`${BASE}/api/users`);
           if (!res.ok) throw new Error("Failed to fetch user data");
           const users = await res.json();
           const user = users.find((u) => u.email === email);
 
           if (!user || !user.roles || user.roles.length === 0) {
-            modalCurrentAccessDiv.innerHTML = `<p class="text-[var(--text-tertiary)]">No specific node access granted.</p>`;
+            modalCurrentAccessDiv.innerHTML = `<p class="text-[var(--text-tertiary)] p-3">No specific node access granted.</p>`;
             return;
           }
 
           const accessItemsPromises = user.roles.map(async (role) => {
             const nodeName = await fetchNodeName(role.nodeId);
             return `
-                        <div class="flex justify-between items-center p-2 border-b border-[var(--border-primary)] last:border-b-0">
+                        <div class="access-item flex justify-between items-center p-2.5 border-b border-[var(--border-primary)] last:border-b-0">
                             <div>
                                 <span class="font-medium text-[var(--text-primary)]">${escapeJSString(
                                   nodeName
                                 )}</span>
-                                <span class="text-xs text-[var(--text-tertiary)]">(ID: ${
-                                  role.nodeId
-                                })</span>
-                            </div>
+                                </div>
                             <div class="flex items-center gap-2">
                                 <select class="input-field text-xs py-1 px-2 w-auto" data-node-id="${
                                   role.nodeId
@@ -1234,7 +1449,7 @@
           ).join("");
         } catch (error) {
           console.error("Error loading user access for modal:", error);
-          modalCurrentAccessDiv.innerHTML = `<p class="text-[var(--text-red-accent)]">Error loading access: ${error.message}</p>`;
+          modalCurrentAccessDiv.innerHTML = `<p class="text-[var(--text-red-accent)] p-3">Error loading access: ${error.message}</p>`;
         }
       }
 
@@ -1242,14 +1457,14 @@
         const newRole = selectElement.value;
         const originalRole = selectElement.dataset.originalRole;
 
-        if (newRole === originalRole) return; // No change
+        if (newRole === originalRole) return;
 
         if (
           !confirm(
             `Change access for ${email} on node ID ${nodeId} to ${newRole}?`
           )
         ) {
-          selectElement.value = originalRole; // Revert dropdown
+          selectElement.value = originalRole;
           return;
         }
         try {
@@ -1266,12 +1481,12 @@
               }`
             );
           alert("Access updated successfully! ✅");
-          selectElement.dataset.originalRole = newRole; // Update original role for future changes
-          fetchUsers(); // Refresh main user list
+          selectElement.dataset.originalRole = newRole;
+          fetchUsers();
         } catch (error) {
           console.error("Error updating access from modal:", error);
           alert(`Error: ${error.message}`);
-          selectElement.value = originalRole; // Revert on error
+          selectElement.value = originalRole;
         }
       }
 
@@ -1296,8 +1511,8 @@
               }`
             );
           alert("Access revoked successfully! ✅");
-          loadUserAccessRolesForModal(email); // Refresh modal list
-          fetchUsers(); // Refresh main user list
+          loadUserAccessRolesForModal(email);
+          fetchUsers();
         } catch (error) {
           console.error("Error revoking access from modal:", error);
           alert(`Error: ${error.message}`);
@@ -1318,7 +1533,7 @@
           }
           try {
             const response = await fetch(`${BASE}/api/access`, {
-              method: "PUT", // Or POST, depending on API for new grant
+              method: "PUT",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ email, nodeId: parseInt(nodeId), role }),
             });
@@ -1330,8 +1545,8 @@
                 }`
               );
             alert("Access granted successfully! ✅");
-            loadUserAccessRolesForModal(email); // Refresh modal list
-            fetchUsers(); // Refresh main user list
+            loadUserAccessRolesForModal(email);
+            fetchUsers();
             document.getElementById("grantNewAccessForm").reset();
           } catch (error) {
             console.error("Error granting new access from modal:", error);
@@ -1340,7 +1555,7 @@
         });
 
       // Initial data fetch
-      fetchTree(); // This will now also call populateNodeDropdowns
+      fetchTree();
       fetchUsers();
     </script>
   </body>

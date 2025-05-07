@@ -18,7 +18,28 @@ class UserUpdate(BaseModel):
 
 @router.get("/api/users")
 async def list_users():
-    return await db.user.find_many()
+    users = await db.user.find_many(
+        include={
+            "access": {
+                "include": {"node": True}
+            }
+        }
+    )
+    return [
+        {
+            "id": u.id,
+            "email": u.email,
+            "name": u.name,
+            "roles": [
+                {
+                    "role": a.role,
+                    "nodeId": a.nodeId,
+                    "nodeName": a.node.name if a.node else None
+                } for a in u.access
+            ]
+        }
+        for u in users
+    ]
 
 
 @router.post("/api/users")
@@ -38,21 +59,3 @@ async def update_user(user_id: int, payload: UserUpdate):
         where={"id": user_id},
         data={"email": payload.email, "name": payload.name}
     )
-
-
-@router.get("/api/users")
-async def list_users():
-    users = await db.user.find_many(
-        include={
-            "access": True  # include all node-level roles
-        }
-    )
-    return [
-        {
-            "id": u.id,
-            "email": u.email,
-            "name": u.name,
-            "roles": [a.role for a in u.access]  # list of assigned roles
-        }
-        for u in users
-    ]

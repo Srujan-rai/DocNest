@@ -40,3 +40,10 @@ async def create_node(payload: NodeCreate, user=Depends(get_current_user)):
 
     #await db.disconnect()
     return node
+
+@router.get("/api/nodes/{node_id}")
+async def get_node(node_id: int):
+    node = await db.node.find_unique(where={"id": node_id})
+    if not node:
+        raise HTTPException(404, "Node not found")
+    return node
