@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login - DocNest</title>
+    <title>Login - DocNest Admin</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
@@ -147,7 +147,7 @@
           <h2
             class="text-2xl font-semibold text-[var(--text-primary-login)] mt-2"
           >
-            DocNest
+            DocNest Admin
           </h2>
           <p class="text-sm text-[var(--text-secondary-login)] mt-1">
             Sign in to continue
@@ -357,9 +357,11 @@
                   window.location.href = "user.html"; // Redirect non-admins to user.html
                 }
               } else {
-                const errorData = await backendResponse.json().catch(() => ({
-                  detail: "Authorization failed with backend.",
-                }));
+                const errorData = await backendResponse
+                  .json()
+                  .catch(() => ({
+                    detail: "Authorization failed with backend.",
+                  }));
                 showLoginError(
                   `Access Denied: ${
                     errorData.detail || backendResponse.statusText

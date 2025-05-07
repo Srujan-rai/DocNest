@@ -1,11 +1,7 @@
 
 under_dev/venv/
-
-<<<<<<< HEAD
 backend/docnest-f85e2-firebase-adminsdk-fbsvc-4f30712b1b.json
-=======
 under_dev/docnest-f85e2-firebase-adminsdk-fbsvc-4f30712b1b.json
->>>>>>> ea7ddd586cef8ad375f03c704e5991d6e094f7e1
 
 under_dev/.env
 

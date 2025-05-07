@@ -3,150 +3,210 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login - My App</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <title>Login - DocNest Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link
-      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
     <style>
       :root {
-        --primary-color: #4285f4;
-        --background-color: #f7f9fc;
-        --container-bg: #ffffff;
-        --text-color: #333;
-        --error-color: #db4437;
-        --success-color: #34a853;
-        --button-hover: #3367d6;
-        --shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        /* Dark Theme (Default) */
+        --bg-primary-login: #0a0a0a;
+        --bg-card-login: #1a1a1a;
+        --text-primary-login: #e0e0e0;
+        --text-secondary-login: #bbb;
+        --text-tertiary-login: #999;
+        --border-card-login: #333;
+        --shadow-card-login: 0 8px 20px rgba(0, 0, 0, 0.3);
+        --button-google-bg: #ffffff;
+        --button-google-text: #1f2937;
+        --button-google-border: #d1d5db;
+        --button-google-bg-hover: #f3f4f6;
+        --error-text-login: #f87171;
+        --error-bg-login: rgba(248, 113, 113, 0.1);
+        --error-border-login: #f87171;
+        --theme-toggle-bg: var(--bg-card-login);
+        --theme-toggle-text: var(--text-secondary-login);
+        --theme-toggle-border: var(--border-card-login);
+        --theme-toggle-bg-hover: var(--bg-card-hover);
+        --theme-toggle-text-hover: var(--text-primary-login);
+        --theme-toggle-ring: #007acc; /* Matches admin panel focus */
+      }
+
+      .light-theme {
+        --bg-primary-login: #f4f4f5; /* zinc-100 */
+        --bg-card-login: #ffffff;
+        --text-primary-login: #18181b; /* zinc-900 */
+        --text-secondary-login: #52525b; /* zinc-600 */
+        --text-tertiary-login: #71717a; /* zinc-500 */
+        --border-card-login: #d1d5db; /* gray-300 */
+        --shadow-card-login: 0 4px 15px rgba(0, 0, 0, 0.07);
+        --button-google-bg: #27272a; /* zinc-800 */
+        --button-google-text: #ffffff;
+        --button-google-border: #27272a;
+        --button-google-bg-hover: #18181b; /* zinc-900 */
+        --error-text-login: #dc2626; /* red-600 */
+        --error-bg-login: rgba(220, 38, 38, 0.1);
+        --error-border-login: #dc2626;
+        --theme-toggle-bg: var(--bg-card-login);
+        --theme-toggle-text: var(--text-secondary-login);
+        --theme-toggle-border: var(--border-card-login);
+        --theme-toggle-bg-hover: #f9fafb; /* gray-50 */
+        --theme-toggle-text-hover: var(--text-primary-login);
+        --theme-toggle-ring: #2563eb; /* Matches admin panel focus */
       }
 
       body {
-        font-family: "Roboto", sans-serif;
-        background-color: var(--background-color);
-        margin: 0;
-        padding: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
-        color: var(--text-color);
+        font-family: "Inter", sans-serif;
+        background-color: var(--bg-primary-login);
+        color: var(--text-primary-login);
+        transition: background-color 0.3s ease, color 0.3s ease;
       }
-
       .login-container {
-        background-color: var(--container-bg);
-        padding: 40px 50px;
-        border-radius: 12px;
-        box-shadow: var(--shadow);
-        text-align: center;
-        max-width: 400px;
-        width: 90%;
-        animation: fadeIn 0.5s ease-out;
-      }
-
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-          transform: translateY(-10px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      .login-container h1 {
-        margin-bottom: 15px;
-        font-weight: 500;
-      }
-
-      .login-container p {
-        margin-bottom: 30px;
-        color: #666;
-        font-size: 0.95em;
-      }
-
-      #googleSignInBtn {
-        display: inline-flex;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
         align-items: center;
         justify-content: center;
-        width: 100%;
-        padding: 12px 20px;
-        margin-top: 10px;
-        background-color: var(--primary-color);
-        color: white;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        font-size: 1em;
-        font-weight: 500;
-        transition: background-color 0.2s ease, box-shadow 0.2s ease;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        padding: 1rem;
+        position: relative;
       }
-
-      #googleSignInBtn:hover {
-        background-color: var(--button-hover);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      .login-card {
+        background-color: var(--bg-card-login);
+        border: 1px solid var(--border-card-login);
+        box-shadow: var(--shadow-card-login);
+        color: var(--text-primary-login);
       }
-
-      #googleSignInBtn img {
-        margin-right: 12px;
-        height: 20px;
-        width: 20px;
-        background-color: #fff;
-        border-radius: 2px;
-        padding: 2px;
+      .google-btn {
+        background-color: var(--button-google-bg);
+        color: var(--button-google-text);
+        border: 1px solid var(--button-google-border);
+        transition: background-color 0.2s ease-in-out,
+          transform 0.1s ease-in-out;
       }
-
-      #message {
-        margin-top: 25px;
-        font-weight: 500;
-        min-height: 1.2em;
-        font-size: 0.9em;
+      .google-btn:hover {
+        background-color: var(--button-google-bg-hover);
+        transform: translateY(-1px);
       }
-
-      .error {
-        color: var(--error-color);
+      .google-btn:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
       }
-
-      .success {
-        color: var(--success-color);
-      }
-
-      .logo {
-        width: 60px;
-        height: 60px;
-        margin: 0 auto 20px auto;
-        background-color: #eee;
+      .spinner {
+        animation: spin 1s linear infinite;
+        border: 2px solid currentColor;
+        border-top-color: transparent;
         border-radius: 50%;
+        width: 1em;
+        height: 1em;
+        margin-right: 0.5em;
+      }
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+      #error-message {
+        color: var(--error-text-login);
+        background-color: var(--error-bg-login);
+        border: 1px solid var(--error-border-login);
+      }
+      #theme-toggle-button-login {
+        position: absolute;
+        top: 1.5rem;
+        right: 1.5rem;
+        background-color: var(--theme-toggle-bg);
+        color: var(--theme-toggle-text);
+        border: 1px solid var(--theme-toggle-border);
+        padding: 0.5rem;
+        border-radius: 0.375rem;
+      }
+      #theme-toggle-button-login:hover {
+        background-color: var(--theme-toggle-bg-hover);
+        color: var(--theme-toggle-text-hover);
+      }
+      #theme-toggle-button-login:focus {
+        outline: none;
+        box-shadow: 0 0 0 2px var(--theme-toggle-ring);
       }
     </style>
   </head>
   <body>
-    <body style="display: none;">
-
     <div class="login-container">
-      <div class="logo"></div>
-      <h1>Login</h1>
-      <p>Use your Google account to continue</p>
+      <button id="theme-toggle-button-login" title="Toggle Theme"></button>
 
-      <button id="googleSignInBtn">
-        <img
-          src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
-          alt="Google icon"
-        />
-        Sign in with Google
-      </button>
+      <div class="login-card w-full max-w-md p-8 rounded-xl">
+        <div class="text-center mb-8">
+          <h1 class="text-4xl font-bold text-[var(--text-primary-login)]">
+            📂
+          </h1>
+          <h2
+            class="text-2xl font-semibold text-[var(--text-primary-login)] mt-2"
+          >
+            DocNest Admin
+          </h2>
+          <p class="text-sm text-[var(--text-secondary-login)] mt-1">
+            Sign in to continue
+          </p>
+        </div>
 
-      <p id="message"></p>
+        <div
+          id="error-message"
+          class="hidden p-3 mb-6 rounded-md text-sm"
+        ></div>
+
+        <button
+          id="login-button"
+          class="google-btn w-full py-3 px-4 rounded-lg font-semibold text-lg flex items-center justify-center"
+        >
+          <svg
+            class="w-6 h-6 mr-3"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M22.56,12.25C22.56,11.47 22.49,10.72 22.36,10H12V14.26H17.95C17.72,15.62 17.03,16.79 15.97,17.57V20.09H19.63C21.57,18.31 22.56,15.56 22.56,12.25Z"
+              fill="#4285F4"
+            />
+            <path
+              d="M12,23C14.97,23 17.45,22.04 19.63,20.09L15.97,17.57C14.97,18.23 13.62,18.62 12,18.62C9.05,18.62 6.56,16.62 5.56,13.91H1.79V16.52C3.78,20.34 7.59,23 12,23Z"
+              fill="#34A853"
+            />
+            <path
+              d="M5.56,13.91C5.34,13.28 5.22,12.65 5.22,12C5.22,11.35 5.34,10.72 5.56,10.09V7.48H1.79C0.95,9.14 0.44,10.95 0.44,12C0.44,13.05 0.95,14.86 1.79,16.52L5.56,13.91Z"
+              fill="#FBBC05"
+            />
+            <path
+              d="M12,5.38C13.71,5.38 15.14,5.99 16.3,7.09L19.71,3.68C17.45,1.63 14.97,0.56 12,0.56C7.59,0.56 3.78,3.66 1.79,7.48L5.56,10.09C6.56,7.38 9.05,5.38 12,5.38Z"
+              fill="#EA4335"
+            />
+          </svg>
+          <span class="button-text">Sign in with Google</span>
+        </button>
+
+        <p class="text-xs text-[var(--text-tertiary-login)] mt-8 text-center">
+          By signing in, you agree to our Terms of Service and Privacy Policy.
+        </p>
+      </div>
     </div>
 
-    <!-- Firebase scripts -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script type="module">
+      // Import Firebase v9 modular SDK
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+      import {
+        getAuth,
+        signInWithPopup,
+        GoogleAuthProvider,
+        onAuthStateChanged,
+        signOut,
+        getIdToken,
+      } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
 
-    <script>
+      // Firebase project configuration from user
       const firebaseConfig = {
         apiKey: "AIzaSyCbHWUEzqGjzeanOiMG0Z5Lb4wIjWWEMUQ",
         authDomain: "docnest-f85e2.firebaseapp.com",
@@ -157,45 +217,217 @@
         measurementId: "G-YRMBR8BVSE",
       };
 
-      firebase.initializeApp(firebaseConfig);
-      const auth = firebase.auth();
-      const googleSignInBtn = document.getElementById("googleSignInBtn");
-      const messageElement = document.getElementById("message");
-      const LANDING_PAGE_URL = "home.html";
+      let app;
+      let auth;
+      let googleProvider;
 
-      // ✅ Check for existing session on page load
-      auth.onAuthStateChanged((user) => {
-        if (user) {
-          console.log("Login Page: User already signed in, redirecting...");
-          window.location.replace(LANDING_PAGE_URL);
+      const loginButton = document.getElementById("login-button");
+      const errorMessageDiv = document.getElementById("error-message");
+      const themeToggleButtonLogin = document.getElementById(
+        "theme-toggle-button-login"
+      );
+
+      const sunIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>`;
+      const moonIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>`;
+
+      function applyLoginTheme(theme) {
+        if (theme === "light") {
+          document.body.classList.add("light-theme");
+          if (themeToggleButtonLogin)
+            themeToggleButtonLogin.innerHTML = moonIcon;
+          localStorage.setItem("loginTheme", "light");
         } else {
-          console.log("Login Page: No user session, showing login form.");
-          document.body.style.display = ""; // Ensure body is visible
+          document.body.classList.remove("light-theme");
+          if (themeToggleButtonLogin)
+            themeToggleButtonLogin.innerHTML = sunIcon;
+          localStorage.setItem("loginTheme", "dark");
         }
-      });
+      }
 
-      // ✅ Set persistence & sign in
-      googleSignInBtn.addEventListener("click", () => {
-        const provider = new firebase.auth.GoogleAuthProvider();
-        googleSignInBtn.disabled = true;
-        setMessage("Signing in...", "success");
+      if (themeToggleButtonLogin) {
+        themeToggleButtonLogin.addEventListener("click", () => {
+          applyLoginTheme(
+            document.body.classList.contains("light-theme") ? "dark" : "light"
+          );
+        });
+      }
 
-        auth
-          .setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-          .then(() => auth.signInWithPopup(provider))
-          .then(() => {
-            window.location.href = LANDING_PAGE_URL;
-          })
-          .catch((error) => {
-            googleSignInBtn.disabled = false;
-            setMessage(error.message, "error");
-            console.error(error);
-          });
-      });
+      const savedLoginTheme = localStorage.getItem("loginTheme");
+      const prefersDarkLogin = window.matchMedia(
+        "(prefers-color-scheme: dark)"
+      ).matches;
+      applyLoginTheme(savedLoginTheme || (prefersDarkLogin ? "dark" : "dark"));
 
-      function setMessage(msg, type = "error") {
-        messageElement.textContent = msg;
-        messageElement.className = type;
+      function setButtonLoadingState(isLoading) {
+        const buttonTextSpan = loginButton.querySelector(".button-text");
+        if (isLoading) {
+          loginButton.disabled = true;
+          if (buttonTextSpan) {
+            buttonTextSpan.dataset.originalText = buttonTextSpan.textContent;
+            buttonTextSpan.innerHTML = `<span class="spinner"></span>Signing in...`;
+          }
+        } else {
+          loginButton.disabled = false;
+          if (buttonTextSpan && buttonTextSpan.dataset.originalText) {
+            buttonTextSpan.innerHTML = buttonTextSpan.dataset.originalText;
+          } else if (buttonTextSpan) {
+            buttonTextSpan.innerHTML = "Sign in with Google";
+          }
+        }
+      }
+
+      function showLoginError(message) {
+        errorMessageDiv.textContent = message;
+        errorMessageDiv.classList.remove("hidden");
+      }
+
+      function clearLoginError() {
+        errorMessageDiv.textContent = "";
+        errorMessageDiv.classList.add("hidden");
+      }
+
+      if (
+        firebaseConfig.apiKey &&
+        firebaseConfig.apiKey !== "YOUR_FIREBASE_API_KEY"
+      ) {
+        try {
+          app = initializeApp(firebaseConfig);
+          auth = getAuth(app);
+          googleProvider = new GoogleAuthProvider();
+        } catch (e) {
+          console.error("Error initializing Firebase:", e);
+          showLoginError(
+            "Login service initialization failed. Please contact support."
+          );
+          if (loginButton) loginButton.disabled = true;
+        }
+      } else {
+        console.warn(
+          "Firebase config is not set with actual values. Please update firebaseConfig in the script."
+        );
+        showLoginError(
+          "Application not configured for login. Please contact support."
+        );
+        if (loginButton) loginButton.disabled = true;
+      }
+
+      // Handle Firebase Auth state changes
+      if (auth) {
+        onAuthStateChanged(auth, async (user) => {
+          if (user) {
+            console.log(
+              "onAuthStateChanged: User is signed in.",
+              user.displayName
+            );
+            if (sessionStorage.getItem("isAuthenticating") === "true") {
+              console.log(
+                "Authentication already in progress, skipping onAuthStateChanged handler."
+              );
+              return;
+            }
+
+            sessionStorage.setItem("isAuthenticating", "true");
+            setButtonLoadingState(true);
+            clearLoginError();
+
+            try {
+              const token = await getIdToken(user);
+
+              const backendResponse = await fetch(
+                "http://localhost:8000/api/auth",
+                {
+                  method: "POST",
+                  headers: {
+                    // "Content-Type": "application/json", // Removed as per user's new snippet if no body
+                    Authorization: `Bearer ${token}`,
+                  },
+                  // No body is sent in this version, only the token in the header
+                }
+              );
+
+              if (backendResponse.ok) {
+                const userData = await backendResponse.json(); // Expecting JSON response
+                console.log("Backend auth successful:", userData);
+                sessionStorage.setItem("token", token);
+
+                if (userData.isAdmin) {
+                  // Check the isAdmin flag from backend
+                  window.location.href = "admin.html";
+                } else {
+                  window.location.href = "user.html"; // Redirect non-admins to user.html
+                }
+              } else {
+                const errorData = await backendResponse
+                  .json()
+                  .catch(() => ({
+                    detail: "Authorization failed with backend.",
+                  }));
+                showLoginError(
+                  `Access Denied: ${
+                    errorData.detail || backendResponse.statusText
+                  }`
+                );
+                console.warn(
+                  "Backend authorization failed. Signing out from Firebase client."
+                );
+                await signOut(auth);
+                setButtonLoadingState(false);
+                sessionStorage.removeItem("isAuthenticating");
+              }
+            } catch (error) {
+              console.error(
+                "Error during onAuthStateChanged token processing or backend call:",
+                error
+              );
+              showLoginError(
+                "An error occurred during sign-in. Please try again."
+              );
+              setButtonLoadingState(false);
+              sessionStorage.removeItem("isAuthenticating");
+            }
+          } else {
+            console.log("onAuthStateChanged: No user signed in.");
+            sessionStorage.removeItem("token");
+            sessionStorage.removeItem("isAuthenticating");
+            setButtonLoadingState(false);
+          }
+        });
+      }
+
+      async function triggerGoogleSignIn() {
+        if (!auth || !googleProvider) {
+          showLoginError(
+            "Login service not available. Please check configuration."
+          );
+          return;
+        }
+        clearLoginError();
+        setButtonLoadingState(true);
+        try {
+          await signInWithPopup(auth, googleProvider);
+        } catch (err) {
+          console.error("Google Sign-In Popup Error:", err);
+          let friendlyMessage = "Sign-in failed. Please try again.";
+          if (err.code === "auth/popup-closed-by-user") {
+            friendlyMessage = "Sign-in popup closed before completion.";
+          } else if (err.code === "auth/network-request-failed") {
+            friendlyMessage = "Network error. Please check your connection.";
+          } else if (
+            err.code === "auth/cancelled-popup-request" ||
+            err.code === "auth/popup-blocked"
+          ) {
+            friendlyMessage =
+              "Sign-in popup was blocked or cancelled. Please try again and allow popups.";
+          }
+          showLoginError(friendlyMessage);
+          setButtonLoadingState(false);
+        }
+      }
+
+      if (loginButton) {
+        loginButton.addEventListener("click", triggerGoogleSignIn);
+      } else {
+        console.error("Login button not found.");
       }
     </script>
   </body>
