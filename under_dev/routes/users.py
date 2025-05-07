@@ -1,23 +1,21 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel, EmailStr
 from typing import Optional
 from db import db
+from auth import get_current_user  # ⬅️ Firebase ID token validator
 
 router = APIRouter()
-
 
 class UserCreate(BaseModel):
     email: EmailStr
     name: Optional[str] = None
 
-
 class UserUpdate(BaseModel):
     name: Optional[str] = None
     email: Optional[EmailStr] = None
 
-
 @router.get("/api/users")
-async def list_users():
+async def list_users(user=Depends(get_current_user)):
     users = await db.user.find_many(
         include={
             "access": {
@@ -41,21 +39,30 @@ async def list_users():
         for u in users
     ]
 
-
 @router.post("/api/users")
-async def create_user(payload: UserCreate):
+async def create_user(payload: UserCreate, user=Depends(get_current_user)):
     existing = await db.user.find_unique(where={"email": payload.email})
     if existing:
         raise HTTPException(400, "User already exists.")
     return await db.user.create(data={"email": payload.email, "name": payload.name})
 
-
 @router.put("/api/users/{user_id}")
-async def update_user(user_id: int, payload: UserUpdate):
-    user = await db.user.find_unique(where={"id": user_id})
-    if not user:
+async def update_user(user_id: int, payload: UserUpdate, user=Depends(get_current_user)):
+    target = await db.user.find_unique(where={"id": user_id})
+    if not target:
         raise HTTPException(404, "User not found.")
     return await db.user.update(
         where={"id": user_id},
         data={"email": payload.email, "name": payload.name}
     )
+
+
+@router.delete("/api/users/{email}")
+async def delete_user(email: str, user=Depends(get_current_user)):
+    existing = await db.user.find_unique(where={"email": email})
+    if not existing:
+        raise HTTPException(404, "User not found.")
+
+    await db.access.delete_many(where={"userId": existing.id})  # Clean access
+    await db.user.delete(where={"email": email})
+    return {"message": f"User {email} deleted successfully."}

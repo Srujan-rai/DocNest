@@ -2,6 +2,7 @@ from fastapi import Depends, HTTPException, Header,APIRouter
 from firebase_admin import auth as firebase_auth
 from db import db  # your Prisma client
 
+router = APIRouter()
 async def get_current_user(authorization: str = Header(...)):
     if not authorization.startswith("Bearer "):
         raise HTTPException(status_code=401, detail="Invalid token header")

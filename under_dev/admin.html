@@ -989,6 +989,7 @@
         firebaseAuth.onAuthStateChanged((user) => {
           if (user) {
             console.log("✅ Admin Panel: Logged in as", user.email);
+            console.log(user.has_admin_access);
             initializeAdminPanel();
           } else {
             console.log(

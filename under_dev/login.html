@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login - DocNest Admin</title>
+    <title>Login - DocNest</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
@@ -147,7 +147,7 @@
           <h2
             class="text-2xl font-semibold text-[var(--text-primary-login)] mt-2"
           >
-            DocNest Admin
+            DocNest
           </h2>
           <p class="text-sm text-[var(--text-secondary-login)] mt-1">
             Sign in to continue
@@ -211,7 +211,7 @@
         apiKey: "AIzaSyCbHWUEzqGjzeanOiMG0Z5Lb4wIjWWEMUQ",
         authDomain: "docnest-f85e2.firebaseapp.com",
         projectId: "docnest-f85e2",
-        storageBucket: "docnest-f85e2.appspot.com", // Corrected from firebasestorage.app
+        storageBucket: "docnest-f85e2.appspot.com",
         messagingSenderId: "102395439437",
         appId: "1:102395439437:web:84e6676388b5d54395af04",
         measurementId: "G-YRMBR8BVSE",
@@ -286,12 +286,10 @@
         errorMessageDiv.classList.add("hidden");
       }
 
-      // Initialize Firebase
       if (
         firebaseConfig.apiKey &&
         firebaseConfig.apiKey !== "YOUR_FIREBASE_API_KEY"
       ) {
-        // Check if it's not the placeholder
         try {
           app = initializeApp(firebaseConfig);
           auth = getAuth(app);
@@ -321,7 +319,12 @@
               "onAuthStateChanged: User is signed in.",
               user.displayName
             );
-            if (sessionStorage.getItem("isAuthenticating")) return;
+            if (sessionStorage.getItem("isAuthenticating") === "true") {
+              console.log(
+                "Authentication already in progress, skipping onAuthStateChanged handler."
+              );
+              return;
+            }
 
             sessionStorage.setItem("isAuthenticating", "true");
             setButtonLoadingState(true);
@@ -335,25 +338,30 @@
                 {
                   method: "POST",
                   headers: {
+                    // "Content-Type": "application/json", // Removed as per user's new snippet if no body
                     Authorization: `Bearer ${token}`,
                   },
+                  // No body is sent in this version, only the token in the header
                 }
               );
 
               if (backendResponse.ok) {
-                const userData = await backendResponse.json();
+                const userData = await backendResponse.json(); // Expecting JSON response
                 console.log("Backend auth successful:", userData);
                 sessionStorage.setItem("token", token);
-                console.log(
-                  "Backend auth successful, redirecting to admin.html"
-                );
-                window.location.href = "admin.html";
+
+                if (userData.isAdmin) {
+                  // Check the isAdmin flag from backend
+                  window.location.href = "admin.html";
+                } else {
+                  window.location.href = "user.html"; // Redirect non-admins to user.html
+                }
               } else {
                 const errorData = await backendResponse.json().catch(() => ({
                   detail: "Authorization failed with backend.",
                 }));
                 showLoginError(
-                  `Access Denied by Application: ${
+                  `Access Denied: ${
                     errorData.detail || backendResponse.statusText
                   }`
                 );
