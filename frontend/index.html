@@ -3,16 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Admin UI - DocNest Admin (Themed)</title>
+    <title>Admin UI - Niveus Knowledge Base (Themed)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
-
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
-
     <style>
       :root {
         /* Dark Theme (Default) */
@@ -637,9 +633,9 @@
         <h1
           class="text-4xl sm:text-5xl font-bold tracking-tight text-[var(--text-card-header)]"
         >
-          📂 DocNest Admin
+          📂 Niveus KB Admin
         </h1>
-        <div class="header-controls flex items-center gap-4">
+        <div class="header-controls">
           <input
             type="search"
             id="search-tree-input"
@@ -651,12 +647,6 @@
             class="p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--border-input-focus)] flex-shrink-0"
             title="Toggle Theme"
           ></button>
-          <button
-            id="logout-button"
-            class="submit-button secondary text-sm py-2 px-4 flex-shrink-0"
-          >
-            <span class="button-text">Logout</span>
-          </button>
         </div>
       </header>
 
@@ -870,197 +860,13 @@
     </div>
 
     <script>
-      // --- Firebase Configuration ---
-      // Using the config provided by the user
-      const firebaseConfig = {
-        apiKey: "AIzaSyCbHWUEzqGjzeanOiMG0Z5Lb4wIjWWEMUQ",
-        authDomain: "docnest-f85e2.firebaseapp.com",
-        projectId: "docnest-f85e2",
-        storageBucket: "docnest-f85e2.appspot.com", // Corrected from firebasestorage.app
-        messagingSenderId: "102395439437",
-        appId: "1:102395439437:web:84e6676388b5d54395af04",
-        measurementId: "G-YRMBR8BVSE",
-      };
-
-      // --- Global Helper Functions (defined early) ---
-      window.showNotification = function (
-        message,
-        type = "success",
-        duration = 3000
-      ) {
-        const toastContainer = document.getElementById("toast-container");
-        if (!toastContainer) return; // Guard against missing container
-
-        const toast = document.createElement("div");
-        toast.classList.add("toast", type);
-
-        let iconHtml = "";
-        if (type === "success") {
-          iconHtml = `<svg class="toast-icon h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
-        } else if (type === "error") {
-          iconHtml = `<svg class="toast-icon h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
-        }
-
-        toast.innerHTML = `${iconHtml}<span>${message}</span>`;
-        toastContainer.appendChild(toast);
-
-        toast.offsetHeight;
-
-        toast.classList.add("show");
-
-        setTimeout(() => {
-          toast.classList.remove("show");
-          setTimeout(() => {
-            toast.remove();
-          }, 300);
-        }, duration);
-      };
-
-      window.setButtonLoading = function (
-        button,
-        isLoading,
-        originalText = null
-      ) {
-        if (!(button instanceof HTMLElement)) {
-          console.error(
-            "setButtonLoading: button argument is not an HTMLElement",
-            button
-          );
-          return;
-        }
-        const buttonTextSpan = button.querySelector(".button-text");
-        if (isLoading) {
-          button.disabled = true;
-          if (buttonTextSpan) {
-            if (originalText !== null)
-              buttonTextSpan.dataset.originalText = buttonTextSpan.innerHTML;
-            buttonTextSpan.innerHTML = `<span class="spinner"></span>Processing...`;
-          } else {
-            if (originalText !== null)
-              button.dataset.originalText = button.innerHTML;
-            button.innerHTML = `<span class="spinner"></span>Processing...`;
-          }
-        } else {
-          button.disabled = false;
-          if (buttonTextSpan) {
-            buttonTextSpan.innerHTML =
-              buttonTextSpan.dataset.originalText || originalText || "Submit";
-          } else {
-            button.innerHTML =
-              button.dataset.originalText || originalText || "Submit";
-          }
-        }
-      };
-      // --- End Global Helper Functions ---
-
-      // Initialize Firebase (compat version)
-      let firebaseApp;
-      let firebaseAuth;
-      if (
-        firebaseConfig.apiKey &&
-        firebaseConfig.apiKey !== "YOUR_FIREBASE_API_KEY"
-      ) {
-        // Check if it's not the placeholder
-        try {
-          firebaseApp = firebase.initializeApp(firebaseConfig);
-          firebaseAuth = firebase.auth();
-        } catch (e) {
-          console.error("Error initializing Firebase:", e);
-          window.showNotification(
-            "Critical Error: Could not initialize authentication service.",
-            "error",
-            10000
-          );
-        }
-      } else {
-        console.warn(
-          "Firebase config is not set with actual values. Authentication will not work."
-        );
-        // Show notification if config is placeholder
-        window.showNotification(
-          "Authentication is not configured. Please contact support.",
-          "error",
-          10000
-        );
-      }
-
-      // --- Auth State Management ---
-      if (firebaseAuth) {
-        firebaseAuth.onAuthStateChanged((user) => {
-          if (user) {
-            console.log("✅ Admin Panel: Logged in as", user.email);
-            console.log(user.has_admin_access);
-            initializeAdminPanel();
-          } else {
-            console.log(
-              "🚫 Admin Panel: No user logged in. Redirecting to login page."
-            );
-            sessionStorage.removeItem("token");
-            window.location.href = "login.html";
-          }
-        });
-      } else {
-        // This block will run if firebaseAuth is undefined (e.g., config was placeholder)
-        // Only redirect if not already on login page to avoid loops
-        if (!window.location.pathname.endsWith("login.html")) {
-          console.error(
-            "Firebase Auth not initialized. Likely due to missing/incorrect config. Redirecting to login."
-          );
-          window.showNotification(
-            "Authentication service unavailable. Redirecting to login.",
-            "error",
-            5000
-          );
-          setTimeout(() => {
-            window.location.href = "login.html";
-          }, 5000);
-        }
-      }
-
-      async function getAuthToken() {
-        if (!firebaseAuth || !firebaseAuth.currentUser) {
-          console.warn("No current user. Cannot get token.");
-          window.showNotification(
-            "Your session has expired or you are not logged in. Please log in again.",
-            "error"
-          );
-          return null;
-        }
-        try {
-          const token = await firebaseAuth.currentUser.getIdToken(true);
-          sessionStorage.setItem("token", token);
-          return token;
-        } catch (error) {
-          console.error("Error getting ID token:", error);
-          window.showNotification(
-            "Could not refresh authentication token. Please try logging in again.",
-            "error"
-          );
-          return null;
-        }
-      }
-
-      async function secureFetch(url, options = {}) {
-        const token = await getAuthToken();
-        if (!token) {
-          throw new Error("Authentication token not available.");
-        }
-
-        const headers = {
-          ...options.headers,
-          Authorization: `Bearer ${token}`,
-        };
-        if (!(options.body instanceof FormData)) {
-          headers["Content-Type"] = "application/json";
-        }
-        return fetch(url, { ...options, headers });
-      }
-
       const BASE = "http://localhost:8000";
+
       let currentlySelectedElementForAccess = null;
       let fullTreeData = [];
       let flatNodeList = [];
 
+      // --- Theme Toggle Functionality ---
       const themeToggleButton = document.getElementById("theme-toggle-button");
       const sunIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>`;
       const moonIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>`;
@@ -1086,6 +892,81 @@
         "(prefers-color-scheme: dark)"
       ).matches;
       applyTheme(savedTheme || (prefersDark ? "dark" : "dark"));
+      // --- End Theme Toggle ---
+
+      // --- Toast Notification System ---
+      const toastContainer = document.getElementById("toast-container");
+
+      window.showNotification = function (
+        message,
+        type = "success",
+        duration = 3000
+      ) {
+        // Attached to window
+        const toast = document.createElement("div");
+        toast.classList.add("toast", type);
+
+        let iconHtml = "";
+        if (type === "success") {
+          iconHtml = `<svg class="toast-icon h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
+        } else if (type === "error") {
+          iconHtml = `<svg class="toast-icon h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
+        }
+
+        toast.innerHTML = `${iconHtml}<span>${message}</span>`;
+        toastContainer.appendChild(toast);
+
+        toast.offsetHeight;
+
+        toast.classList.add("show");
+
+        setTimeout(() => {
+          toast.classList.remove("show");
+          setTimeout(() => {
+            toast.remove();
+          }, 300);
+        }, duration);
+      };
+      // --- End Toast Notification System ---
+
+      // --- Button Loading State Helper ---
+      window.setButtonLoading = function (
+        button,
+        isLoading,
+        originalText = null
+      ) {
+        // Attached to window
+        if (!(button instanceof HTMLElement)) {
+          console.error(
+            "setButtonLoading: button argument is not an HTMLElement",
+            button
+          );
+          return;
+        }
+        const buttonTextSpan = button.querySelector(".button-text");
+        if (isLoading) {
+          button.disabled = true;
+          if (buttonTextSpan) {
+            if (originalText !== null)
+              buttonTextSpan.dataset.originalText = buttonTextSpan.innerHTML; // Store only if originalText is provided
+            buttonTextSpan.innerHTML = `<span class="spinner"></span>Processing...`;
+          } else {
+            if (originalText !== null)
+              button.dataset.originalText = button.innerHTML;
+            button.innerHTML = `<span class="spinner"></span>Processing...`;
+          }
+        } else {
+          button.disabled = false;
+          if (buttonTextSpan) {
+            buttonTextSpan.innerHTML =
+              buttonTextSpan.dataset.originalText || originalText || "Submit";
+          } else {
+            button.innerHTML =
+              button.dataset.originalText || originalText || "Submit";
+          }
+        }
+      };
+      // --- End Button Loading State ---
 
       function escapeJSString(str) {
         if (typeof str !== "string") return "";
@@ -1096,6 +977,7 @@
           .replace(/`/g, "\\`");
       }
 
+      // --- Tree Search Functionality ---
       const searchTreeInput = document.getElementById("search-tree-input");
       searchTreeInput.addEventListener("input", (e) => {
         const searchTerm = e.target.value.toLowerCase();
@@ -1142,6 +1024,7 @@
         }
       }
 
+      // --- Node List for Dropdowns ---
       function generateFlatNodeList(nodes, prefix = "", level = 0) {
         let list = [];
         nodes.forEach((node) => {
@@ -1186,13 +1069,7 @@
 
       async function fetchTree() {
         try {
-          const token = await getAuthToken();
-          const res = await fetch(`${BASE}/api/tree`, {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
+          const res = await fetch(`${BASE}/api/tree`);
           if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
           fullTreeData = await res.json();
           document.getElementById("tree").innerHTML = renderTree(fullTreeData);
@@ -1224,7 +1101,6 @@
               (n.children && n.children.length > 0) ||
               (n.artifacts && n.artifacts.length > 0);
             const childrenHTML = n.children ? renderTree(n.children) : "";
-
             const artifactsHTML = n.artifacts
               ? n.artifacts
                   .map((a) => {
@@ -1237,11 +1113,7 @@
 
                     return `
                         <div class="tree-artifact-wrapper" 
-                             data-artifact-id="${artifactId}" 
-                             data-node-id="${artifactId}" 
-                             data-node-name="${titleContent}" 
-                             data-node-type="ARTIFACT" 
-                             data-parent-node-id="${n.id}">
+                             data-artifact-id="${artifactId}" data-node-id="${artifactId}" data-node-name="${titleContent}" data-node-type="ARTIFACT" data-parent-node-id="${n.id}">
                             <div class="node-content group hover:bg-[var(--bg-card-hover)] rounded-md px-1 py-0.5">
                                 <span class="tree-artifact-text clickable flex items-center text-sm flex-grow" 
                                       title="View details for: ${titleContent}"
@@ -1263,9 +1135,11 @@
 
             return `
                     <div class="tree-node" 
-                         data-node-id="${n.id}" 
-                         data-node-name="${escapeJSString(n.name)}" 
-                         data-node-type="NODE">
+                         data-node-id="${
+                           n.id
+                         }" data-node-name="${escapeJSString(
+              n.name
+            )}" data-node-type="NODE">
                         <div class="node-content group hover:bg-[var(--bg-card-hover)] rounded-md px-1 py-0.5">
                             <span class="font-medium tree-node-text cursor-pointer flex items-center flex-grow" onclick="toggleTreeNode(${
                               n.id
@@ -1406,7 +1280,7 @@
 
       async function fetchUsers() {
         try {
-          const res = await secureFetch(`${BASE}/api/users`);
+          const res = await fetch(`${BASE}/api/users`);
           if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
           const users = await res.json();
 
@@ -1453,10 +1327,9 @@
           document.getElementById("userList").innerHTML = userListHtml.join("");
         } catch (error) {
           console.error("Failed to fetch users:", error);
-          window.showNotification(
-            `Error loading users: ${error.message}`,
-            "error"
-          );
+          document.getElementById(
+            "userList"
+          ).innerHTML = `<p class="text-[var(--text-red-accent)] p-4">Error loading users: ${error.message}</p>`;
         }
       }
 
@@ -1468,11 +1341,10 @@
         )
           return;
         try {
-          const response = await secureFetch(`${BASE}/api/users/${email}`, {
+          const res = await fetch(`${BASE}/api/users/${email}`, {
             method: "DELETE",
           });
-          if (!response.ok)
-            throw new Error(`HTTP error! status: ${response.statusText}`);
+          if (!res.ok) throw new Error(`HTTP error! status: ${res.statusText}`);
           window.showNotification("User deleted successfully. ✅", "success");
           fetchUsers();
           fetchTree();
@@ -1576,8 +1448,9 @@
                 );
                 return;
               }
-              response = await secureFetch(`${BASE}/api/artifacts`, {
+              response = await fetch(`${BASE}/api/artifacts`, {
                 method: "POST",
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                   title: name,
                   description,
@@ -1609,14 +1482,15 @@
               formData.append("description", description);
               formData.append("nodeId", parentId);
 
-              response = await secureFetch(`${BASE}/api/upload`, {
+              response = await fetch(`${BASE}/api/upload`, {
                 method: "POST",
                 body: formData,
               });
             }
           } else {
-            response = await secureFetch(`${BASE}/api/nodes`, {
+            response = await fetch(`${BASE}/api/nodes`, {
               method: "POST",
+              headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ name, type, parentId, description }),
             });
           }
@@ -1658,7 +1532,7 @@
         )
           return;
         try {
-          const response = await secureFetch(`${BASE}/api/nodes/${nodeId}`, {
+          const response = await fetch(`${BASE}/api/nodes/${nodeId}`, {
             method: "DELETE",
           });
           if (!response.ok)
@@ -1684,10 +1558,9 @@
         )
           return;
         try {
-          const response = await secureFetch(
-            `${BASE}/api/artifacts/${artifactId}`,
-            { method: "DELETE" }
-          );
+          const response = await fetch(`${BASE}/api/artifacts/${artifactId}`, {
+            method: "DELETE",
+          });
           if (!response.ok)
             throw new Error(
               `Failed to delete file: ${
@@ -1709,8 +1582,9 @@
         );
         if (!name?.trim()) return;
         try {
-          const response = await secureFetch(`${BASE}/api/nodes`, {
+          const response = await fetch(`${BASE}/api/nodes`, {
             method: "POST",
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               name: name.trim(),
               type: "VERTICAL",
@@ -1759,8 +1633,9 @@
           }
 
           try {
-            let response = await secureFetch(`${BASE}/api/users`, {
+            let response = await fetch(`${BASE}/api/users`, {
               method: "POST",
+              headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ email, role: globalRole }),
             });
             if (!response.ok) {
@@ -1777,8 +1652,9 @@
             let successMessage = "User added successfully! ✅";
 
             if (selectedNodeIdForAccess) {
-              response = await secureFetch(`${BASE}/api/access`, {
+              response = await fetch(`${BASE}/api/access`, {
                 method: "PUT",
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                   email,
                   nodeId: parseInt(selectedNodeIdForAccess),
@@ -1835,7 +1711,7 @@
       async function loadUserAccessRolesForModal(email) {
         modalCurrentAccessDiv.innerHTML = `<p class="text-[var(--text-tertiary)] p-3">Loading access...</p>`;
         try {
-          const res = await secureFetch(`${BASE}/api/users`);
+          const res = await fetch(`${BASE}/api/users`);
           if (!res.ok) throw new Error("Failed to fetch user data");
           const users = await res.json();
           const user = users.find((u) => u.email === email);
@@ -1905,8 +1781,9 @@
           return;
         }
         try {
-          const response = await secureFetch(`${BASE}/api/access`, {
+          const response = await fetch(`${BASE}/api/access`, {
             method: "PUT",
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, nodeId, role: newRole }),
           });
           if (!response.ok)
@@ -1934,8 +1811,9 @@
         )
           return;
         try {
-          const response = await secureFetch(`${BASE}/api/access`, {
+          const response = await fetch(`${BASE}/api/access`, {
             method: "DELETE",
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, nodeId }),
           });
           if (!response.ok)
@@ -1977,8 +1855,9 @@
             return;
           }
           try {
-            const response = await secureFetch(`${BASE}/api/access`, {
+            const response = await fetch(`${BASE}/api/access`, {
               method: "PUT",
+              headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ email, nodeId: parseInt(nodeId), role }),
             });
             if (!response.ok)
@@ -2071,31 +1950,9 @@
         }
       }
 
-      // --- Logout Functionality ---
-      const logoutButton = document.getElementById("logout-button");
-      if (logoutButton) {
-        logoutButton.addEventListener("click", async () => {
-          if (firebaseAuth) {
-            try {
-              await firebaseAuth.signOut();
-              sessionStorage.removeItem("token");
-              window.showNotification("You have been logged out.", "success");
-            } catch (error) {
-              console.error("Error signing out:", error);
-              window.showNotification(
-                "Logout failed. Please try again.",
-                "error"
-              );
-            }
-          }
-        });
-      }
-
-      function initializeAdminPanel() {
-        console.log("Initializing Admin Panel data...");
-        fetchTree();
-        fetchUsers();
-      }
+      // Initial data fetch
+      fetchTree();
+      fetchUsers();
     </script>
   </body>
 </html>
