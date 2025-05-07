@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Niveus Knowledge Base</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        /* Dark Theme (Default) */
+        --bg-primary: #0f1013; /* Slightly softer dark */
+        --bg-card: #16181c;   /* Card bg */
+        --bg-card-hover: #1f2125;
+        --bg-input: #1f2125;
+        --bg-button-primary: #f0f0f0;
+        --bg-button-primary-hover: #ffffff;
+        --bg-breadcrumb-item-hover: #2a2a2a;
+        --bg-file-item-hover: #1f2125;
+        --bg-search-result-item-hover: #22252a;
+        --bg-toast-success: #2f5c3b;
+        --bg-toast-error: #5c2f2f;
+        --bg-action-button: #2a2c31; /* For back button */
+        --bg-action-button-hover: #34373c;
+
+        --text-primary: #e4e4e7; /* zinc-200 like */
+        --text-secondary: #a0a0ab; /* zinc-400 like */
+        --text-tertiary: #7f7f89; /* zinc-500 like */
+        --text-placeholder: #7f7f89;
+        --text-button-primary: #111;
+        --text-card-header: #f0f0f0;
+        --text-link: #60a5fa;
+        --text-link-hover: #93c5fd;
+        --text-search-path: #7f7f89;
+        --text-toast: #ffffff;
+
+        --border-primary: #36393f; /* Slightly more visible border */
+        --border-card: #2a2c31;
+        --border-input: #36393f;
+        --border-input-focus: #007acc;
+        --border-button-primary: #ccc;
+        --border-button-primary-hover: #bbb;
+        --border-toast-success: #38a169;
+        --border-toast-error: #e53e3e;
+
+        --shadow-card: 0 4px 10px rgba(0, 0, 0, 0.25); /* Softer shadow */
+        --shadow-card-hover: 0 6px 15px rgba(0, 0, 0, 0.3);
+        --shadow-input-focus: 0 0 0 2px rgba(0, 122, 204, 0.25);
+        --shadow-toast: 0 4px 12px rgba(0, 0, 0, 0.4);
+
+        --scrollbar-thumb: #4a4a4a;
+        --scrollbar-track: #1e1e1e;
+      }
+
+      .light-theme {
+        --bg-primary: #ffffff;
+        --bg-card: #f9fafb; /* Off-white for cards */
+        --bg-card-hover: #f3f4f6;
+        --bg-input: #ffffff;
+        --bg-button-primary: #1f2937; /* Dark button text on light theme */
+        --bg-button-primary-hover: #111827;
+        --bg-breadcrumb-item-hover: #e5e7eb;
+        --bg-file-item-hover: #f3f4f6;
+        --bg-search-result-item-hover: #e5e7eb;
+        --bg-toast-success: #c6f6d5;
+        --bg-toast-error: #fed7d7;
+        --bg-action-button: #f3f4f6; /* Light gray for back button */
+        --bg-action-button-hover: #e5e7eb;
+
+
+        --text-primary: #111827; /* Darker primary text */
+        --text-secondary: #4b5563; /* Medium gray */
+        --text-tertiary: #6b7280;  /* Lighter gray */
+        --text-placeholder: #9ca3af;
+        --text-button-primary: #ffffff;
+        --text-card-header: #111827;
+        --text-link: #2563eb;
+        --text-link-hover: #1d4ed8;
+        --text-search-path: #6b7280;
+        --text-toast: #1a202c;
+
+        --border-primary: #e5e7eb; /* Light border */
+        --border-card: #e5e7eb;
+        --border-input: #d1d5db;
+        --border-input-focus: #2563eb;
+        --border-button-primary: #1f2937;
+        --border-button-primary-hover: #111827;
+        --border-toast-success: #68d391;
+        --border-toast-error: #fc8181;
+
+        --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0,0,0,0.03); /* Very subtle shadow */
+        --shadow-card-hover: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0,0,0,0.05);
+        --shadow-input-focus: 0 0 0 2px rgba(37, 99, 235, 0.2);
+        --shadow-toast: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+        --scrollbar-thumb: #cbd5e1; /* zinc-400 */
+        --scrollbar-track: #e2e8f0; /* zinc-200 */
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
+        transition: background-color 0.3s ease, color 0.3s ease;
+        min-height: 100vh;
+      }
+      .input-field {
+        display: block; width: 100%; border-radius: 0.375rem; /* 6px */
+        border: 1px solid var(--border-input); background-color: var(--bg-input);
+        color: var(--text-primary); padding: 0.625rem 0.875rem; /* 10px 14px */ font-size: 0.875rem;
+        transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, background-color 0.2s ease;
+      }
+      .input-field::placeholder { color: var(--text-placeholder); }
+      .input-field:focus {
+        border-color: var(--border-input-focus); outline: none; box-shadow: var(--shadow-input-focus);
+      }
+      .item-card {
+        background-color: var(--bg-card); border: 1px solid var(--border-card);
+        border-radius: 0.5rem; /* 8px */ box-shadow: var(--shadow-card);
+        transition: transform 0.2s ease-out, box-shadow 0.2s ease-out, background-color 0.2s ease-out;
+        cursor: pointer;
+      }
+      .item-card:hover {
+        transform: translateY(-3px); box-shadow: var(--shadow-card-hover); background-color: var(--bg-card-hover);
+      }
+      .file-item {
+        background-color: transparent; /* No card bg needed */
+        border-bottom: 1px solid var(--border-primary);
+        transition: background-color 0.2s ease-out;
+        padding: 0.75rem 0.5rem; /* py-3 px-2 */
+      }
+      .file-item:hover { background-color: var(--bg-file-item-hover); }
+      .file-item:last-child { border-bottom: none; }
+
+      .search-result-item {
+        border-bottom: 1px solid var(--border-primary); cursor: pointer;
+        transition: background-color 0.2s ease-out;
+        padding: 0.75rem 1rem; /* py-3 px-4 */
+      }
+      .search-result-item:hover { background-color: var(--bg-search-result-item-hover); }
+      .search-result-item:last-child { border-bottom: none; }
+
+      .breadcrumb-item { padding: 0.25rem 0.5rem; border-radius: 0.25rem; }
+      .breadcrumb-item:hover { background-color: var(--bg-breadcrumb-item-hover); }
+      
+      #back-button, #theme-toggle-button {
+        background-color: var(--bg-action-button);
+        color: var(--text-secondary);
+        border: 1px solid var(--border-primary);
+        border-radius: 0.375rem; /* 6px */
+        transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+      }
+      #back-button:hover, #theme-toggle-button:hover {
+        background-color: var(--bg-action-button-hover);
+        color: var(--text-primary);
+        border-color: var(--border-card); /* Slightly different border on hover */
+      }
+
+      #logout-button {
+  background-color: var(--bg-action-button);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: 0.375rem; /* 6px */
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  line-height: 1.25; /* Adjust if needed for vertical alignment with icon buttons */
+}
+
+#logout-button:hover {
+  background-color: var(--bg-action-button-hover);
+  color: var(--text-primary);
+  border-color: var(--border-card);
+}
+
+      .custom-scrollbar { scrollbar-width: thin; scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track); }
+      .custom-scrollbar::-webkit-scrollbar { width: 8px; height: 8px; }
+      .custom-scrollbar::-webkit-scrollbar-track { background: var(--scrollbar-track); border-radius: 4px; }
+      .custom-scrollbar::-webkit-scrollbar-thumb { background-color: var(--scrollbar-thumb); border-radius: 4px; }
+      .custom-scrollbar::-webkit-scrollbar-thumb:hover { background-color: color-mix(in srgb, var(--scrollbar-thumb) 80%, #fff 20%); }
+      #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 2000; display: flex; flex-direction: column; gap: 0.5rem; }
+      .toast { padding: 1rem 1.5rem; border-radius: 0.5rem; color: var(--text-toast); box-shadow: var(--shadow-toast); opacity: 0; transform: translateY(20px); transition: opacity 0.3s ease, transform 0.3s ease; display: flex; align-items: center; gap: 0.75rem; min-width: 250px; max-width: 400px; }
+      .toast.show { opacity: 1; transform: translateY(0); }
+      .toast.success { background-color: var(--bg-toast-success); border: 1px solid var(--border-toast-success); }
+      .toast.error { background-color: var(--bg-toast-error); border: 1px solid var(--border-toast-error); }
+      .toast-icon { flex-shrink: 0; }
+      .loading-placeholder { text-align: center; padding: 2rem; font-style: italic; color: var(--text-secondary); }
+    </style>
+  </head>
+  <body class="custom-scrollbar">
+    <div id="toast-container"></div>
+    <div class="container mx-auto p-4 md:px-6 lg:px-8 py-6 md:py-8 min-h-screen flex flex-col">
+      <header class="mb-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+        <h1 class="text-2xl sm:text-3xl font-semibold tracking-tight text-[var(--text-card-header)] flex items-center gap-2">
+          <img src="https://niveussolutions.com/wp-content/uploads/2025/02/Niveus-ntt-data.png" alt="Niveus Logo" class="h-7 sm:h-8 mr-3 mt-3"> DocNest
+        </h1>
+        <div class="flex items-center gap-3 w-full sm:w-auto max-w-md">
+            <input
+              type="search"
+              id="user-search-input"
+              class="input-field flex-grow text-sm"
+              placeholder="Search for Books/Files..."
+            />
+            <button
+                id="theme-toggle-button"
+                class="p-2 flex-shrink-0"
+                title="Toggle Theme"
+            ></button>
+            <button
+            id="logout-button"
+            class="px-3 py-2 text-xs sm:text-sm font-medium flex-shrink-0"
+            title="Logout"
+        >
+            Logout
+        </button>
+        </div>
+      </header>
+
+      <nav aria-label="Breadcrumb" class="mb-6 min-h-[36px] flex items-center gap-2"> <button id="back-button" title="Go Back" class="p-2 hidden">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+        </button>
+        <ol id="breadcrumb-container" class="flex items-center space-x-1 text-sm text-[var(--text-secondary)] flex-wrap">
+          </ol>
+      </nav>
+
+      <main id="content-container" class="flex-grow">
+        <div class="loading-placeholder">Loading initial content...</div>
+      </main>
+
+      <footer class="text-center py-8 mt-auto text-xs text-[var(--text-tertiary)]">
+        &copy; <span id="current-year"></span> Niveus Solutions. All rights reserved.
+      </footer>
+    </div>
+
+    <script>
+      const BASE = "http://localhost:8000";
+      let fullTreeData = [];
+      let currentPath = [{ id: null, name: "Home" }]; 
+      let currentViewNodeId = null; 
+      let isCurrentlySearching = false;
+
+      const contentContainer = document.getElementById("content-container");
+      const breadcrumbContainer = document.getElementById("breadcrumb-container");
+      const searchInput = document.getElementById("user-search-input");
+      const backButton = document.getElementById("back-button");
+      document.getElementById("current-year").textContent = new Date().getFullYear();
+
+      // --- Theme Toggle ---
+      const themeToggleButton = document.getElementById("theme-toggle-button");
+      const sunIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>`;
+      const moonIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>`;
+      function applyTheme(theme) {
+        if (theme === "light") { document.body.classList.add("light-theme"); themeToggleButton.innerHTML = moonIcon; localStorage.setItem("theme", "light"); }
+        else { document.body.classList.remove("light-theme"); themeToggleButton.innerHTML = sunIcon; localStorage.setItem("theme", "dark"); }
+      }
+      themeToggleButton.addEventListener("click", () => applyTheme(document.body.classList.contains("light-theme") ? "dark" : "light"));
+      applyTheme(localStorage.getItem("theme") || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "dark"));
+
+      // --- Toast Notifications ---
+      const toastContainer = document.getElementById("toast-container");
+      window.showNotification = function (message, type = "success", duration = 3000) {
+        const toast = document.createElement("div"); toast.classList.add("toast", type);
+        let iconHtml = "";
+        if (type === "success") iconHtml = `<svg class="toast-icon h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
+        else if (type === "error") iconHtml = `<svg class="toast-icon h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
+        toast.innerHTML = `${iconHtml}<span>${escapeHTML(message)}</span>`;
+        toastContainer.appendChild(toast); toast.offsetHeight; toast.classList.add("show");
+        setTimeout(() => { toast.classList.remove("show"); setTimeout(() => { toast.remove(); }, 300); }, duration);
+      };
+
+      function escapeHTML(str) {
+        if (typeof str !== 'string') return '';
+        return str.replace(/[&<>"']/g, match => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[match]));
+      }
+      
+      function updateBackButtonVisibility() {
+        if (!isCurrentlySearching && currentPath.length > 1) {
+            backButton.classList.remove("hidden");
+        } else {
+            backButton.classList.add("hidden");
+        }
+      }
+
+      function renderBreadcrumbs() {
+        updateBackButtonVisibility(); // Control back button visibility
+        if (isCurrentlySearching) { 
+            breadcrumbContainer.innerHTML = `<li class="text-sm text-[var(--text-tertiary)] italic">Displaying search results for "${escapeHTML(searchInput.value)}"...</li>`;
+            return;
+        }
+        breadcrumbContainer.innerHTML = "";
+        currentPath.forEach((crumb, index) => {
+          const li = document.createElement("li");
+          const isLast = index === currentPath.length - 1;
+          
+          const a = document.createElement("a");
+          a.href = "#";
+          a.textContent = escapeHTML(crumb.name);
+          a.classList.add("breadcrumb-item", "text-sm");
+
+          if (isLast) { 
+            a.classList.add("font-medium", "text-[var(--text-primary)]", "cursor-default");
+          } else {
+            a.classList.add("cursor-pointer", "hover:underline");
+            a.style.color = "var(--text-link)";
+            a.onclick = (e) => {
+              e.preventDefault();
+              currentPath = currentPath.slice(0, index + 1);
+              currentViewNodeId = crumb.id;
+              displayNodes(currentViewNodeId);
+            };
+          }
+          li.appendChild(a);
+
+          if (!isLast) {
+            const separator = document.createElement("span");
+            separator.textContent = "/";
+            separator.classList.add("mx-1.5", "text-[var(--text-tertiary)]");
+            li.appendChild(separator);
+          }
+          breadcrumbContainer.appendChild(li);
+        });
+      }
+      
+      function findNodeAndPathById(nodes, targetId, currentTrail = [{id: null, name: "Home"}]) {
+        for (const node of nodes) {
+            const newTrail = [...currentTrail, { id: node.id, name: node.name }];
+            if (node.id === targetId) {
+                return { node, path: newTrail };
+            }
+            if (node.children) {
+                const foundInChildren = findNodeAndPathById(node.children, targetId, newTrail);
+                if (foundInChildren) return foundInChildren;
+            }
+        }
+        return null;
+      }
+      
+      function findNodeById(nodes, id) {
+        for (const node of nodes) {
+          if (node.id === id) return node;
+          if (node.children) {
+            const found = findNodeById(node.children, id);
+            if (found) return found;
+          }
+        }
+        return null;
+      }
+      
+      function createCard(item) {
+        const card = document.createElement("div");
+        card.className = "item-card p-4 sm:p-5 flex flex-col h-full"; // Adjusted padding
+        card.title = item.description || `Explore ${escapeHTML(item.name)}`;
+        card.onclick = () => {
+          isCurrentlySearching = false; 
+          searchInput.value = ""; 
+          
+          const pathInfo = findNodeAndPathById(fullTreeData, item.id);
+          if (pathInfo) {
+            currentPath = pathInfo.path;
+          } else { 
+            if (!currentPath.find(p => p.id === item.id)) {
+                currentPath.push({ id: item.id, name: item.name });
+            }
+          }
+          currentViewNodeId = item.id;
+          displayNodes(item.id);
+        };
+        const icon = `<svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 sm:h-10 sm:w-10 mb-3 text-[var(--text-tertiary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" /></svg>`;
+        const title = `<h3 class="text-md sm:text-lg font-medium text-[var(--text-card-header)] mb-1 truncate">${escapeHTML(item.name)}</h3>`;
+        const description = item.description ? `<p class="text-xs text-[var(--text-secondary)] flex-grow line-clamp-2 sm:line-clamp-3">${escapeHTML(item.description)}</p>` : '<div class="flex-grow"></div>';
+        const idLabel = item.id !== undefined 
+                        ? `<span class="text-xs font-medium text-[var(--text-tertiary)] mt-2 inline-block">ID: ${escapeHTML(String(item.id))}</span>` 
+                        : ''; 
+        card.innerHTML = icon + title + description + idLabel;
+        return card;
+      }
+
+      function displayNodes(nodeId) {
+        contentContainer.innerHTML = '<div class="loading-placeholder">Loading content...</div>';
+        if (!isCurrentlySearching) { 
+            renderBreadcrumbs();
+        } else {
+            breadcrumbContainer.innerHTML = `<li class="text-sm text-[var(--text-tertiary)] italic">Displaying search results for "${escapeHTML(searchInput.value)}"...</li>`;
+            updateBackButtonVisibility(); // Also update here for search results display
+        }
+
+        let itemsToDisplay = [];
+        if (nodeId === null) {
+          currentViewNodeId = null; 
+          itemsToDisplay = fullTreeData.filter(node => node.type === 'VERTICAL' || !node.parentId);
+        } else {
+          const currentNode = findNodeById(fullTreeData, nodeId);
+          currentViewNodeId = nodeId; 
+          if (currentNode) {
+            itemsToDisplay = [...(currentNode.children || []) , ...(currentNode.artifacts || [])];
+          } else {
+            contentContainer.innerHTML = '<p class="text-center text-[var(--text-secondary)]">Folder not found.</p>';
+            if (!isCurrentlySearching) renderBreadcrumbs();
+            return;
+          }
+        }
+
+        if (itemsToDisplay.length === 0 && !isCurrentlySearching) { 
+          contentContainer.innerHTML = '<p class="text-center text-[var(--text-secondary)] py-8">This folder is empty.</p>';
+          if (!isCurrentlySearching) renderBreadcrumbs();
+          return;
+        } else if (itemsToDisplay.length === 0 && isCurrentlySearching) {
+            // This case is handled by displayDirectSearchResults
+        }
+
+        contentContainer.innerHTML = ""; 
+        const grid = document.createElement("div");
+        grid.className = "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5"; // Adjusted gap
+        
+        const filesListContainer = document.createElement('div'); // Container for files list
+        const filesList = document.createElement('ul');
+        filesList.className = "space-y-2"; // Removed mt-6, will add margin if needed
+        filesListContainer.appendChild(filesList);
+
+        let hasFiles = false;
+        let hasFolders = false;
+
+        itemsToDisplay.forEach(item => {
+          if (item.type === 'FOLDER' || item.type === 'SUBFOLDER' || item.type === 'VERTICAL' || item.children) {
+            hasFolders = true;
+            grid.appendChild(createCard(item));
+          } else if (item.type === 'ARTIFACT' || item.link) {
+            hasFiles = true;
+            const listItem = document.createElement('li');
+            listItem.className = "file-item flex items-center justify-between rounded-md"; // Added rounded-md
+            const fileInfo = document.createElement('div');
+            fileInfo.className = "flex items-center overflow-hidden mr-2";
+            fileInfo.innerHTML = `
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2.5 text-[var(--text-tertiary)] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+              <span class="text-sm text-[var(--text-primary)] truncate" title="${escapeHTML(item.title)}">${escapeHTML(item.title)}</span>
+            `;
+            
+            const linkElement = document.createElement('a');
+            let url = item.link || "#";
+            if (url && url !== "#" && !url.toLowerCase().startsWith("http://") && !url.toLowerCase().startsWith("https://") && !url.startsWith("/")) {
+                if (url.includes('.') && !url.includes(' ') && !url.startsWith('//')) {
+                     url = `https://${url}`; 
+                }
+            }
+            linkElement.href = url;
+            if (item.link && url !== "#") linkElement.target = "_blank";
+            linkElement.rel = "noopener noreferrer";
+            linkElement.className = "text-xs ml-auto px-2.5 py-1 rounded hover:underline flex-shrink-0"; // Adjusted padding
+            linkElement.style.color = "var(--text-link)";
+            linkElement.textContent = item.link ? "Open" : "No Link";
+            if (!item.link || url === "#") linkElement.classList.add("opacity-50", "cursor-not-allowed");
+            
+            listItem.appendChild(fileInfo);
+            listItem.appendChild(linkElement);
+            filesList.appendChild(listItem);
+          }
+        });
+        if (hasFolders) contentContainer.appendChild(grid);
+        if (hasFiles) {
+          if (hasFolders) {
+            const separator = document.createElement('hr');
+            separator.className = "my-6 sm:my-8 border-[var(--border-primary)] opacity-50"; // Adjusted margin & opacity
+            contentContainer.appendChild(separator);
+          }
+          const filesHeader = document.createElement('h3');
+          filesHeader.className = "text-lg sm:text-xl font-medium text-[var(--text-card-header)] mb-3 sm:mb-4"; // Adjusted size & margin
+          filesHeader.textContent = "Files / Pages";
+          contentContainer.appendChild(filesHeader);
+          contentContainer.appendChild(filesListContainer); // Append container for files list
+        }
+      }
+
+      // --- Search Functionality ---
+      let searchDebounceTimer;
+      searchInput.addEventListener('input', () => {
+          clearTimeout(searchDebounceTimer);
+          searchDebounceTimer = setTimeout(() => {
+              handleSearch(searchInput.value);
+          }, 300);
+      });
+
+      function handleSearch(term) {
+          const searchTerm = term.trim().toLowerCase();
+          if (!searchTerm) {
+              isCurrentlySearching = false;
+              displayNodes(currentViewNodeId); 
+              return;
+          }
+
+          isCurrentlySearching = true;
+          breadcrumbContainer.innerHTML = `<li class="text-sm text-[var(--text-tertiary)] italic">Searching for "${escapeHTML(searchTerm)}"...</li>`;
+          updateBackButtonVisibility(); // Hide back button during search results display specifically
+          const matches = [];
+          collectAllMatchingItems(fullTreeData, searchTerm, [], matches);
+          displayDirectSearchResults(matches, searchTerm);
+      }
+
+      function collectAllMatchingItems(nodes, term, currentTrail, matches) {
+          if (!nodes) return;
+          nodes.forEach(node => {
+              const nodePathSegment = { id: node.id, name: node.name };
+              const pathToNode = [...currentTrail, nodePathSegment];
+
+              if (node.name && node.name.toLowerCase().includes(term)) {
+                  matches.push({ item: node, path: pathToNode, type: 'folder' });
+              }
+              if (node.artifacts) {
+                  node.artifacts.forEach(artifact => {
+                      if (artifact.title && artifact.title.toLowerCase().includes(term)) {
+                          matches.push({ item: artifact, path: pathToNode, type: 'file' });
+                      }
+                  });
+              }
+              if (node.children) {
+                  collectAllMatchingItems(node.children, term, pathToNode, matches);
+              }
+          });
+      }
+
+      function displayDirectSearchResults(matches, searchTerm) {
+          contentContainer.innerHTML = ""; 
+          // Breadcrumb shows "Searching..." - handled by handleSearch now
+          // Back button is hidden by updateBackButtonVisibility called in handleSearch
+
+          if (matches.length === 0) {
+              contentContainer.innerHTML = `<p class="text-center text-[var(--text-secondary)] py-8">No items found matching "${escapeHTML(searchTerm)}".</p>`;
+              return;
+          }
+
+          const resultsList = document.createElement('ul');
+          resultsList.className = "space-y-0 bg-[var(--bg-card)] p-0 rounded-lg shadow-md overflow-hidden border border-[var(--border-card)]"; // Improved list styling
+
+          matches.forEach(matchData => {
+              const { item, path, type } = matchData;
+              const listItem = document.createElement('li');
+              listItem.className = "search-result-item flex items-center justify-between";
+              
+              const itemInfo = document.createElement('div');
+              itemInfo.className = "flex items-center overflow-hidden mr-2 py-2.5 px-3"; // Adjusted padding
+              const iconType = type === 'folder' ? 
+                `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2.5 text-[var(--text-tertiary)] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" /></svg>` :
+                `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2.5 text-[var(--text-tertiary)] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>`;
+              
+              const itemName = type === 'folder' ? item.name : item.title;
+              const displayPathArray = [{name: "Home"}, ...path.map(p => ({name: p.name}))]; 
+              if (type === 'file') {
+                displayPathArray.pop(); 
+                const parentNodeInPath = path[path.length -1];
+                if (parentNodeInPath) { displayPathArray.push({name: parentNodeInPath.name}); }
+                 displayPathArray.push({name: item.title});
+              }
+              itemInfo.innerHTML = `
+                  ${iconType}
+                  <div class="flex flex-col overflow-hidden">
+                      <span class="text-sm font-medium text-[var(--text-primary)] truncate" title="${escapeHTML(itemName)}">${escapeHTML(itemName)}</span>
+                      <span class="text-xs text-[var(--text-search-path)] truncate" title="Path: ${displayPathArray.map(p=>p.name).join(' / ')}">
+                          ${displayPathArray.map(p=>p.name).join(' / ')}
+                      </span>
+                  </div>
+              `;
+              
+              listItem.appendChild(itemInfo);
+              listItem.onclick = () => {
+                  searchInput.value = ""; 
+                  isCurrentlySearching = false; 
+
+                  if (type === 'folder') {
+                      currentPath = [{id: null, name: "Home"}, ...path]; 
+                      currentViewNodeId = item.id;
+                      displayNodes(item.id);
+                  } else { 
+                      currentPath = [{id: null, name: "Home"}, ...path]; 
+                      currentViewNodeId = path[path.length-1].id; 
+                      displayNodes(currentViewNodeId);
+                  }
+              };
+              resultsList.appendChild(listItem);
+          });
+          contentContainer.appendChild(resultsList);
+      }
+
+      // --- Back Button Logic ---
+      function handleBackButton() {
+        if (!isCurrentlySearching && currentPath.length > 1) {
+            searchInput.value = ""; 
+            isCurrentlySearching = false;
+
+            currentPath.pop();
+            const previousCrumb = currentPath[currentPath.length - 1];
+            currentViewNodeId = previousCrumb.id;
+            displayNodes(currentViewNodeId);
+        }
+      }
+      backButton.addEventListener('click', handleBackButton);
+
+      // --- Initial Load ---
+      async function initializeUserView() {
+        contentContainer.innerHTML = '<div class="loading-placeholder">Loading initial content...</div>';
+        try {
+          const res = await fetch(`${BASE}/api/tree`);
+          if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+          fullTreeData = await res.json();
+          currentViewNodeId = null;
+          currentPath = [{ id: null, name: "Home" }];
+          isCurrentlySearching = false;
+          displayNodes(null); // This will also call renderBreadcrumbs -> updateBackButtonVisibility
+        } catch (error) {
+          console.error("Failed to fetch initial tree data:", error);
+          contentContainer.innerHTML = `<p class="text-center text-[var(--text-red-accent)] p-4">Error loading knowledge base: ${error.message}. Please try again later.</p>`;
+          showNotification(`Error loading data: ${error.message}`, "error");
+        }
+      }
+      document.addEventListener("DOMContentLoaded", initializeUserView);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,1958 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin UI - Niveus Knowledge Base (Themed)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        /* Dark Theme (Default) */
+        --bg-primary: #0a0a0a;
+        --bg-card: #1a1a1a;
+        --bg-card-hover: #222222;
+        --bg-input: #2d2d2d;
+        --bg-input-readonly: #383838;
+        --bg-button-primary: #f0f0f0;
+        --bg-button-primary-hover: #ffffff;
+        --bg-button-destructive: #c53030;
+        --bg-button-destructive-hover: #b02a2a;
+        --bg-button-secondary: #4a5568; /* gray-600 like */
+        --bg-button-secondary-hover: #2d3748; /* gray-700 like */
+        --bg-action-icon-hover: #333;
+        --bg-user-list-item: #2c2c2c;
+        --bg-user-list-item-hover: #333333;
+        --bg-inline-form: rgba(42, 42, 42, 0.85);
+        --bg-selected-node: #2a2a2a;
+        --bg-modal-overlay: rgba(0, 0, 0, 0.7);
+        --bg-modal-content: #1f2937; /* gray-800 like */
+        --bg-access-item-even: rgba(255, 255, 255, 0.03);
+        --bg-toast-success: #2f5c3b; /* Darker green */
+        --bg-toast-error: #5c2f2f; /* Darker red */
+
+        --text-primary: #e0e0e0;
+        --text-secondary: #bbb;
+        --text-tertiary: #999;
+        --text-placeholder: #888;
+        --text-button-primary: #111;
+        --text-button-destructive: #ffffff;
+        --text-button-secondary: #e2e8f0;
+        --text-card-header: #f0f0f0;
+        --text-link-hover: #0095ff;
+        --text-action-icon: #999;
+        --text-action-icon-hover: #ffffff;
+        --text-green-accent: #4ade80;
+        --text-red-accent: #f87171;
+        --text-yellow-accent: #facc15;
+        --text-toast: #ffffff;
+
+        --border-primary: #333;
+        --border-input: #555;
+        --border-input-focus: #007acc;
+        --border-button-primary: #ccc;
+        --border-button-primary-hover: #bbb;
+        --border-button-destructive: #a02828;
+        --border-button-secondary: #4a5568;
+        --border-selected-node: #007acc;
+        --border-tree-children: rgba(107, 114, 128, 0.3);
+        --border-tree-line: #444;
+        --border-preview: #555;
+        --border-toast-success: #38a169; /* green-600 */
+        --border-toast-error: #e53e3e; /* red-600 */
+
+        --shadow-card: 0 8px 20px rgba(0, 0, 0, 0.3);
+        --shadow-input-focus: 0 0 0 3px rgba(0, 122, 204, 0.3);
+        --shadow-selected-node: inset 2px 0 0 var(--border-selected-node);
+        --shadow-modal: 0 10px 25px rgba(0, 0, 0, 0.5);
+        --shadow-toast: 0 4px 12px rgba(0, 0, 0, 0.4);
+
+        --scrollbar-thumb: #4a4a4a;
+        --scrollbar-track: #1e1e1e;
+      }
+
+      .light-theme {
+        --bg-primary: #f4f4f5;
+        --bg-card: #ffffff;
+        --bg-card-hover: #f9fafb;
+        --bg-input: #ffffff;
+        --bg-input-readonly: #e5e7eb;
+        --bg-button-primary: #27272a;
+        --bg-button-primary-hover: #18181b;
+        --bg-button-destructive: #ef4444;
+        --bg-button-destructive-hover: #dc2626;
+        --bg-button-secondary: #e5e7eb;
+        --bg-button-secondary-hover: #d1d5db;
+        --bg-action-icon-hover: #e5e7eb;
+        --bg-user-list-item: #f9fafb;
+        --bg-user-list-item-hover: #f3f4f6;
+        --bg-inline-form: rgba(243, 244, 246, 0.9);
+        --bg-selected-node: #dbeafe;
+        --bg-modal-overlay: rgba(0, 0, 0, 0.3);
+        --bg-modal-content: #ffffff;
+        --bg-access-item-even: #f3f4f6;
+        --bg-toast-success: #c6f6d5; /* Lighter green */
+        --bg-toast-error: #fed7d7; /* Lighter red */
+
+        --text-primary: #18181b;
+        --text-secondary: #52525b;
+        --text-tertiary: #71717a;
+        --text-placeholder: #a1a1aa;
+        --text-button-primary: #ffffff;
+        --text-button-destructive: #ffffff;
+        --text-button-secondary: #1f2937;
+        --text-card-header: #1f2937;
+        --text-link-hover: #2563eb;
+        --text-action-icon: #71717a;
+        --text-action-icon-hover: #18181b;
+        --text-green-accent: #16a34a;
+        --text-red-accent: #dc2626;
+        --text-yellow-accent: #ca8a04;
+        --text-toast: #1a202c; /* Dark text for light toasts */
+
+        --border-primary: #d1d5db;
+        --border-input: #d1d5db;
+        --border-input-focus: #2563eb;
+        --border-button-primary: #27272a;
+        --border-button-primary-hover: #18181b;
+        --border-button-destructive: #ef4444;
+        --border-button-secondary: #d1d5db;
+        --border-selected-node: #2563eb;
+        --border-tree-children: rgba(209, 213, 219, 0.5);
+        --border-tree-line: #ccc;
+        --border-preview: #d1d5db;
+        --border-toast-success: #68d391; /* green-400 */
+        --border-toast-error: #fc8181; /* red-400 */
+
+        --shadow-card: 0 4px 15px rgba(0, 0, 0, 0.07);
+        --shadow-input-focus: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        --shadow-selected-node: inset 2px 0 0 var(--border-selected-node);
+        --shadow-modal: 0 10px 25px rgba(0, 0, 0, 0.1);
+        --shadow-toast: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+        --scrollbar-thumb: #a1a1aa;
+        --scrollbar-track: #e5e7eb;
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
+        transition: background-color 0.3s ease, color 0.3s ease;
+      }
+      .selected-node-highlight {
+        background-color: var(--bg-selected-node);
+        border-color: var(--border-selected-node);
+        border-left-width: 3px;
+        box-shadow: var(--shadow-selected-node);
+      }
+      .form-inline input,
+      .form-inline select,
+      .form-inline textarea {
+        margin-bottom: 0.75rem;
+      }
+      .node-item:hover .actions,
+      .artifact-item:hover .actions {
+        opacity: 1;
+      }
+      .actions {
+        transition: opacity 0.2s ease-in-out;
+      }
+      #tree-container,
+      #access-management-modal-current-access,
+      #artifact-details-modal-description {
+        max-height: 70vh;
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+      }
+      #tree-container::-webkit-scrollbar,
+      #access-management-modal-current-access::-webkit-scrollbar,
+      #artifact-details-modal-description::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      #tree-container::-webkit-scrollbar-track,
+      #access-management-modal-current-access::-webkit-scrollbar-track,
+      #artifact-details-modal-description::-webkit-scrollbar-track {
+        background: var(--scrollbar-track);
+      }
+
+      #tree-container::-webkit-scrollbar-thumb,
+      #access-management-modal-current-access::-webkit-scrollbar-thumb,
+      #artifact-details-modal-description::-webkit-scrollbar-thumb {
+        background-color: var(--scrollbar-thumb);
+        border-radius: 3px;
+      }
+      #access-management-modal-current-access {
+        max-height: 250px;
+      }
+      #artifact-details-modal-description {
+        max-height: 200px;
+      }
+
+      .submit-button {
+        background-color: var(--bg-button-primary);
+        color: var(--text-button-primary);
+        font-weight: 600;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.375rem;
+        border: 1px solid var(--border-button-primary);
+        transition: background-color 0.2s ease-in-out,
+          transform 0.1s ease-in-out, border-color 0.2s ease-in-out;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .submit-button:hover {
+        background-color: var(--bg-button-primary-hover);
+        border-color: var(--border-button-primary-hover);
+        transform: translateY(-1px);
+      }
+      .submit-button:active {
+        transform: translateY(0px);
+      }
+      .submit-button.destructive {
+        background-color: var(--bg-button-destructive);
+        color: var(--text-button-destructive);
+        border-color: var(--border-button-destructive);
+      }
+      .submit-button.destructive:hover {
+        background-color: var(--bg-button-destructive-hover);
+      }
+      .submit-button.secondary {
+        background-color: var(--bg-button-secondary);
+        color: var(--text-button-secondary);
+        border-color: var(--border-button-secondary);
+      }
+      .submit-button.secondary:hover {
+        background-color: var(--bg-button-secondary-hover);
+      }
+      .submit-button:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+      }
+      .spinner {
+        animation: spin 1s linear infinite;
+        border: 2px solid var(--text-button-primary);
+        border-top-color: transparent;
+        border-radius: 50%;
+        width: 1em;
+        height: 1em;
+        margin-right: 0.5em;
+      }
+      .light-theme .submit-button .spinner {
+        border: 2px solid var(--text-button-primary);
+        border-top-color: transparent;
+      }
+      .submit-button.secondary .spinner,
+      .submit-button.destructive .spinner {
+        border: 2px solid var(--text-button-secondary);
+        border-top-color: transparent;
+      }
+      .light-theme .submit-button.secondary .spinner {
+        border: 2px solid var(--text-button-secondary);
+        border-top-color: transparent;
+      }
+
+      .input-field,
+      textarea.input-field {
+        margin-top: 0.25rem;
+        display: block;
+        width: 100%;
+        border-radius: 0.375rem;
+        border: 1px solid var(--border-input);
+        background-color: var(--bg-input);
+        color: var(--text-primary);
+        padding: 0.75rem 1rem;
+        font-size: 0.875rem;
+        transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out,
+          background-color 0.2s ease;
+      }
+      textarea.input-field {
+        min-height: 60px;
+      }
+      .input-field::placeholder,
+      textarea.input-field::placeholder {
+        color: var(--text-placeholder);
+      }
+      .input-field:focus,
+      textarea.input-field:focus {
+        border-color: var(--border-input-focus);
+        outline: none;
+        box-shadow: var(--shadow-input-focus);
+      }
+      .input-field.readonly {
+        background-color: var(--bg-input-readonly);
+        cursor: not-allowed;
+      }
+
+      .label-text {
+        display: block;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--text-secondary);
+        margin-bottom: 0.25rem;
+      }
+      .card {
+        background-color: var(--bg-card);
+        border: 1px solid var(--border-primary);
+        border-radius: 0.75rem;
+        box-shadow: var(--shadow-card);
+        transition: background-color 0.3s ease, border-color 0.3s ease;
+      }
+      .card-header {
+        color: var(--text-card-header);
+        font-weight: 600;
+      }
+
+      /* Tree Styling with Connection Lines */
+      .tree-node,
+      .tree-artifact-wrapper {
+        position: relative;
+        padding-left: 20px;
+      }
+      .tree-node::before,
+      .tree-artifact-wrapper::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 8px;
+        width: 1px;
+        height: 100%;
+        background-color: var(--border-tree-line);
+      }
+      .tree-node > .node-content::before,
+      .tree-artifact-wrapper > .node-content::before {
+        content: "";
+        position: absolute;
+        top: 12px;
+        left: -11px;
+        width: 12px;
+        height: 1px;
+        background-color: var(--border-tree-line);
+      }
+      .tree-node:last-child::before {
+        height: 13px;
+      }
+      .tree-artifact-wrapper:last-child::before {
+        height: 13px;
+      }
+      .tree-root > .tree-node::before,
+      .tree-root > .tree-artifact-wrapper::before {
+        display: none;
+      }
+      .tree-root > .tree-node > .node-content::before,
+      .tree-root > .tree-artifact-wrapper > .node-content::before {
+        display: none;
+      }
+
+      .node-content {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 2px 0;
+      }
+      .tree-children-container {
+        margin-left: 20px;
+      }
+      .tree-children-container.collapsed {
+        display: none;
+      }
+      .tree-toggle-icon {
+        cursor: pointer;
+        width: 1.25rem;
+        height: 1.25rem;
+        margin-right: 0.25rem;
+        color: var(--text-tertiary);
+        transition: transform 0.2s ease-in-out;
+        display: inline-flex; /* For centering icon */
+        align-items: center;
+        justify-content: center;
+      }
+      .tree-toggle-icon.collapsed svg {
+        transform: rotate(-90deg);
+      }
+
+      .tree-node-text,
+      .tree-artifact-text {
+        transition: color 0.2s ease-in-out;
+        display: flex;
+        align-items: center;
+      }
+      .tree-node-text {
+        color: var(--text-primary);
+      }
+      .tree-artifact-text {
+        color: var(--text-tertiary);
+      }
+      .tree-artifact-text.clickable:hover {
+        color: var(--text-link-hover);
+        cursor: pointer;
+        text-decoration: underline;
+      }
+      .tree-node-icon {
+        color: var(--text-yellow-accent);
+      }
+      .tree-artifact-icon {
+        color: var(--text-tertiary);
+      }
+      .artifact-preview-container {
+        display: none;
+      }
+
+      .user-list-item {
+        background-color: var(--bg-user-list-item);
+        border: 1px solid var(--border-primary);
+        border-radius: 0.5rem;
+        transition: background-color 0.2s ease-in-out,
+          transform 0.2s ease-in-out, border-color 0.2s ease;
+      }
+      .user-list-item:hover {
+        background-color: var(--bg-user-list-item-hover);
+        transform: translateY(-2px);
+      }
+      .user-email-text {
+        color: var(--text-primary);
+      }
+      .user-role-text {
+        color: var(--text-secondary);
+      }
+      .user-node-role-summary {
+        color: var(--text-tertiary);
+        font-size: 0.8rem;
+      }
+
+      .action-icon-btn {
+        color: var(--text-action-icon);
+        padding: 0.3rem;
+        border-radius: 0.25rem;
+        transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+      }
+      .action-icon-btn:hover {
+        color: var(--text-action-icon-hover);
+        background-color: var(--bg-action-icon-hover);
+      }
+      .action-icon-btn.add {
+        color: var(--text-green-accent);
+      }
+      .action-icon-btn.delete {
+        color: var(--text-red-accent);
+      }
+      .action-icon-btn.add:hover {
+        color: var(--text-green-accent);
+      }
+      .action-icon-btn.delete:hover {
+        color: var(--text-red-accent);
+      }
+
+      .user-action-button {
+        padding: 0.5rem 0.75rem;
+        border-radius: 0.375rem;
+        font-size: 0.8rem;
+        font-weight: 500;
+        transition: background-color 0.2s ease-in-out,
+          transform 0.1s ease-in-out, color 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+      }
+      .user-action-button svg {
+        margin-right: 0.3rem;
+      }
+      .user-action-button.manage-access {
+        background-color: var(--bg-input);
+        color: var(--text-secondary);
+        border: 1px solid var(--border-input);
+      }
+      .user-action-button.manage-access:hover {
+        background-color: var(--bg-action-icon-hover);
+        color: var(--text-action-icon-hover);
+        transform: translateY(-1px);
+      }
+      .user-action-button.delete-user {
+        background-color: var(--bg-button-destructive);
+        color: var(--text-button-destructive);
+        border: 1px solid var(--border-button-destructive);
+      }
+      .user-action-button.delete-user:hover {
+        background-color: var(--bg-button-destructive-hover);
+        transform: translateY(-1px);
+      }
+
+      #theme-toggle-button {
+        background-color: var(--bg-card);
+        color: var(--text-secondary);
+        border: 1px solid var(--border-primary);
+      }
+      #theme-toggle-button:hover {
+        background-color: var(--bg-card-hover);
+        color: var(--text-primary);
+      }
+
+      /* Modal Styles */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: var(--bg-modal-overlay);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+          visibility 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 1000;
+      }
+      .modal-overlay.active {
+        opacity: 1;
+        visibility: visible;
+      }
+      .modal-content {
+        background-color: var(--bg-modal-content);
+        padding: 2rem;
+        border-radius: 0.75rem;
+        box-shadow: var(--shadow-modal);
+        width: 90%;
+        max-width: 600px;
+        max-height: 90vh;
+        overflow-y: auto;
+        transform: scale(0.95) translateY(10px);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+          opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        opacity: 0;
+      }
+      .modal-overlay.active .modal-content {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+      }
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+      }
+      .modal-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-card-header);
+      }
+      .modal-close-btn {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: var(--text-tertiary);
+        transition: color 0.2s ease;
+      }
+      .modal-close-btn:hover {
+        color: var(--text-primary);
+      }
+      .access-item:nth-child(even) {
+        background-color: var(--bg-access-item-even);
+      }
+
+      /* Search Bar */
+      #search-tree-input {
+        width: 100%;
+        max-width: 400px;
+        padding: 0.6rem 1rem;
+        font-size: 0.9rem;
+      }
+      .header-controls {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        width: 100%;
+        max-width: 500px;
+      }
+      .hidden-node {
+        display: none !important;
+      }
+
+      /* Toast Notification Styles */
+      #toast-container {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 2000;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      .toast {
+        padding: 1rem 1.5rem;
+        border-radius: 0.5rem;
+        color: var(--text-toast);
+        box-shadow: var(--shadow-toast);
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.3s ease, transform 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+      .toast.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .toast.success {
+        background-color: var(--bg-toast-success);
+        border: 1px solid var(--border-toast-success);
+      }
+      .toast.error {
+        background-color: var(--bg-toast-error);
+        border: 1px solid var(--border-toast-error);
+      }
+      .toast-icon {
+        flex-shrink: 0;
+      }
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="toast-container"></div>
+    <div class="container mx-auto p-4 md:p-8">
+      <header
+        class="mb-6 flex flex-col sm:flex-row justify-between items-center gap-4"
+      >
+        <h1
+          class="text-4xl sm:text-5xl font-bold tracking-tight text-[var(--text-card-header)]"
+        >
+          📂 Niveus KB Admin
+        </h1>
+        <div class="header-controls">
+          <input
+            type="search"
+            id="search-tree-input"
+            class="input-field flex-grow"
+            placeholder="Search folders/files..."
+          />
+          <button
+            id="theme-toggle-button"
+            class="p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--border-input-focus)] flex-shrink-0"
+            title="Toggle Theme"
+          ></button>
+        </div>
+      </header>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+        <div class="lg:col-span-1 space-y-8">
+          <div class="card p-6 rounded-xl shadow-2xl">
+            <div class="flex justify-between items-center mb-5">
+              <h2 class="text-2xl card-header">📁 Folder Structure</h2>
+              <button
+                onclick="promptNewRoot()"
+                class="action-icon-btn add text-2xl"
+                title="Add New Root Folder"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M12 4v16m8-8H4"
+                  />
+                </svg>
+              </button>
+            </div>
+            <div id="tree-container">
+              <div id="tree" class="tree-root space-y-0.5"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="lg:col-span-2 space-y-8">
+          <div class="card p-6 rounded-xl shadow-2xl">
+            <h2 class="text-2xl card-header mb-6">👤 Add New User</h2>
+            <form id="addUserForm" class="space-y-5">
+              <div>
+                <label for="newUserEmail" class="label-text"
+                  >Email Address</label
+                >
+                <input
+                  type="email"
+                  id="newUserEmail"
+                  required
+                  class="input-field"
+                  placeholder="user@example.com"
+                />
+              </div>
+              <div>
+                <label for="newUserRole" class="label-text"
+                  >Assign Global Role</label
+                >
+                <select id="newUserRole" class="input-field">
+                  <option value="ADMIN">ADMIN</option>
+                  <option value="EDITOR">EDITOR</option>
+                  <option value="VIEWER">VIEWER</option>
+                </select>
+              </div>
+              <div>
+                <label for="newUserNodeAccess" class="label-text"
+                  >Grant Initial Node Access (Optional)</label
+                >
+                <select id="newUserNodeAccess" class="input-field">
+                  <option value="">None - Global Role Only</option>
+                </select>
+              </div>
+              <div>
+                <label for="newUserNodeRole" class="label-text"
+                  >Role for Selected Node</label
+                >
+                <select id="newUserNodeRole" class="input-field">
+                  <option value="ADMIN">ADMIN</option>
+                  <option value="EDITOR">EDITOR</option>
+                  <option value="VIEWER">VIEWER</option>
+                </select>
+              </div>
+              <button type="submit" class="submit-button w-full sm:w-auto">
+                <span class="button-text">Add User</span>
+              </button>
+            </form>
+          </div>
+
+          <div class="card p-6 rounded-xl shadow-2xl">
+            <h2 class="text-2xl card-header mb-6">👥 All Users</h2>
+            <ul id="userList" class="space-y-4"></ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="access-management-modal" class="modal-overlay">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title">
+            Manage Access for
+            <span id="modal-user-email" class="font-mono"></span>
+          </h3>
+          <button class="modal-close-btn" onclick="closeAccessModal()">
+            &times;
+          </button>
+        </div>
+        <input type="hidden" id="modal-editing-user-email-hidden" />
+
+        <h4 class="text-lg font-semibold mb-2 text-[var(--text-secondary)]">
+          Current Node Access:
+        </h4>
+        <div
+          id="access-management-modal-current-access"
+          class="mb-6 space-y-0 border border-[var(--border-primary)] rounded-md"
+        >
+          <p class="text-[var(--text-tertiary)] p-3">
+            No specific node access granted.
+          </p>
+        </div>
+
+        <h4 class="text-lg font-semibold mb-3 text-[var(--text-secondary)]">
+          Grant New Node Access:
+        </h4>
+        <form
+          id="grantNewAccessForm"
+          class="space-y-4 p-4 border border-[var(--border-primary)] rounded-md bg-[var(--bg-inline-form)]"
+        >
+          <div>
+            <label for="modalNodeSelect" class="label-text"
+              >Select Folder/File</label
+            >
+            <select id="modalNodeSelect" class="input-field">
+              <option value="">-- Select Node --</option>
+            </select>
+          </div>
+          <div>
+            <label for="modalNodeRoleSelect" class="label-text"
+              >Assign Role</label
+            >
+            <select id="modalNodeRoleSelect" class="input-field">
+              <option value="ADMIN">ADMIN</option>
+              <option value="EDITOR">EDITOR</option>
+              <option value="VIEWER">VIEWER</option>
+            </select>
+          </div>
+          <button
+            type="submit"
+            class="submit-button secondary w-full sm:w-auto"
+          >
+            <span class="button-text">Grant Access</span>
+          </button>
+        </form>
+        <div class="mt-6 text-right">
+          <button class="submit-button secondary" onclick="closeAccessModal()">
+            <span class="button-text">Close</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="artifact-details-modal" class="modal-overlay">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 id="artifact-modal-title" class="modal-title">
+            Artifact Details
+          </h3>
+          <button class="modal-close-btn" onclick="closeArtifactDetailsModal()">
+            &times;
+          </button>
+        </div>
+
+        <div class="mb-4">
+          <label class="label-text">Description:</label>
+          <div
+            id="artifact-details-modal-description"
+            class="p-3 border border-[var(--border-input)] rounded-md bg-[var(--bg-input)] text-sm min-h-[60px]"
+          >
+            No description provided.
+          </div>
+        </div>
+
+        <div class="mt-6 text-right space-x-3">
+          <a
+            id="artifact-modal-link"
+            href="#"
+            target="_blank"
+            class="submit-button inline-block"
+          >
+            Go to Resource
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-4 w-4 inline-block ml-1"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+              />
+            </svg>
+          </a>
+          <button
+            class="submit-button secondary"
+            onclick="closeArtifactDetailsModal()"
+          >
+            <span class="button-text">Close</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const BASE = "http://localhost:8000";
+
+      let currentlySelectedElementForAccess = null;
+      let fullTreeData = [];
+      let flatNodeList = [];
+
+      // --- Theme Toggle Functionality ---
+      const themeToggleButton = document.getElementById("theme-toggle-button");
+      const sunIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>`;
+      const moonIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>`;
+
+      function applyTheme(theme) {
+        if (theme === "light") {
+          document.body.classList.add("light-theme");
+          themeToggleButton.innerHTML = moonIcon;
+          localStorage.setItem("theme", "light");
+        } else {
+          document.body.classList.remove("light-theme");
+          themeToggleButton.innerHTML = sunIcon;
+          localStorage.setItem("theme", "dark");
+        }
+      }
+      themeToggleButton.addEventListener("click", () => {
+        applyTheme(
+          document.body.classList.contains("light-theme") ? "dark" : "light"
+        );
+      });
+      const savedTheme = localStorage.getItem("theme");
+      const prefersDark = window.matchMedia(
+        "(prefers-color-scheme: dark)"
+      ).matches;
+      applyTheme(savedTheme || (prefersDark ? "dark" : "dark"));
+      // --- End Theme Toggle ---
+
+      // --- Toast Notification System ---
+      const toastContainer = document.getElementById("toast-container");
+
+      window.showNotification = function (
+        message,
+        type = "success",
+        duration = 3000
+      ) {
+        // Attached to window
+        const toast = document.createElement("div");
+        toast.classList.add("toast", type);
+
+        let iconHtml = "";
+        if (type === "success") {
+          iconHtml = `<svg class="toast-icon h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
+        } else if (type === "error") {
+          iconHtml = `<svg class="toast-icon h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
+        }
+
+        toast.innerHTML = `${iconHtml}<span>${message}</span>`;
+        toastContainer.appendChild(toast);
+
+        toast.offsetHeight;
+
+        toast.classList.add("show");
+
+        setTimeout(() => {
+          toast.classList.remove("show");
+          setTimeout(() => {
+            toast.remove();
+          }, 300);
+        }, duration);
+      };
+      // --- End Toast Notification System ---
+
+      // --- Button Loading State Helper ---
+      window.setButtonLoading = function (
+        button,
+        isLoading,
+        originalText = null
+      ) {
+        // Attached to window
+        if (!(button instanceof HTMLElement)) {
+          console.error(
+            "setButtonLoading: button argument is not an HTMLElement",
+            button
+          );
+          return;
+        }
+        const buttonTextSpan = button.querySelector(".button-text");
+        if (isLoading) {
+          button.disabled = true;
+          if (buttonTextSpan) {
+            if (originalText !== null)
+              buttonTextSpan.dataset.originalText = buttonTextSpan.innerHTML; // Store only if originalText is provided
+            buttonTextSpan.innerHTML = `<span class="spinner"></span>Processing...`;
+          } else {
+            if (originalText !== null)
+              button.dataset.originalText = button.innerHTML;
+            button.innerHTML = `<span class="spinner"></span>Processing...`;
+          }
+        } else {
+          button.disabled = false;
+          if (buttonTextSpan) {
+            buttonTextSpan.innerHTML =
+              buttonTextSpan.dataset.originalText || originalText || "Submit";
+          } else {
+            button.innerHTML =
+              button.dataset.originalText || originalText || "Submit";
+          }
+        }
+      };
+      // --- End Button Loading State ---
+
+      function escapeJSString(str) {
+        if (typeof str !== "string") return "";
+        return str
+          .replace(/\\/g, "\\\\")
+          .replace(/'/g, "\\'")
+          .replace(/"/g, '\\"')
+          .replace(/`/g, "\\`");
+      }
+
+      // --- Tree Search Functionality ---
+      const searchTreeInput = document.getElementById("search-tree-input");
+      searchTreeInput.addEventListener("input", (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        filterTreeDOM(searchTerm);
+      });
+
+      function filterTreeDOM(searchTerm) {
+        const treeElement = document.getElementById("tree");
+        if (!treeElement) return;
+
+        function checkVisibility(element, term) {
+          let directMatch = false;
+          const nodeName = (element.dataset.nodeName || "").toLowerCase();
+          if (nodeName.includes(term)) {
+            directMatch = true;
+          }
+
+          let childrenMatch = false;
+          if (element.classList.contains("tree-node")) {
+            const childrenContainer = element.querySelector(
+              ".tree-children-container"
+            );
+            if (childrenContainer) {
+              const childrenElements = childrenContainer.children;
+              for (const child of childrenElements) {
+                if (checkVisibility(child, term)) {
+                  childrenMatch = true;
+                }
+              }
+            }
+          }
+
+          const shouldBeVisible = directMatch || childrenMatch;
+          element.classList.toggle(
+            "hidden-node",
+            !shouldBeVisible && term.length > 0
+          );
+          return shouldBeVisible;
+        }
+
+        const topLevelNodes = treeElement.children;
+        for (const node of topLevelNodes) {
+          checkVisibility(node, searchTerm);
+        }
+      }
+
+      // --- Node List for Dropdowns ---
+      function generateFlatNodeList(nodes, prefix = "", level = 0) {
+        let list = [];
+        nodes.forEach((node) => {
+          list.push({
+            id: node.id,
+            name: `${"—".repeat(level)} ${node.name} (Folder)`,
+            type: "NODE",
+          });
+          if (node.artifacts) {
+            node.artifacts.forEach((artifact) => {
+              list.push({
+                id: artifact.id,
+                name: `${"—".repeat(level + 1)} ${artifact.title} (File)`,
+                type: "ARTIFACT",
+                nodeId: artifact.id,
+              });
+            });
+          }
+          if (node.children) {
+            list = list.concat(
+              generateFlatNodeList(node.children, prefix + "—", level + 1)
+            );
+          }
+        });
+        return list;
+      }
+
+      function populateNodeDropdowns() {
+        flatNodeList = generateFlatNodeList(fullTreeData);
+        const newUserNodeSelect = document.getElementById("newUserNodeAccess");
+        const modalNodeSelect = document.getElementById("modalNodeSelect");
+
+        newUserNodeSelect.length = 1;
+        modalNodeSelect.length = 1;
+
+        flatNodeList.forEach((item) => {
+          const option = new Option(item.name, item.id);
+          newUserNodeSelect.add(option.cloneNode(true));
+          modalNodeSelect.add(option);
+        });
+      }
+
+      async function fetchTree() {
+        try {
+          const res = await fetch(`${BASE}/api/tree`);
+          if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+          fullTreeData = await res.json();
+          document.getElementById("tree").innerHTML = renderTree(fullTreeData);
+          populateNodeDropdowns();
+        } catch (error) {
+          console.error("Failed to fetch tree:", error);
+          document.getElementById(
+            "tree"
+          ).innerHTML = `<p class="text-[var(--text-red-accent)] p-4">Error loading folder structure: ${error.message}</p>`;
+        }
+      }
+
+      function toggleTreeNode(nodeId) {
+        const childrenContainer = document.getElementById(`children-${nodeId}`);
+        const toggleIcon = document.getElementById(`toggle-icon-${nodeId}`);
+        if (childrenContainer && toggleIcon) {
+          const isCollapsed = childrenContainer.classList.toggle("collapsed");
+          toggleIcon.classList.toggle("collapsed", isCollapsed);
+          toggleIcon.innerHTML = isCollapsed
+            ? `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>`
+            : `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" /></svg>`;
+        }
+      }
+
+      function renderTree(nodes) {
+        return nodes
+          .map((n) => {
+            const hasChildren =
+              (n.children && n.children.length > 0) ||
+              (n.artifacts && n.artifacts.length > 0);
+            const childrenHTML = n.children ? renderTree(n.children) : "";
+            const artifactsHTML = n.artifacts
+              ? n.artifacts
+                  .map((a) => {
+                    const titleContent = escapeJSString(a.title);
+                    const descriptionContent = escapeJSString(
+                      a.description || ""
+                    );
+                    const linkContent = escapeJSString(a.link || "#");
+                    const artifactId = a.id;
+
+                    return `
+                        <div class="tree-artifact-wrapper" 
+                             data-artifact-id="${artifactId}" data-node-id="${artifactId}" data-node-name="${titleContent}" data-node-type="ARTIFACT" data-parent-node-id="${n.id}">
+                            <div class="node-content group hover:bg-[var(--bg-card-hover)] rounded-md px-1 py-0.5">
+                                <span class="tree-artifact-text clickable flex items-center text-sm flex-grow" 
+                                      title="View details for: ${titleContent}"
+                                      onclick="showArtifactDetailsModal('${titleContent}', '${descriptionContent}', '${linkContent}')"> 
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 tree-artifact-icon flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+                                    <span>${titleContent}</span>
+                                </span>
+                                <div class="actions opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <button title="Delete file" class="action-icon-btn delete" onclick="event.stopPropagation(); deleteArtifact(${artifactId})">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                    </button>
+                                </div>
+                            </div>
+                            </div>
+                    `;
+                  })
+                  .join("")
+              : "";
+
+            return `
+                    <div class="tree-node" 
+                         data-node-id="${
+                           n.id
+                         }" data-node-name="${escapeJSString(
+              n.name
+            )}" data-node-type="NODE">
+                        <div class="node-content group hover:bg-[var(--bg-card-hover)] rounded-md px-1 py-0.5">
+                            <span class="font-medium tree-node-text cursor-pointer flex items-center flex-grow" onclick="toggleTreeNode(${
+                              n.id
+                            })">
+                                ${
+                                  hasChildren
+                                    ? `<span id="toggle-icon-${n.id}" class="tree-toggle-icon"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" /></svg></span>`
+                                    : '<span class="tree-toggle-icon"></span>'
+                                }
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1 tree-node-icon flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" /></svg>
+                                <span>${escapeJSString(
+                                  n.name
+                                )}</span> <span class="text-xs text-[var(--text-tertiary)] ml-1.5">(ID: ${
+              n.id
+            })</span>
+                            </span>
+                            <div class="actions opacity-0 group-hover:opacity-100 transition-opacity space-x-1">
+                                <button title="Add item to this folder" class="action-icon-btn add" onclick="event.stopPropagation(); showInlineForm(${
+                                  n.id
+                                }, this)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                </button>
+                                <button title="Delete folder" class="action-icon-btn delete" onclick="event.stopPropagation(); deleteNode(${
+                                  n.id
+                                })">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div id="form-${
+                          n.id
+                        }" class="form-inline mt-2 ml-5 p-4 bg-[var(--bg-inline-form)] rounded-lg border border-[var(--border-primary)] shadow-md" style="display:none;">
+                            <input type="text" placeholder="Name (Folder/File)" id="name-${
+                              n.id
+                            }" class="input-field text-sm">
+                            <select id="type-${
+                              n.id
+                            }" class="input-field text-sm" onchange="toggleFileInput(${
+              n.id
+            })">
+                                <option value="FOLDER">FOLDER</option>
+                                <option value="SUBFOLDER">SUBFOLDER</option>
+                                <option value="FILE">FILE</option>
+                            </select>
+                            <textarea placeholder="Description (Optional)" id="description-${
+                              n.id
+                            }" class="input-field text-sm" rows="2"></textarea>
+
+                            <div id="file-method-options-${
+                              n.id
+                            }" style="display:none;">
+                                <div class="mb-2">
+                                    <label class="label-text text-xs">File Source:</label>
+                                    <select id="file-source-${
+                                      n.id
+                                    }" class="input-field text-xs py-1" onchange="toggleLinkOrUpload(${
+              n.id
+            })">
+                                        <option value="link">Enter Link</option>
+                                        <option value="upload">Upload File</option>
+                                    </select>
+                                </div>
+                                <div id="link-input-container-${n.id}">
+                                    <input type="text" placeholder="Link (e.g., https://...)" id="link-${
+                                      n.id
+                                    }" class="input-field text-sm">
+                                </div>
+                                <div id="upload-input-container-${
+                                  n.id
+                                }" style="display:none;">
+                                    <input type="file" id="file-upload-${
+                                      n.id
+                                    }" class="input-field text-sm p-2">
+                                </div>
+                            </div>
+                            <button onclick="submitInlineForm(${
+                              n.id
+                            }, this)" class="submit-button text-sm w-full py-2">
+                                <span class="button-text">Add Item</span>
+                            </button>
+                        </div>
+                        <div class="tree-children-container" id="children-${
+                          n.id
+                        }">
+                            ${childrenHTML}
+                            ${artifactsHTML}
+                        </div>
+                    </div>
+                `;
+          })
+          .join("");
+      }
+
+      async function fetchNodeName(nodeId) {
+        if (
+          !nodeId ||
+          String(nodeId).toLowerCase() === "null" ||
+          typeof nodeId === "undefined"
+        ) {
+          return "Global / Unspecified Node";
+        }
+        const localNode = flatNodeList.find(
+          (n) => String(n.id) === String(nodeId)
+        );
+        if (localNode) {
+          let cleanedName = localNode.name.replace(/—/g, "").trim();
+          return `${cleanedName} (ID: ${nodeId})`;
+        }
+        try {
+          let res = await fetch(`${BASE}/api/nodes/${nodeId}`);
+          if (res.ok) {
+            const data = await res.json();
+            return data.name
+              ? `${data.name} (Folder) (ID: ${data.id})`
+              : `Item ${nodeId}`;
+          } else {
+            console.warn(
+              `Node fetch failed for ID ${nodeId} (status: ${res.status}). Trying as artifact.`
+            );
+            res = await fetch(`${BASE}/api/artifacts/${nodeId}`);
+            if (res.ok) {
+              const data = await res.json();
+              return data.title
+                ? `${data.title} (File) (ID: ${data.id})`
+                : `Item ${nodeId}`;
+            } else {
+              console.warn(
+                `Artifact fetch also failed for ID ${nodeId} (status: ${res.status}). Returning generic name.`
+              );
+              return `Item ${nodeId}`;
+            }
+          }
+        } catch (error) {
+          console.error(`Error fetching details for ID ${nodeId}:`, error);
+          return `Item ${nodeId}`;
+        }
+      }
+
+      async function fetchUsers() {
+        try {
+          const res = await fetch(`${BASE}/api/users`);
+          if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+          const users = await res.json();
+
+          const userListPromises = users.map(async (u) => {
+            let nodeAccessSummary = "No specific node roles.";
+            if (u.roles && u.roles.length > 0) {
+              nodeAccessSummary = `Node Access: ${u.roles.length} role${
+                u.roles.length > 1 ? "s" : ""
+              }`;
+            }
+
+            return `
+                        <li class="user-list-item p-4 rounded-lg shadow-md flex flex-col sm:flex-row justify-between sm:items-center space-y-3 sm:space-y-0">
+                            <div class="flex-grow">
+                                <span class="font-semibold user-email-text block text-md">${escapeJSString(
+                                  u.email
+                                )}</span>
+                                <span class="text-sm user-role-text block">${
+                                  u.role
+                                    ? `Global: ${u.role}`
+                                    : "No Global Role"
+                                }</span>
+                                <span class="user-node-role-summary block mt-1">${nodeAccessSummary}</span>
+                            </div>
+                            <div class="user-actions space-x-2 flex-shrink-0 mt-3 sm:mt-0">
+                                <button class="user-action-button manage-access" title="Manage User Access" 
+                                        onclick="openAccessModal('${escapeJSString(
+                                          u.email
+                                        )}')">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                                    Manage Access
+                                </button>
+                                <button class="user-action-button delete-user" title="Delete User & All Access" 
+                                        onclick="deleteUser('${escapeJSString(
+                                          u.email
+                                        )}')">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                    Delete User
+                                </button>
+                            </div>
+                        </li>`;
+          });
+          const userListHtml = await Promise.all(userListPromises);
+          document.getElementById("userList").innerHTML = userListHtml.join("");
+        } catch (error) {
+          console.error("Failed to fetch users:", error);
+          document.getElementById(
+            "userList"
+          ).innerHTML = `<p class="text-[var(--text-red-accent)] p-4">Error loading users: ${error.message}</p>`;
+        }
+      }
+
+      async function deleteUser(email) {
+        if (
+          !confirm(
+            `Are you sure you want to delete all access roles and user data for ${email}? This action cannot be undone.`
+          )
+        )
+          return;
+        try {
+          const res = await fetch(`${BASE}/api/users/${email}`, {
+            method: "DELETE",
+          });
+          if (!res.ok) throw new Error(`HTTP error! status: ${res.statusText}`);
+          window.showNotification("User deleted successfully. ✅", "success");
+          fetchUsers();
+          fetchTree();
+        } catch (error) {
+          console.error("Failed to delete user:", error);
+          window.showNotification(
+            `Error deleting user: ${error.message}`,
+            "error"
+          );
+        }
+      }
+
+      function showInlineForm(parentId, buttonElement) {
+        const form = document.getElementById(`form-${parentId}`);
+        if (form) {
+          const isVisible = form.style.display === "block";
+          form.style.display = isVisible ? "none" : "block";
+          if (!isVisible) {
+            form.querySelector('input[type="text"], select')?.focus();
+            toggleFileInput(parentId);
+          }
+        }
+      }
+
+      function toggleFileInput(parentId) {
+        const typeSelect = document.getElementById(`type-${parentId}`);
+        const fileMethodOptionsDiv = document.getElementById(
+          `file-method-options-${parentId}`
+        );
+        const descriptionTextarea = document.getElementById(
+          `description-${parentId}`
+        );
+
+        if (typeSelect.value === "FILE") {
+          fileMethodOptionsDiv.style.display = "block";
+          descriptionTextarea.placeholder = "Description (Optional for File)";
+          document.getElementById(`file-source-${parentId}`).value = "link";
+          toggleLinkOrUpload(parentId);
+        } else {
+          fileMethodOptionsDiv.style.display = "none";
+          descriptionTextarea.placeholder = "Description (Optional for Folder)";
+        }
+      }
+
+      function toggleLinkOrUpload(parentId) {
+        const fileSource = document.getElementById(
+          `file-source-${parentId}`
+        ).value;
+        const linkInputContainer = document.getElementById(
+          `link-input-container-${parentId}`
+        );
+        const uploadInputContainer = document.getElementById(
+          `upload-input-container-${parentId}`
+        );
+
+        if (fileSource === "link") {
+          linkInputContainer.style.display = "block";
+          uploadInputContainer.style.display = "none";
+        } else {
+          linkInputContainer.style.display = "none";
+          uploadInputContainer.style.display = "block";
+        }
+      }
+
+      async function submitInlineForm(parentId, buttonElement) {
+        const name = document.getElementById(`name-${parentId}`).value.trim();
+        const type = document.getElementById(`type-${parentId}`).value;
+        const description = document
+          .getElementById(`description-${parentId}`)
+          .value.trim();
+        const originalButtonText =
+          buttonElement.querySelector(".button-text")?.textContent ||
+          buttonElement.textContent;
+        window.setButtonLoading(buttonElement, true, originalButtonText);
+
+        if (!name) {
+          window.showNotification("Name is required.", "error");
+          window.setButtonLoading(buttonElement, false, originalButtonText);
+          return;
+        }
+
+        try {
+          let response;
+          if (type === "FILE") {
+            const fileSource = document.getElementById(
+              `file-source-${parentId}`
+            ).value;
+            if (fileSource === "link") {
+              const link = document
+                .getElementById(`link-${parentId}`)
+                .value.trim();
+              if (!link) {
+                window.showNotification(
+                  "Link is required when 'Enter Link' is selected.",
+                  "error"
+                );
+                window.setButtonLoading(
+                  buttonElement,
+                  false,
+                  originalButtonText
+                );
+                return;
+              }
+              response = await fetch(`${BASE}/api/artifacts`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  title: name,
+                  description,
+                  link,
+                  nodeId: parentId,
+                }),
+              });
+            } else {
+              const fileInput = document.getElementById(
+                `file-upload-${parentId}`
+              );
+              const file = fileInput.files[0];
+              if (!file) {
+                window.showNotification(
+                  "Please select a file to upload.",
+                  "error"
+                );
+                window.setButtonLoading(
+                  buttonElement,
+                  false,
+                  originalButtonText
+                );
+                return;
+              }
+
+              const formData = new FormData();
+              formData.append("file", file);
+              formData.append("title", name);
+              formData.append("description", description);
+              formData.append("nodeId", parentId);
+
+              response = await fetch(`${BASE}/api/upload`, {
+                method: "POST",
+                body: formData,
+              });
+            }
+          } else {
+            response = await fetch(`${BASE}/api/nodes`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ name, type, parentId, description }),
+            });
+          }
+
+          if (!response.ok) {
+            const errorData = await response
+              .json()
+              .catch(() => ({ message: response.statusText }));
+            throw new Error(
+              `Failed to add item: ${errorData.message || response.statusText}`
+            );
+          }
+          window.showNotification("Item added successfully! ✅", "success");
+          fetchTree();
+
+          const formElement = document.getElementById(`form-${parentId}`);
+          formElement.style.display = "none";
+          document.getElementById(`name-${parentId}`).value = "";
+          document.getElementById(`description-${parentId}`).value = "";
+          document.getElementById(`type-${parentId}`).value = "FOLDER";
+          if (document.getElementById(`link-${parentId}`))
+            document.getElementById(`link-${parentId}`).value = "";
+          if (document.getElementById(`file-upload-${parentId}`))
+            document.getElementById(`file-upload-${parentId}`).value = null;
+          toggleFileInput(parentId);
+        } catch (error) {
+          console.error("Error submitting inline form:", error);
+          window.showNotification(`Error: ${error.message}`, "error");
+        } finally {
+          window.setButtonLoading(buttonElement, false, originalButtonText);
+        }
+      }
+
+      async function deleteNode(nodeId) {
+        if (
+          !confirm(
+            "Are you sure you want to delete this folder and all its contents? This action cannot be undone."
+          )
+        )
+          return;
+        try {
+          const response = await fetch(`${BASE}/api/nodes/${nodeId}`, {
+            method: "DELETE",
+          });
+          if (!response.ok)
+            throw new Error(
+              `Failed to delete folder: ${
+                (await response.json().catch(() => ({}))).message ||
+                response.statusText
+              }`
+            );
+          window.showNotification("Folder deleted successfully. ✅", "success");
+          fetchTree();
+        } catch (error) {
+          console.error("Error deleting node:", error);
+          window.showNotification(`Error: ${error.message}`, "error");
+        }
+      }
+
+      async function deleteArtifact(artifactId) {
+        if (
+          !confirm(
+            "Are you sure you want to delete this file? This action cannot be undone."
+          )
+        )
+          return;
+        try {
+          const response = await fetch(`${BASE}/api/artifacts/${artifactId}`, {
+            method: "DELETE",
+          });
+          if (!response.ok)
+            throw new Error(
+              `Failed to delete file: ${
+                (await response.json().catch(() => ({}))).message ||
+                response.statusText
+              }`
+            );
+          window.showNotification("File deleted successfully. ✅", "success");
+          fetchTree();
+        } catch (error) {
+          console.error("Error deleting artifact:", error);
+          window.showNotification(`Error: ${error.message}`, "error");
+        }
+      }
+
+      async function promptNewRoot() {
+        const name = prompt(
+          "Enter new root folder name (e.g., Vertical name):"
+        );
+        if (!name?.trim()) return;
+        try {
+          const response = await fetch(`${BASE}/api/nodes`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              name: name.trim(),
+              type: "VERTICAL",
+              parentId: null,
+            }),
+          });
+          if (!response.ok)
+            throw new Error(
+              `Failed to create root folder: ${
+                (await response.json().catch(() => ({}))).message ||
+                response.statusText
+              }`
+            );
+          window.showNotification("New root folder created! ✅", "success");
+          fetchTree();
+        } catch (error) {
+          console.error("Error creating new root:", error);
+          window.showNotification(`Error: ${error.message}`, "error");
+        }
+      }
+
+      document
+        .getElementById("addUserForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const submitButton = e.target.querySelector('button[type="submit"]');
+          const originalButtonText =
+            submitButton.querySelector(".button-text")?.textContent ||
+            submitButton.textContent;
+          window.setButtonLoading(submitButton, true, originalButtonText);
+
+          const email = document.getElementById("newUserEmail").value;
+          const globalRole = document.getElementById("newUserRole").value;
+          const selectedNodeIdForAccess =
+            document.getElementById("newUserNodeAccess").value;
+          const selectedNodeRoleForAccess =
+            document.getElementById("newUserNodeRole").value;
+
+          if (!email || !globalRole) {
+            window.showNotification(
+              "Email and Global Role are required.",
+              "error"
+            );
+            window.setButtonLoading(submitButton, false, originalButtonText);
+            return;
+          }
+
+          try {
+            let response = await fetch(`${BASE}/api/users`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ email, role: globalRole }),
+            });
+            if (!response.ok) {
+              const errorData = await response
+                .json()
+                .catch(() => ({ message: response.statusText }));
+              throw new Error(
+                `Failed to add user: ${
+                  errorData.message || response.statusText
+                }`
+              );
+            }
+
+            let successMessage = "User added successfully! ✅";
+
+            if (selectedNodeIdForAccess) {
+              response = await fetch(`${BASE}/api/access`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  email,
+                  nodeId: parseInt(selectedNodeIdForAccess),
+                  role: selectedNodeRoleForAccess,
+                }),
+              });
+              if (!response.ok) {
+                const errorData = await response
+                  .json()
+                  .catch(() => ({ message: response.statusText }));
+                successMessage += `\n⚠️ Could not grant initial node access: ${
+                  errorData.message || response.statusText
+                }`;
+                window.showNotification(successMessage, "error");
+              } else {
+                successMessage += ` Initial node access granted.`;
+                window.showNotification(successMessage, "success");
+              }
+            } else {
+              window.showNotification(successMessage, "success");
+            }
+            fetchUsers();
+            document.getElementById("addUserForm").reset();
+          } catch (error) {
+            console.error("Error in add user process:", error);
+            window.showNotification(`Error: ${error.message}`, "error");
+          } finally {
+            window.setButtonLoading(submitButton, false, originalButtonText);
+          }
+        });
+
+      // --- Access Management Modal Logic ---
+      const accessModal = document.getElementById("access-management-modal");
+      const modalUserEmailSpan = document.getElementById("modal-user-email");
+      const modalCurrentAccessDiv = document.getElementById(
+        "access-management-modal-current-access"
+      );
+      const modalEditingUserEmailHidden = document.getElementById(
+        "modal-editing-user-email-hidden"
+      );
+
+      async function openAccessModal(email) {
+        modalUserEmailSpan.textContent = email;
+        modalEditingUserEmailHidden.value = email;
+        accessModal.classList.add("active");
+        await loadUserAccessRolesForModal(email);
+      }
+
+      function closeAccessModal() {
+        accessModal.classList.remove("active");
+        modalCurrentAccessDiv.innerHTML = `<p class="text-[var(--text-tertiary)] p-3">Loading access...</p>`;
+      }
+
+      async function loadUserAccessRolesForModal(email) {
+        modalCurrentAccessDiv.innerHTML = `<p class="text-[var(--text-tertiary)] p-3">Loading access...</p>`;
+        try {
+          const res = await fetch(`${BASE}/api/users`);
+          if (!res.ok) throw new Error("Failed to fetch user data");
+          const users = await res.json();
+          const user = users.find((u) => u.email === email);
+
+          if (!user || !user.roles || user.roles.length === 0) {
+            modalCurrentAccessDiv.innerHTML = `<p class="text-[var(--text-tertiary)] p-3">No specific node access granted.</p>`;
+            return;
+          }
+
+          const accessItemsPromises = user.roles.map(async (role) => {
+            const nodeName = await fetchNodeName(role.nodeId);
+            return `
+                        <div class="access-item flex justify-between items-center p-2.5 border-b border-[var(--border-primary)] last:border-b-0">
+                            <div>
+                                <span class="font-medium text-[var(--text-primary)]">${escapeJSString(
+                                  nodeName
+                                )}</span>
+                                </div>
+                            <div class="flex items-center gap-2">
+                                <select class="input-field text-xs py-1 px-2 w-auto" data-node-id="${
+                                  role.nodeId
+                                }" data-original-role="${
+              role.role
+            }" onchange="updateNodeAccessInModal(this, '${escapeJSString(
+              email
+            )}', ${role.nodeId})">
+                                    <option value="ADMIN" ${
+                                      role.role === "ADMIN" ? "selected" : ""
+                                    }>ADMIN</option>
+                                    <option value="EDITOR" ${
+                                      role.role === "EDITOR" ? "selected" : ""
+                                    }>EDITOR</option>
+                                    <option value="VIEWER" ${
+                                      role.role === "VIEWER" ? "selected" : ""
+                                    }>VIEWER</option>
+                                </select>
+                                <button class="action-icon-btn delete text-sm" title="Revoke Access" onclick="revokeNodeAccessInModal('${escapeJSString(
+                                  email
+                                )}', ${role.nodeId})">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+          });
+          modalCurrentAccessDiv.innerHTML = (
+            await Promise.all(accessItemsPromises)
+          ).join("");
+        } catch (error) {
+          console.error("Error loading user access for modal:", error);
+          modalCurrentAccessDiv.innerHTML = `<p class="text-[var(--text-red-accent)] p-3">Error loading access: ${error.message}</p>`;
+        }
+      }
+
+      async function updateNodeAccessInModal(selectElement, email, nodeId) {
+        const newRole = selectElement.value;
+        const originalRole = selectElement.dataset.originalRole;
+
+        if (newRole === originalRole) return;
+
+        if (
+          !confirm(
+            `Change access for ${email} on node ID ${nodeId} to ${newRole}?`
+          )
+        ) {
+          selectElement.value = originalRole;
+          return;
+        }
+        try {
+          const response = await fetch(`${BASE}/api/access`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, nodeId, role: newRole }),
+          });
+          if (!response.ok)
+            throw new Error(
+              `Failed to update access: ${
+                (await response.json().catch(() => ({}))).message ||
+                response.statusText
+              }`
+            );
+          window.showNotification("Access updated successfully! ✅", "success");
+          selectElement.dataset.originalRole = newRole;
+          fetchUsers();
+        } catch (error) {
+          console.error("Error updating access from modal:", error);
+          window.showNotification(`Error: ${error.message}`, "error");
+          selectElement.value = originalRole;
+        }
+      }
+
+      async function revokeNodeAccessInModal(email, nodeId) {
+        if (
+          !confirm(
+            `Are you sure you want to revoke access for ${email} from node ID ${nodeId}?`
+          )
+        )
+          return;
+        try {
+          const response = await fetch(`${BASE}/api/access`, {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, nodeId }),
+          });
+          if (!response.ok)
+            throw new Error(
+              `Failed to revoke access: ${
+                (await response.json().catch(() => ({}))).message ||
+                response.statusText
+              }`
+            );
+          window.showNotification("Access revoked successfully! ✅", "success");
+          loadUserAccessRolesForModal(email);
+          fetchUsers();
+        } catch (error) {
+          console.error("Error revoking access from modal:", error);
+          window.showNotification(`Error: ${error.message}`, "error");
+        }
+      }
+
+      document
+        .getElementById("grantNewAccessForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const submitButton = e.target.querySelector('button[type="submit"]');
+          const originalButtonText =
+            submitButton.querySelector(".button-text")?.textContent ||
+            submitButton.textContent;
+          window.setButtonLoading(submitButton, true, originalButtonText);
+
+          const email = modalEditingUserEmailHidden.value;
+          const nodeId = document.getElementById("modalNodeSelect").value;
+          const role = document.getElementById("modalNodeRoleSelect").value;
+
+          if (!email || !nodeId || !role) {
+            window.showNotification(
+              "Please select a user, node, and role to grant access.",
+              "error"
+            );
+            window.setButtonLoading(submitButton, false, originalButtonText);
+            return;
+          }
+          try {
+            const response = await fetch(`${BASE}/api/access`, {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ email, nodeId: parseInt(nodeId), role }),
+            });
+            if (!response.ok)
+              throw new Error(
+                `Failed to grant access: ${
+                  (await response.json().catch(() => ({}))).message ||
+                  response.statusText
+                }`
+              );
+            window.showNotification(
+              "Access granted successfully! ✅",
+              "success"
+            );
+            loadUserAccessRolesForModal(email);
+            fetchUsers();
+            document.getElementById("grantNewAccessForm").reset();
+          } catch (error) {
+            console.error("Error granting new access from modal:", error);
+            window.showNotification(`Error: ${error.message}`, "error");
+          } finally {
+            window.setButtonLoading(submitButton, false, originalButtonText);
+          }
+        });
+
+      // --- Artifact Details Modal Logic ---
+      function showArtifactDetailsModal(title, description, link) {
+        const artifactDetailsModalEl = document.getElementById(
+          "artifact-details-modal"
+        );
+        const artifactModalTitleEl = document.getElementById(
+          "artifact-modal-title"
+        );
+        const artifactModalDescriptionEl = document.getElementById(
+          "artifact-details-modal-description"
+        );
+        const artifactModalLinkEl = document.getElementById(
+          "artifact-modal-link"
+        );
+
+        if (
+          !artifactDetailsModalEl ||
+          !artifactModalTitleEl ||
+          !artifactModalDescriptionEl ||
+          !artifactModalLinkEl
+        ) {
+          console.error(
+            "Artifact details modal elements could not be found. Check HTML IDs."
+          );
+          window.showNotification(
+            "Error: Cannot display artifact details.",
+            "error"
+          );
+          return;
+        }
+
+        artifactModalTitleEl.textContent = title || "Artifact Details";
+        artifactModalDescriptionEl.textContent =
+          description || "No description provided.";
+
+        let processedLink = link || "#";
+        if (
+          processedLink &&
+          !processedLink.startsWith("http://") &&
+          !processedLink.startsWith("https://") &&
+          processedLink !== "#"
+        ) {
+          processedLink = `https://${processedLink}`;
+        }
+        artifactModalLinkEl.href = processedLink;
+
+        if (!link || link === "#") {
+          artifactModalLinkEl.classList.add("opacity-50", "cursor-not-allowed");
+          artifactModalLinkEl.removeAttribute("target");
+        } else {
+          artifactModalLinkEl.classList.remove(
+            "opacity-50",
+            "cursor-not-allowed"
+          );
+          artifactModalLinkEl.setAttribute("target", "_blank");
+        }
+        artifactDetailsModalEl.classList.add("active");
+      }
+
+      function closeArtifactDetailsModal() {
+        const artifactDetailsModalEl = document.getElementById(
+          "artifact-details-modal"
+        );
+        if (artifactDetailsModalEl) {
+          artifactDetailsModalEl.classList.remove("active");
+        }
+      }
+
+      // Initial data fetch
+      fetchTree();
+      fetchUsers();
+    </script>
+  </body>
+</html>
