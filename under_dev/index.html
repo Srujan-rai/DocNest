@@ -62,6 +62,7 @@
         --border-selected-node: #007acc;
         --border-tree-children: rgba(107, 114, 128, 0.3);
         --border-tree-line: #444;
+        --border-preview: #555;
 
         --shadow-card: 0 8px 20px rgba(0, 0, 0, 0.3);
         --shadow-input-focus: 0 0 0 3px rgba(0, 122, 204, 0.3);
@@ -118,6 +119,7 @@
         --border-selected-node: #2563eb;
         --border-tree-children: rgba(209, 213, 219, 0.5);
         --border-tree-line: #ccc;
+        --border-preview: #d1d5db;
 
         --shadow-card: 0 4px 15px rgba(0, 0, 0, 0.07);
         --shadow-input-focus: 0 0 0 3px rgba(37, 99, 235, 0.2);
@@ -153,27 +155,37 @@
         transition: opacity 0.2s ease-in-out;
       }
       #tree-container,
-      #access-management-modal-current-access {
+      #access-management-modal-current-access,
+      #artifact-details-modal-description {
+        /* Added artifact modal desc */
         max-height: 70vh;
         overflow-y: auto;
         scrollbar-width: thin;
         scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
       }
       #tree-container::-webkit-scrollbar,
-      #access-management-modal-current-access::-webkit-scrollbar {
+      #access-management-modal-current-access::-webkit-scrollbar,
+      #artifact-details-modal-description::-webkit-scrollbar {
         width: 6px;
       }
+
       #tree-container::-webkit-scrollbar-track,
-      #access-management-modal-current-access::-webkit-scrollbar-track {
+      #access-management-modal-current-access::-webkit-scrollbar-track,
+      #artifact-details-modal-description::-webkit-scrollbar-track {
         background: var(--scrollbar-track);
       }
+
       #tree-container::-webkit-scrollbar-thumb,
-      #access-management-modal-current-access::-webkit-scrollbar-thumb {
+      #access-management-modal-current-access::-webkit-scrollbar-thumb,
+      #artifact-details-modal-description::-webkit-scrollbar-thumb {
         background-color: var(--scrollbar-thumb);
         border-radius: 3px;
       }
       #access-management-modal-current-access {
         max-height: 250px;
+      }
+      #artifact-details-modal-description {
+        max-height: 200px;
       }
 
       .submit-button {
@@ -265,56 +277,54 @@
 
       /* Tree Styling with Connection Lines */
       .tree-node,
-      .tree-artifact {
+      .tree-artifact-wrapper {
         position: relative;
-        padding-left: 20px; /* Space for lines */
+        padding-left: 20px;
       }
       .tree-node::before,
-      .tree-artifact::before {
+      .tree-artifact-wrapper::before {
         content: "";
         position: absolute;
         top: 0;
-        left: 8px; /* Adjust left for line position */
+        left: 8px;
         width: 1px;
         height: 100%;
         background-color: var(--border-tree-line);
       }
       .tree-node > .node-content::before,
-      .tree-artifact > .node-content::before {
-        /* Horizontal part of L */
+      .tree-artifact-wrapper > .node-content::before {
         content: "";
         position: absolute;
-        top: 12px; /* Align with text/icon */
-        left: -11px; /* Connect to vertical line */
+        top: 12px;
+        left: -11px;
         width: 12px;
         height: 1px;
         background-color: var(--border-tree-line);
       }
       .tree-node:last-child::before {
-        height: 12px; /* Shorten line for last item in a level */
+        height: 12px;
       }
-      .tree-artifact:last-child::before {
+      .tree-artifact-wrapper:last-child::before {
         height: 12px;
       }
       .tree-root > .tree-node::before,
-      .tree-root > .tree-artifact::before {
+      .tree-root > .tree-artifact-wrapper::before {
         display: none;
-      } /* No line for top-level items */
+      }
       .tree-root > .tree-node > .node-content::before,
-      .tree-root > .tree-artifact > .node-content::before {
+      .tree-root > .tree-artifact-wrapper > .node-content::before {
         display: none;
       }
 
       .node-content {
-        /* Wrapper for the actual text/icon part of the node */
-        position: relative; /* For pseudo-elements */
+        position: relative;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 2px 0; /* Adjust vertical padding */
+        padding: 2px 0;
       }
       .tree-children-container {
-        margin-left: 20px; /* Indent children further */
+        margin-left: 20px;
       }
 
       .tree-node-text,
@@ -332,14 +342,20 @@
       .tree-artifact-text {
         color: var(--text-tertiary);
       }
-      .tree-artifact-text:hover {
+      .tree-artifact-text.clickable:hover {
         color: var(--text-link-hover);
+        cursor: pointer;
+        text-decoration: underline;
       }
       .tree-node-icon {
         color: var(--text-yellow-accent);
       }
       .tree-artifact-icon {
         color: var(--text-tertiary);
+      }
+      .artifact-preview-container {
+        /* No longer used for inline previews */
+        display: none;
       }
 
       .user-list-item {
@@ -690,8 +706,63 @@
       </div>
     </div>
 
+    <div id="artifact-details-modal" class="modal-overlay">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 id="artifact-modal-title" class="modal-title">
+            Artifact Details
+          </h3>
+          <button class="modal-close-btn" onclick="closeArtifactDetailsModal()">
+            &times;
+          </button>
+        </div>
+
+        <div class="mb-4">
+          <label class="label-text">Description:</label>
+          <div
+            id="artifact-details-modal-description"
+            class="p-3 border border-[var(--border-input)] rounded-md bg-[var(--bg-input)] text-sm min-h-[60px]"
+          >
+            No description provided.
+          </div>
+        </div>
+
+        <div class="mt-6 text-right space-x-3">
+          <a
+            id="artifact-modal-link"
+            href="#"
+            target="_blank"
+            class="submit-button inline-block"
+          >
+            Go to Resource
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-4 w-4 inline-block ml-1"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+              />
+            </svg>
+          </a>
+          <button
+            class="submit-button secondary"
+            onclick="closeArtifactDetailsModal()"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+
     <script>
       const BASE = "http://localhost:8000";
+
       let currentlySelectedElementForAccess = null;
       let fullTreeData = [];
       let flatNodeList = [];
@@ -746,16 +817,13 @@
 
         function checkVisibility(element, term) {
           let directMatch = false;
-          // Check the element's own name/title
           const nodeName = (element.dataset.nodeName || "").toLowerCase();
           if (nodeName.includes(term)) {
             directMatch = true;
           }
 
           let childrenMatch = false;
-          // If it's a folder, check its children recursively
           if (element.classList.contains("tree-node")) {
-            // Check if it's a folder representation
             const childrenContainer = element.querySelector(
               ".tree-children-container"
             );
@@ -763,7 +831,7 @@
               const childrenElements = childrenContainer.children;
               for (const child of childrenElements) {
                 if (checkVisibility(child, term)) {
-                  childrenMatch = true; // If any child is visible, this parent should be too
+                  childrenMatch = true;
                 }
               }
             }
@@ -847,30 +915,33 @@
             const childrenHTML = n.children ? renderTree(n.children) : "";
             const artifactsHTML = n.artifacts
               ? n.artifacts
-                  .map(
-                    (a) => `
-                    <div class="tree-artifact" 
-                         data-artifact-id="${a.id}" data-node-id="${
-                      a.id
-                    }" data-node-name="${escapeJSString(
-                      a.title
-                    )}" data-node-type="ARTIFACT" data-parent-node-id="${n.id}">
-                        <div class="node-content group hover:bg-[var(--bg-card-hover)] rounded-md px-1 py-0.5">
-                            <span class="tree-artifact-text cursor-default flex items-center text-sm flex-grow"> 
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 tree-artifact-icon flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
-                                <span>${escapeJSString(a.title)}</span>
-                            </span>
-                            <div class="actions opacity-0 group-hover:opacity-100 transition-opacity">
-                                <button title="Delete file" class="action-icon-btn delete" onclick="event.stopPropagation(); deleteArtifact(${
-                                  a.id
-                                })">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                                </button>
+                  .map((a) => {
+                    const titleContent = escapeJSString(a.title);
+                    const descriptionContent = escapeJSString(
+                      a.description || ""
+                    );
+                    const linkContent = escapeJSString(a.link || "#");
+                    const artifactId = a.id;
+
+                    return `
+                        <div class="tree-artifact-wrapper" 
+                             data-artifact-id="${artifactId}" data-node-id="${artifactId}" data-node-name="${titleContent}" data-node-type="ARTIFACT" data-parent-node-id="${n.id}">
+                            <div class="node-content group hover:bg-[var(--bg-card-hover)] rounded-md px-1 py-0.5">
+                                <span class="tree-artifact-text clickable flex items-center text-sm flex-grow" 
+                                      title="View details for: ${titleContent}"
+                                      onclick="showArtifactDetailsModal('${titleContent}', '${descriptionContent}', '${linkContent}')"> 
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 tree-artifact-icon flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+                                    <span>${titleContent}</span>
+                                </span>
+                                <div class="actions opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <button title="Delete file" class="action-icon-btn delete" onclick="event.stopPropagation(); deleteArtifact(${artifactId})">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                `
-                  )
+                            </div>
+                    `;
+                  })
                   .join("")
               : "";
 
@@ -979,29 +1050,29 @@
           return `${cleanedName} (ID: ${nodeId})`;
         }
         try {
-          const res = await fetch(`${BASE}/api/nodes/${nodeId}`);
-          if (!res.ok) {
+          let res = await fetch(`${BASE}/api/nodes/${nodeId}`);
+          if (res.ok) {
+            const data = await res.json();
+            return data.name
+              ? `${data.name} (Folder) (ID: ${data.id})`
+              : `Item ${nodeId}`;
+          } else {
             console.warn(
-              `API fetch failed for node ID ${nodeId}, status: ${res.status}. Trying as artifact.`
+              `Node fetch failed for ID ${nodeId} (status: ${res.status}). Trying as artifact.`
             );
-            const artifactRes = await fetch(`${BASE}/api/artifacts/${nodeId}`);
-            if (artifactRes.ok) {
-              const artifactData = await artifactRes.json();
-              return artifactData.title
-                ? `${artifactData.title} (File) (ID: ${artifactData.id})`
+            res = await fetch(`${BASE}/api/artifacts/${nodeId}`);
+            if (res.ok) {
+              const data = await res.json();
+              return data.title
+                ? `${data.title} (File) (ID: ${data.id})`
                 : `Item ${nodeId}`;
+            } else {
+              console.warn(
+                `Artifact fetch also failed for ID ${nodeId} (status: ${res.status}). Returning generic name.`
+              );
+              return `Item ${nodeId}`;
             }
-            console.warn(
-              `API fetch also failed for artifact ID ${nodeId}. Returning generic name.`
-            );
-            return `Item ${nodeId}`;
           }
-          const data = await res.json();
-          const itemName = data.name || data.title;
-          const itemType = data.name ? "Folder" : data.title ? "File" : "Item";
-          return itemName
-            ? `${itemName} (${itemType}) (ID: ${data.id})`
-            : `Item ${nodeId}`;
         } catch (error) {
           console.error(`Error fetching details for ID ${nodeId}:`, error);
           return `Item ${nodeId}`;
@@ -1553,6 +1624,71 @@
             alert(`Error: ${error.message}`);
           }
         });
+
+      // --- Artifact Details Modal Logic ---
+      function showArtifactDetailsModal(title, description, link) {
+        const artifactDetailsModalEl = document.getElementById(
+          "artifact-details-modal"
+        );
+        const artifactModalTitleEl = document.getElementById(
+          "artifact-modal-title"
+        );
+        const artifactModalDescriptionEl = document.getElementById(
+          "artifact-details-modal-description"
+        );
+        const artifactModalLinkEl = document.getElementById(
+          "artifact-modal-link"
+        );
+
+        if (
+          !artifactDetailsModalEl ||
+          !artifactModalTitleEl ||
+          !artifactModalDescriptionEl ||
+          !artifactModalLinkEl
+        ) {
+          console.error(
+            "Artifact details modal elements could not be found. Check HTML IDs."
+          );
+          alert("Error: Cannot display artifact details.");
+          return;
+        }
+
+        artifactModalTitleEl.textContent = title || "Artifact Details";
+        artifactModalDescriptionEl.textContent =
+          description || "No description provided.";
+
+        let processedLink = link || "#";
+        if (
+          processedLink &&
+          !processedLink.startsWith("http://") &&
+          !processedLink.startsWith("https://") &&
+          processedLink !== "#"
+        ) {
+          processedLink = `https://${processedLink}`;
+        }
+        artifactModalLinkEl.href = processedLink;
+
+        if (!link || link === "#") {
+          artifactModalLinkEl.classList.add("opacity-50", "cursor-not-allowed");
+          artifactModalLinkEl.removeAttribute("target");
+        } else {
+          artifactModalLinkEl.classList.remove(
+            "opacity-50",
+            "cursor-not-allowed"
+          );
+          artifactModalLinkEl.setAttribute("target", "_blank");
+        }
+        artifactDetailsModalEl.classList.add("active");
+      }
+
+      function closeArtifactDetailsModal() {
+        const artifactDetailsModalEl = document.getElementById(
+          "artifact-details-modal"
+        );
+        if (artifactDetailsModalEl) {
+          artifactDetailsModalEl.classList.remove("active");
+        }
+      }
 
       // Initial data fetch
       fetchTree();
