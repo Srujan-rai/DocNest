@@ -338,23 +338,24 @@
                 {
                   method: "POST",
                   headers: {
-                    // "Content-Type": "application/json", // Removed as per user's new snippet if no body
                     Authorization: `Bearer ${token}`,
                   },
-                  // No body is sent in this version, only the token in the header
                 }
               );
 
               if (backendResponse.ok) {
-                const userData = await backendResponse.json(); // Expecting JSON response
+                const userData = await backendResponse.json();
                 console.log("Backend auth successful:", userData);
                 sessionStorage.setItem("token", token);
 
-                if (userData.isAdmin) {
-                  // Check the isAdmin flag from backend
+                // *** ROLE-BASED REDIRECT LOGIC ***
+                if (userData && userData.isAdmin === true) {
+                  // Explicitly check if isAdmin is true
+                  console.log("Redirecting to admin.html");
                   window.location.href = "admin.html";
                 } else {
-                  window.location.href = "user.html"; // Redirect non-admins to user.html
+                  console.log("Redirecting to user.html");
+                  window.location.href = "user.html"; // Redirect non-admins or if isAdmin is missing/false
                 }
               } else {
                 const errorData = await backendResponse
