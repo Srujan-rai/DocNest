@@ -20,7 +20,7 @@ async def verify_user(user=Depends(get_current_user)):
     ]
 
     has_admin_access = any(r["role"] == "ADMIN" for r in roles)
-    
+    print(f"User {user.id} has admin access: {has_admin_access}")
     return {
         "id": user.id,
         "email": user.email,

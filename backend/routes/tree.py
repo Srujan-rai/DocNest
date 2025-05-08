@@ -19,7 +19,7 @@ def build_tree(flat_nodes):
 
 # --- GET FULL TREE ---
 @router.get("/api/tree")
-async def get_full_tree(user=Depends(get_current_user)):  # ✅ Protected
+async def get_full_tree():  # ✅ Protected
     flat_nodes = await db.node.find_many(include={"artifacts": True})
     return build_tree(flat_nodes)
 

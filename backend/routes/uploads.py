@@ -26,7 +26,7 @@ async def upload_file(
     # Authorization: Only ADMIN or EDITOR on the node
     access = await db.access.find_first(
         where={
-            "userId": user["id"],
+            "userId": user.id,
             "nodeId": nodeId,
             "role": {"in": ["ADMIN", "EDITOR"]}
         }
@@ -51,13 +51,13 @@ async def upload_file(
                 "description": description,
                 "link": file_url,
                 "nodeId": nodeId,
-                "createdBy": user["id"]
+                "createdBy": user.id
             }
         )
 
         await db.access.create(
             data={
-                "userId": user["id"],
+                "userId": user.id,
                 "artifactId": artifact.id,
                 "role": "ADMIN"
             }
