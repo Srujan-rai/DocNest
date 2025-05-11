@@ -13,6 +13,8 @@ async def get_current_user(authorization: str = Header(...)):
     try:
         decoded_token = firebase_auth.verify_id_token(id_token)
         email = decoded_token.get("email")
+        print(f"Decoded token: {decoded_token}")
+        print(f"Email from token: {email}")
 
         if not email:
             raise HTTPException(status_code=401, detail="No email in token")

@@ -55,3 +55,10 @@ async def update_user(user_id: int, payload: UserUpdate, user=Depends(get_curren
         where={"id": user_id},
         data={"email": payload.email, "name": payload.name}
     )
+
+@router.delete("/api/users/{user_id}")
+async def delete_user(user_id: int, user=Depends(get_current_user)):
+    target = await db.user.find_unique(where={"id": user_id})
+    if not target:
+        raise HTTPException(404, "User not found.")
+    return await db.user.delete(where={"id": user_id})
