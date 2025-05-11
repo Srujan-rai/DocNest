@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login - DocNest Admin</title>
+    <title>Login - DocNest User</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
@@ -142,15 +142,15 @@
       <div class="login-card w-full max-w-md p-8 rounded-xl">
         <div class="text-center mb-8">
           <h1 class="text-4xl font-bold text-[var(--text-primary-login)]">
-            📂
+            🔑
           </h1>
           <h2
             class="text-2xl font-semibold text-[var(--text-primary-login)] mt-2"
           >
-            DocNest Admin
+            DocNest User Login
           </h2>
           <p class="text-sm text-[var(--text-secondary-login)] mt-1">
-            Sign in to continue
+            Sign in to access the Knowledge Base
           </p>
         </div>
 
@@ -189,7 +189,7 @@
         </button>
 
         <p class="text-xs text-[var(--text-tertiary-login)] mt-8 text-center">
-          By signing in, you agree to our Terms of Service and Privacy Policy.
+          Access restricted to authorized users.
         </p>
       </div>
     </div>
@@ -206,7 +206,7 @@
         getIdToken,
       } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
 
-      // Firebase project configuration from user
+      // Firebase project configuration (should be the same as admin login)
       const firebaseConfig = {
         apiKey: "AIzaSyCbHWUEzqGjzeanOiMG0Z5Lb4wIjWWEMUQ",
         authDomain: "docnest-f85e2.firebaseapp.com",
@@ -220,6 +220,7 @@
       let app;
       let auth;
       let googleProvider;
+      let isProcessingLogin = false;
 
       const loginButton = document.getElementById("login-button");
       const errorMessageDiv = document.getElementById("error-message");
@@ -256,7 +257,7 @@
       const prefersDarkLogin = window.matchMedia(
         "(prefers-color-scheme: dark)"
       ).matches;
-      applyLoginTheme(savedLoginTheme || (prefersDarkLogin ? "dark" : "dark"));
+      applyLoginTheme(savedLoginTheme || (prefersDarkLogin ? "dark" : "dark")); // Default to dark
 
       function setButtonLoadingState(isLoading) {
         const buttonTextSpan = loginButton.querySelector(".button-text");
@@ -288,7 +289,7 @@
 
       if (
         firebaseConfig.apiKey &&
-        firebaseConfig.apiKey !== "YOUR_FIREBASE_API_KEY"
+        firebaseConfig.apiKey !== "YOUR_FIREBASE_API_KEY" // Replace with a more robust check if needed
       ) {
         try {
           app = initializeApp(firebaseConfig);
@@ -311,86 +312,120 @@
         if (loginButton) loginButton.disabled = true;
       }
 
-      // Handle Firebase Auth state changes
-      if (auth) {
-        onAuthStateChanged(auth, async (user) => {
-          if (user) {
-            console.log(
-              "onAuthStateChanged: User is signed in.",
-              user.displayName
+      // --- Centralized Authentication Handler for User Login ---
+      async function handleUserAuthentication(user) {
+        if (!user) {
+          console.log(
+            "User Login: handleUserAuthentication called with no user."
+          );
+          setButtonLoadingState(false);
+          isProcessingLogin = false;
+          return;
+        }
+
+        setButtonLoadingState(true);
+        clearLoginError();
+        console.log("User Login: Processing user", user.email);
+
+        try {
+          const token = await getIdToken(user, true);
+          sessionStorage.setItem("token", token); // Store token for userpage.html
+          console.log(
+            "User Login: Token obtained, calling backend /api/auth..."
+          );
+
+          const backendResponse = await fetch(
+            "http://localhost:8000/api/auth", // Same endpoint as admin
+            {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+              },
+            }
+          );
+
+          console.log(
+            "User Login: Backend response status:",
+            backendResponse.status
+          );
+
+          if (!backendResponse.ok) {
+            const errorText = await backendResponse.text();
+            console.error("User Login: Backend auth error:", errorText);
+            const errorData = JSON.parse(errorText || "{}");
+            throw new Error(
+              errorData.detail ||
+                `Authorization failed (Status: ${backendResponse.status})`
             );
-            if (sessionStorage.getItem("isAuthenticating") === "true") {
-              console.log(
-                "Authentication already in progress, skipping onAuthStateChanged handler."
-              );
-              return;
-            }
+          }
 
-            sessionStorage.setItem("isAuthenticating", "true");
-            setButtonLoadingState(true);
-            clearLoginError();
+          const userData = await backendResponse.json();
+          console.log("User Login: Backend auth success. User data:", userData);
 
-            try {
-              const token = await getIdToken(user);
-
-              const backendResponse = await fetch(
-                "http://localhost:8000/api/auth",
-                {
-                  method: "POST",
-                  headers: {
-                    Authorization: `Bearer ${token}`,
-                  },
-                }
-              );
-
-              if (backendResponse.ok) {
-                const userData = await backendResponse.json();
-                console.log("Backend auth successful:", userData);
-                sessionStorage.setItem("token", token);
-
-                // *** ROLE-BASED REDIRECT LOGIC ***
-                if (userData && userData.isAdmin === true) {
-                  // Explicitly check if isAdmin is true
-                  console.log("Redirecting to admin.html");
-                  window.location.href = "admin.html";
-                } else {
-                  console.log("Redirecting to user.html");
-                  window.location.href = "user.html"; // Redirect non-admins or if isAdmin is missing/false
-                }
-              } else {
-                const errorData = await backendResponse
-                  .json()
-                  .catch(() => ({
-                    detail: "Authorization failed with backend.",
-                  }));
-                showLoginError(
-                  `Access Denied: ${
-                    errorData.detail || backendResponse.statusText
-                  }`
-                );
-                console.warn(
-                  "Backend authorization failed. Signing out from Firebase client."
-                );
-                await signOut(auth);
-                setButtonLoadingState(false);
-                sessionStorage.removeItem("isAuthenticating");
-              }
-            } catch (error) {
-              console.error(
-                "Error during onAuthStateChanged token processing or backend call:",
-                error
-              );
-              showLoginError(
-                "An error occurred during sign-in. Please try again."
-              );
-              setButtonLoadingState(false);
-              sessionStorage.removeItem("isAuthenticating");
-            }
+          // Check if the user has general user access (isUser flag from backend)
+          // or if they are an admin (who should also be able to use the user page)
+          if (
+            userData &&
+            (userData.isUser === true || userData.isAdmin === true)
+          ) {
+            console.log(
+              "User Login: User verified. Redirecting to userpage.html"
+            );
+            window.location.href = "userpage.html";
           } else {
-            console.log("onAuthStateChanged: No user signed in.");
+            console.log(
+              "User Login: User does not have sufficient privileges."
+            );
+            showLoginError(
+              "Access Denied: You do not have authorized user privileges for this portal."
+            );
+            if (auth) {
+              await signOut(auth).catch((e) =>
+                console.error("Sign out error:", e)
+              );
+            }
             sessionStorage.removeItem("token");
-            sessionStorage.removeItem("isAuthenticating");
             setButtonLoadingState(false);
+          }
+        } catch (error) {
+          console.error("User Login: Error during authentication:", error);
+          showLoginError(`Authentication failed: ${error.message}`);
+          if (auth && auth.currentUser) {
+            // Check if auth and currentUser exist
+            await signOut(auth).catch((e) =>
+              console.error("Sign out error during catch:", e)
+            );
+          }
+          sessionStorage.removeItem("token");
+          setButtonLoadingState(false);
+        } finally {
+          isProcessingLogin = false;
+        }
+      }
+
+      let initialUserAuthCheckProcessed = false;
+      if (auth) {
+        onAuthStateChanged(auth, (user) => {
+          console.log(
+            `User Login Page: onAuthStateChanged. User: ${
+              user ? user.email : "null"
+            }. Initial Check Processed: ${initialUserAuthCheckProcessed}. IsProcessing: ${isProcessingLogin}`
+          );
+
+          if (user && !initialUserAuthCheckProcessed && !isProcessingLogin) {
+            initialUserAuthCheckProcessed = true;
+            console.log(
+              "User Login Page: Initial check detected user. Handling authentication..."
+            );
+            handleUserAuthentication(user);
+          } else if (!user) {
+            console.log(
+              "User Login Page: No user session detected by onAuthStateChanged or user signed out."
+            );
+            sessionStorage.removeItem("token");
+            setButtonLoadingState(false);
+            isProcessingLogin = false;
           }
         });
       }
@@ -402,12 +437,25 @@
           );
           return;
         }
+        if (isProcessingLogin) {
+          console.log("Sign-in already in progress.");
+          return;
+        }
+
         clearLoginError();
         setButtonLoadingState(true);
+        isProcessingLogin = true;
+
         try {
-          await signInWithPopup(auth, googleProvider);
+          console.log("Triggering signInWithPopup for User Login...");
+          const result = await signInWithPopup(auth, googleProvider);
+          console.log(
+            "User Login: signInWithPopup successful, user:",
+            result.user.email
+          );
+          await handleUserAuthentication(result.user);
         } catch (err) {
-          console.error("Google Sign-In Popup Error:", err);
+          console.error("User Login: Google Sign-In Popup Error:", err);
           let friendlyMessage = "Sign-in failed. Please try again.";
           if (err.code === "auth/popup-closed-by-user") {
             friendlyMessage = "Sign-in popup closed before completion.";
@@ -422,6 +470,7 @@
           }
           showLoginError(friendlyMessage);
           setButtonLoadingState(false);
+          isProcessingLogin = false;
         }
       }
 

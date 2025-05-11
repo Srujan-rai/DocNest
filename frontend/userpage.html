@@ -1,0 +1,1513 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DocNest - My Knowledge Base</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+
+    <style>
+      :root {
+        /* Dark Theme (Default) */
+        --bg-primary: #0a0a0a;
+        --bg-card: #1a1a1a;
+        --bg-card-hover: #222222;
+        --bg-input: #2d2d2d;
+        --bg-input-readonly: #383838;
+        --bg-button-primary: #f0f0f0;
+        --bg-button-primary-hover: #ffffff;
+        --bg-button-destructive: #c53030;
+        --bg-button-destructive-hover: #b02a2a;
+        --bg-button-secondary: #4a5568;
+        --bg-button-secondary-hover: #2d3748;
+        --bg-action-icon-hover: #333;
+        --bg-inline-form: rgba(42, 42, 42, 0.85);
+        --bg-selected-node: #2a2a2a;
+        --bg-modal-overlay: rgba(0, 0, 0, 0.7);
+        --bg-modal-content: #1f2937;
+        --bg-toast-success: #2f5c3b;
+        --bg-toast-error: #5c2f2f;
+        --bg-dropdown-menu: var(--bg-card);
+
+        --text-primary: #e0e0e0;
+        --text-secondary: #bbb;
+        --text-tertiary: #999;
+        --text-placeholder: #888;
+        --text-button-primary: #111;
+        --text-button-destructive: #ffffff;
+        --text-button-secondary: #e2e8f0;
+        --text-card-header: #f0f0f0;
+        --text-link-hover: #0095ff;
+        --text-action-icon: #999;
+        --text-action-icon-hover: #ffffff;
+        --text-green-accent: #4ade80;
+        --text-red-accent: #f87171;
+        --text-yellow-accent: #facc15;
+        --text-toast: #ffffff;
+        --text-dropdown-item-hover: var(--text-link-hover);
+
+        --border-primary: #333;
+        --border-input: #555;
+        --border-input-focus: #007acc;
+        --border-button-primary: #ccc; /* Used for inline form button */
+        --border-button-primary-hover: #bbb; /* Used for inline form button hover */
+        --border-button-destructive: #a02828;
+        --border-button-secondary: #4a5568;
+        --border-selected-node: #007acc;
+        --border-tree-children: rgba(107, 114, 128, 0.3);
+        --border-tree-line: #444;
+        --border-preview: #555;
+        --border-toast-success: #38a169;
+        --border-toast-error: #e53e3e;
+        --border-dropdown-menu: var(--border-primary);
+
+        --shadow-card: 0 8px 20px rgba(0, 0, 0, 0.3);
+        --shadow-input-focus: 0 0 0 3px rgba(0, 122, 204, 0.3);
+        --shadow-selected-node: inset 2px 0 0 var(--border-selected-node);
+        --shadow-modal: 0 10px 25px rgba(0, 0, 0, 0.5);
+        --shadow-toast: 0 4px 12px rgba(0, 0, 0, 0.4);
+        --shadow-dropdown: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+          0 2px 4px -1px rgba(0, 0, 0, 0.06);
+
+        --scrollbar-thumb: #4a4a4a;
+        --scrollbar-track: #1e1e1e;
+      }
+
+      .light-theme {
+        --bg-primary: #f4f4f5;
+        --bg-card: #ffffff;
+        --bg-card-hover: #f9fafb;
+        --bg-input: #ffffff;
+        --bg-input-readonly: #e5e7eb;
+        --bg-button-primary: #27272a;
+        --bg-button-primary-hover: #18181b;
+        --bg-button-destructive: #ef4444;
+        --bg-button-destructive-hover: #dc2626;
+        --bg-button-secondary: #e5e7eb;
+        --bg-button-secondary-hover: #d1d5db;
+        --bg-action-icon-hover: #e5e7eb;
+        --bg-inline-form: rgba(243, 244, 246, 0.9);
+        --bg-selected-node: #dbeafe;
+        --bg-modal-overlay: rgba(0, 0, 0, 0.3);
+        --bg-modal-content: #ffffff;
+        --bg-toast-success: #c6f6d5;
+        --bg-toast-error: #fed7d7;
+        --bg-dropdown-menu: var(--bg-card);
+
+        --text-primary: #18181b;
+        --text-secondary: #52525b;
+        --text-tertiary: #71717a;
+        --text-placeholder: #a1a1aa;
+        --text-button-primary: #ffffff;
+        --text-button-destructive: #ffffff;
+        --text-button-secondary: #1f2937;
+        --text-card-header: #1f2937;
+        --text-link-hover: #2563eb;
+        --text-action-icon: #71717a;
+        --text-action-icon-hover: #18181b;
+        --text-green-accent: #16a34a;
+        --text-red-accent: #dc2626;
+        --text-yellow-accent: #ca8a04;
+        --text-toast: #1a202c;
+        --text-dropdown-item-hover: var(--text-link-hover);
+
+        --border-primary: #d1d5db;
+        --border-input: #d1d5db;
+        --border-input-focus: #2563eb;
+        --border-button-primary: #27272a;
+        --border-button-primary-hover: #18181b;
+        --border-button-destructive: #ef4444;
+        --border-button-secondary: #d1d5db;
+        --border-selected-node: #2563eb;
+        --border-tree-children: rgba(209, 213, 219, 0.5);
+        --border-tree-line: #ccc;
+        --border-preview: #d1d5db;
+        --border-toast-success: #68d391;
+        --border-toast-error: #fc8181;
+        --border-dropdown-menu: var(--border-primary);
+
+        --shadow-card: 0 4px 15px rgba(0, 0, 0, 0.07);
+        --shadow-input-focus: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        --shadow-selected-node: inset 2px 0 0 var(--border-selected-node);
+        --shadow-modal: 0 10px 25px rgba(0, 0, 0, 0.1);
+        --shadow-toast: 0 4px 12px rgba(0, 0, 0, 0.15);
+        --shadow-dropdown: 0 4px 6px -1px rgba(0, 0, 0, 0.07),
+          0 2px 4px -1px rgba(0, 0, 0, 0.04);
+
+        --scrollbar-thumb: #a1a1aa;
+        --scrollbar-track: #e5e7eb;
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
+        transition: background-color 0.3s ease, color 0.3s ease;
+      }
+      .form-inline input,
+      .form-inline select,
+      .form-inline textarea {
+        margin-bottom: 0.75rem;
+      }
+      .node-item:hover .actions,
+      .artifact-item:hover .actions {
+        opacity: 1;
+      }
+      .actions {
+        transition: opacity 0.2s ease-in-out;
+      }
+      #tree-container,
+      #artifact-details-modal-description {
+        max-height: 70vh;
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+      }
+      #tree-container::-webkit-scrollbar,
+      #artifact-details-modal-description::-webkit-scrollbar {
+        width: 6px;
+      }
+      #tree-container::-webkit-scrollbar-track,
+      #artifact-details-modal-description::-webkit-scrollbar-track {
+        background: var(--scrollbar-track);
+      }
+      #tree-container::-webkit-scrollbar-thumb,
+      #artifact-details-modal-description::-webkit-scrollbar-thumb {
+        background-color: var(--scrollbar-thumb);
+        border-radius: 3px;
+      }
+      #artifact-details-modal-description {
+        max-height: 200px;
+      }
+
+      .submit-button {
+        background-color: var(--bg-button-primary);
+        color: var(--text-button-primary);
+        font-weight: 600;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.375rem;
+        border: 1px solid var(--border-button-primary);
+        transition: background-color 0.2s ease-in-out,
+          transform 0.1s ease-in-out, border-color 0.2s ease-in-out;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .submit-button:hover {
+        background-color: var(--bg-button-primary-hover);
+        border-color: var(--border-button-primary-hover);
+        transform: translateY(-1px);
+      }
+      .submit-button:active {
+        transform: translateY(0px);
+      }
+      .submit-button.destructive {
+        background-color: var(--bg-button-destructive);
+        color: var(--text-button-destructive);
+        border-color: var(--border-button-destructive);
+      }
+      .submit-button.destructive:hover {
+        background-color: var(--bg-button-destructive-hover);
+      }
+      .submit-button.secondary {
+        background-color: var(--bg-button-secondary);
+        color: var(--text-button-secondary);
+        border-color: var(--border-button-secondary);
+      }
+      .submit-button.secondary:hover {
+        background-color: var(--bg-button-secondary-hover);
+      }
+      .submit-button:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+      }
+
+      .spinner {
+        animation: spin 1s linear infinite;
+        border: 2px solid currentColor; /* currentColor will adapt to button's text color */
+        border-top-color: transparent;
+        border-radius: 50%;
+        width: 1em;
+        height: 1em;
+        margin-right: 0.5em;
+      }
+      /* Specific spinner colors are handled by setButtonLoading if needed, or rely on currentColor */
+
+      .input-field,
+      textarea.input-field {
+        margin-top: 0.25rem;
+        display: block;
+        width: 100%;
+        border-radius: 0.375rem;
+        border: 1px solid var(--border-input);
+        background-color: var(--bg-input);
+        color: var(--text-primary);
+        padding: 0.75rem 1rem;
+        font-size: 0.875rem;
+        transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out,
+          background-color 0.2s ease;
+      }
+      textarea.input-field {
+        min-height: 60px;
+      }
+      .input-field::placeholder,
+      textarea.input-field::placeholder {
+        color: var(--text-placeholder);
+      }
+      .input-field:focus,
+      textarea.input-field:focus {
+        border-color: var(--border-input-focus);
+        outline: none;
+        box-shadow: var(--shadow-input-focus);
+      }
+      .input-field.readonly {
+        background-color: var(--bg-input-readonly);
+        cursor: not-allowed;
+      }
+
+      .label-text {
+        display: block;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--text-secondary);
+        margin-bottom: 0.25rem;
+      }
+      .card {
+        background-color: var(--bg-card);
+        border: 1px solid var(--border-primary);
+        border-radius: 0.75rem;
+        box-shadow: var(--shadow-card);
+        transition: background-color 0.3s ease, border-color 0.3s ease;
+      }
+      .card-header {
+        color: var(--text-card-header);
+        font-weight: 600;
+      }
+
+      .tree-node,
+      .tree-artifact-wrapper {
+        position: relative;
+        padding-left: 20px;
+      }
+      .tree-node::before,
+      .tree-artifact-wrapper::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 8px;
+        width: 1px;
+        height: 100%;
+        background-color: var(--border-tree-line);
+      }
+      .tree-node > .node-content::before,
+      .tree-artifact-wrapper > .node-content::before {
+        content: "";
+        position: absolute;
+        top: 12px;
+        left: -11px; /* Adjusted for icon alignment */
+        width: 12px;
+        height: 1px;
+        background-color: var(--border-tree-line);
+      }
+      .tree-node:last-child::before,
+      .tree-artifact-wrapper:last-child::before {
+        height: 13px;
+      }
+      .tree-root > .tree-node::before,
+      .tree-root > .tree-artifact-wrapper::before {
+        display: none;
+      }
+      .tree-root > .tree-node > .node-content::before,
+      .tree-root > .tree-artifact-wrapper > .node-content::before {
+        display: none;
+      }
+
+      .node-content {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 2px 0;
+      }
+      .tree-children-container {
+        margin-left: 20px;
+      } /* Indent for children */
+      .tree-children-container.collapsed {
+        display: none;
+      }
+      .tree-toggle-icon {
+        cursor: pointer;
+        width: 1.25rem;
+        height: 1.25rem;
+        margin-right: 0.25rem;
+        color: var(--text-tertiary);
+        transition: transform 0.2s ease-in-out;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .tree-toggle-icon.collapsed svg {
+        transform: rotate(-90deg);
+      }
+
+      .tree-node-text,
+      .tree-artifact-text {
+        transition: color 0.2s ease-in-out;
+        display: flex;
+        align-items: center;
+        flex-grow: 1; /* Allow text to take available space */
+        min-width: 0; /* For text truncation if needed */
+      }
+      .tree-node-text span:not(.tree-toggle-icon),
+      .tree-artifact-text span {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .tree-node-text {
+        color: var(--text-primary);
+      }
+      .tree-artifact-text {
+        color: var(--text-tertiary);
+      }
+      .tree-artifact-text.clickable:hover {
+        color: var(--text-link-hover);
+        cursor: pointer;
+        text-decoration: underline;
+      }
+      .tree-node-icon {
+        color: var(--text-yellow-accent);
+        flex-shrink: 0;
+      }
+      .tree-artifact-icon {
+        color: var(--text-tertiary);
+        flex-shrink: 0;
+      }
+
+      .action-icon-btn {
+        color: var(--text-action-icon);
+        padding: 0.3rem;
+        border-radius: 0.25rem;
+        transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+        flex-shrink: 0; /* Prevent action icons from shrinking */
+      }
+      .action-icon-btn:hover {
+        color: var(--text-action-icon-hover);
+        background-color: var(--bg-action-icon-hover);
+      }
+      .action-icon-btn.add {
+        color: var(--text-green-accent);
+      }
+      .action-icon-btn.delete {
+        color: var(--text-red-accent);
+      }
+      .action-icon-btn.add:hover {
+        color: var(--text-green-accent);
+      }
+      .action-icon-btn.delete:hover {
+        color: var(--text-red-accent);
+      }
+
+      #theme-toggle-button {
+        background-color: var(--bg-card);
+        color: var(--text-secondary);
+        border: 1px solid var(--border-primary);
+      }
+      #theme-toggle-button:hover {
+        background-color: var(--bg-card-hover);
+        color: var(--text-primary);
+      }
+
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: var(--bg-modal-overlay);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+          visibility 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 1000;
+      }
+      .modal-overlay.active {
+        opacity: 1;
+        visibility: visible;
+      }
+      .modal-content {
+        background-color: var(--bg-modal-content);
+        padding: 2rem;
+        border-radius: 0.75rem;
+        box-shadow: var(--shadow-modal);
+        width: 90%;
+        max-width: 600px;
+        max-height: 90vh;
+        overflow-y: auto;
+        transform: scale(0.95) translateY(10px);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+          opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        opacity: 0;
+      }
+      .modal-overlay.active .modal-content {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+      }
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+      }
+      .modal-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-card-header);
+      }
+      .modal-close-btn {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: var(--text-tertiary);
+        transition: color 0.2s ease;
+      }
+      .modal-close-btn:hover {
+        color: var(--text-primary);
+      }
+
+      #search-tree-input {
+        width: 100%;
+        max-width: 400px;
+        padding: 0.6rem 1rem;
+        font-size: 0.9rem;
+      }
+      .header-controls {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+      .user-menu-container {
+        position: relative;
+      }
+      #user-menu-button {
+        background-color: var(--bg-card);
+        color: var(--text-secondary);
+        border: 1px solid var(--border-primary);
+        padding: 0.5rem 0.75rem;
+        border-radius: 0.375rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      #user-menu-button:hover {
+        background-color: var(--bg-card-hover);
+        color: var(--text-primary);
+      }
+      #user-dropdown-menu {
+        background-color: var(--bg-dropdown-menu);
+        border: 1px solid var(--border-dropdown-menu);
+        box-shadow: var(--shadow-dropdown);
+        z-index: 1010;
+      }
+      #user-dropdown-menu button:hover {
+        background-color: var(--bg-card-hover);
+        color: var(--text-dropdown-item-hover);
+      }
+      .hidden-node {
+        display: none !important;
+      }
+
+      #toast-container {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 2000;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      .toast {
+        padding: 1rem 1.5rem;
+        border-radius: 0.5rem;
+        color: var(--text-toast);
+        box-shadow: var(--shadow-toast);
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.3s ease, transform 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+      .toast.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .toast.success {
+        background-color: var(--bg-toast-success);
+        border: 1px solid var(--border-toast-success);
+      }
+      .toast.error {
+        background-color: var(--bg-toast-error);
+        border: 1px solid var(--border-toast-error);
+      }
+      .toast-icon {
+        flex-shrink: 0;
+      }
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="toast-container"></div>
+    <div class="container mx-auto p-4 md:p-8">
+      <header
+        class="mb-6 flex flex-col sm:flex-row justify-between items-center gap-4"
+      >
+        <div class="flex items-center">
+          <img
+            src="https://niveussolutions.com/wp-content/uploads/2025/02/Niveus-ntt-data.png"
+            alt="DocNest Logo"
+            class="h-10 w-auto mr-3"
+          />
+          <h1
+            class="text-4xl sm:text-5xl font-bold tracking-tight text-[var(--text-card-header)]"
+          >
+            DocNest
+          </h1>
+        </div>
+        <div class="header-controls flex items-center gap-4 ml-auto">
+          <input
+            type="search"
+            id="search-tree-input"
+            class="input-field flex-grow max-w-xs sm:max-w-sm md:max-w-md"
+            placeholder="Search folders/files..."
+          />
+          <button
+            id="theme-toggle-button"
+            class="p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--border-input-focus)] flex-shrink-0"
+            title="Toggle Theme"
+          ></button>
+          <div class="user-menu-container">
+            <button
+              id="user-menu-button"
+              type="button"
+              aria-expanded="false"
+              aria-haspopup="true"
+            >
+              <span id="user-display-name" class="text-sm font-medium"
+                >User</span
+              >
+              <svg
+                class="h-5 w-5 text-[var(--text-tertiary)]"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.25 4.25a.75.75 0 01-1.06 0L5.23 8.29a.75.75 0 01.02-1.06z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </button>
+            <div
+              id="user-dropdown-menu"
+              class="absolute right-0 mt-2 w-64 origin-top-right rounded-md bg-[var(--bg-dropdown-menu)] shadow-lg ring-1 ring-[var(--border-dropdown-menu)] ring-opacity-5 focus:outline-none hidden"
+              role="menu"
+              aria-orientation="vertical"
+              aria-labelledby="user-menu-button"
+            >
+              <div class="py-1" role="none">
+                <div class="px-4 py-3 border-b border-[var(--border-primary)]">
+                  <p
+                    class="text-sm font-semibold text-[var(--text-primary)]"
+                    id="dropdown-user-name"
+                  >
+                    User Name
+                  </p>
+                  <p
+                    class="text-xs text-[var(--text-secondary)] truncate"
+                    id="dropdown-user-email"
+                  >
+                    user@example.com
+                  </p>
+                </div>
+                <button
+                  id="logout-button-dropdown"
+                  class="block w-full px-4 py-2 text-left text-sm text-[var(--text-red-accent)] hover:bg-[var(--bg-card-hover)]"
+                  role="menuitem"
+                >
+                  Logout
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="grid grid-cols-1 gap-10">
+        <div class="card p-6 rounded-xl shadow-2xl">
+          <div class="flex justify-between items-center mb-5">
+            <h2 class="text-2xl card-header">📁 Knowledge Base Structure</h2>
+          </div>
+          <div id="tree-container">
+            <div id="tree" class="tree-root space-y-0.5">
+              <p class="p-4 text-[var(--text-secondary)]">
+                Loading structure...
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="artifact-details-modal" class="modal-overlay">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 id="artifact-modal-title" class="modal-title">
+            Artifact Details
+          </h3>
+          <button class="modal-close-btn" onclick="closeArtifactDetailsModal()">
+            &times;
+          </button>
+        </div>
+        <div class="mb-4">
+          <label class="label-text">Description:</label>
+          <div
+            id="artifact-details-modal-description"
+            class="p-3 border border-[var(--border-input)] rounded-md bg-[var(--bg-input)] text-sm min-h-[60px]"
+          >
+            No description provided.
+          </div>
+        </div>
+        <div class="mt-6 text-right space-x-3">
+          <a
+            id="artifact-modal-link"
+            href="#"
+            target="_blank"
+            class="submit-button inline-block"
+          >
+            Go to Resource
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-4 w-4 inline-block ml-1"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+              />
+            </svg>
+          </a>
+          <button
+            class="submit-button secondary"
+            onclick="closeArtifactDetailsModal()"
+          >
+            <span class="button-text">Close</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyCbHWUEzqGjzeanOiMG0Z5Lb4wIjWWEMUQ", // Replace with your actual API key
+        authDomain: "docnest-f85e2.firebaseapp.com",
+        projectId: "docnest-f85e2",
+        storageBucket: "docnest-f85e2.appspot.com",
+        messagingSenderId: "102395439437",
+        appId: "1:102395439437:web:84e6676388b5d54395af04",
+        measurementId: "G-YRMBR8BVSE",
+      };
+
+      window.showNotification = function (
+        message,
+        type = "success",
+        duration = 3000
+      ) {
+        const toastContainer = document.getElementById("toast-container");
+        if (!toastContainer) return;
+        const toast = document.createElement("div");
+        toast.classList.add("toast", type);
+        let iconHtml = "";
+        if (type === "success") {
+          iconHtml = `<svg class="toast-icon h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
+        } else if (type === "error") {
+          iconHtml = `<svg class="toast-icon h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
+        }
+        toast.innerHTML = `${iconHtml}<span>${message}</span>`;
+        toastContainer.appendChild(toast);
+        toast.offsetHeight;
+        toast.classList.add("show");
+        setTimeout(() => {
+          toast.classList.remove("show");
+          setTimeout(() => {
+            toast.remove();
+          }, 300);
+        }, duration);
+      };
+
+      window.setButtonLoading = function (
+        button,
+        isLoading,
+        originalText = null
+      ) {
+        if (!(button instanceof HTMLElement)) {
+          console.error("setButtonLoading: invalid button", button);
+          return;
+        }
+        const buttonTextSpan = button.querySelector(".button-text");
+        const defaultOriginal = buttonTextSpan
+          ? buttonTextSpan.dataset.originalText || buttonTextSpan.textContent
+          : button.dataset.originalText || button.textContent;
+
+        if (isLoading) {
+          button.disabled = true;
+          if (buttonTextSpan) {
+            if (originalText !== null && !buttonTextSpan.dataset.originalText)
+              buttonTextSpan.dataset.originalText = defaultOriginal;
+            buttonTextSpan.innerHTML = `<span class="spinner"></span>Processing...`;
+          } else {
+            if (originalText !== null && !button.dataset.originalText)
+              button.dataset.originalText = defaultOriginal;
+            button.innerHTML = `<span class="spinner"></span>Processing...`;
+          }
+        } else {
+          button.disabled = false;
+          if (buttonTextSpan) {
+            buttonTextSpan.innerHTML =
+              originalText || buttonTextSpan.dataset.originalText || "Submit";
+          } else {
+            button.innerHTML =
+              originalText || button.dataset.originalText || "Submit";
+          }
+        }
+      };
+
+      let firebaseApp;
+      let firebaseAuth;
+      if (
+        firebaseConfig.apiKey &&
+        firebaseConfig.apiKey !== "YOUR_FIREBASE_API_KEY"
+      ) {
+        // Basic check
+        try {
+          firebaseApp = firebase.initializeApp(firebaseConfig);
+          firebaseAuth = firebase.auth();
+        } catch (e) {
+          console.error("Error initializing Firebase:", e);
+          window.showNotification(
+            "Critical Error: Auth service init failed.",
+            "error",
+            10000
+          );
+        }
+      } else {
+        console.warn("Firebase config missing or placeholder.");
+        window.showNotification(
+          "Auth not configured. Please contact support.",
+          "error",
+          10000
+        );
+      }
+
+      const userMenuButton = document.getElementById("user-menu-button");
+      const userDisplayNameSpan = document.getElementById("user-display-name");
+      const userDropdownMenu = document.getElementById("user-dropdown-menu");
+      const dropdownUserName = document.getElementById("dropdown-user-name");
+      const dropdownUserEmail = document.getElementById("dropdown-user-email");
+      const logoutButtonDropdown = document.getElementById(
+        "logout-button-dropdown"
+      );
+
+      let currentUserRoles = [];
+
+      if (firebaseAuth) {
+        firebaseAuth.onAuthStateChanged(async (user) => {
+          if (user) {
+            console.log("✅ User Panel: Logged in as", user.email);
+            if (userDisplayNameSpan)
+              userDisplayNameSpan.textContent =
+                user.displayName || user.email.split("@")[0];
+            if (dropdownUserName)
+              dropdownUserName.textContent = user.displayName || "N/A";
+            if (dropdownUserEmail) dropdownUserEmail.textContent = user.email;
+            await fetchUserRolesAndInitialize();
+          } else {
+            console.log("🚫 User Panel: No user. Redirecting to login.");
+            sessionStorage.removeItem("token");
+            currentUserRoles = [];
+            window.location.href = "user_login.html";
+          }
+        });
+      } else {
+        if (!window.location.pathname.endsWith("user_login.html")) {
+          // Prevent redirect loop if on login page
+          console.error("Firebase Auth not initialized. Redirecting to login.");
+          window.showNotification(
+            "Authentication service unavailable. Redirecting...",
+            "error",
+            5000
+          );
+          setTimeout(() => {
+            window.location.href = "user_login.html";
+          }, 5000);
+        }
+      }
+
+      async function getAuthToken() {
+        const cachedToken = sessionStorage.getItem("token");
+        // If token exists from login page, use it, but Firebase SDK will manage refresh.
+        // For subsequent calls, always prefer SDK's currentUser.getIdToken for freshness.
+        if (!firebaseAuth || !firebaseAuth.currentUser) {
+          console.warn("No Firebase current user for token refresh.");
+          // If no user, signOut might have been called or session expired.
+          // onAuthStateChanged should handle redirect.
+          return null;
+        }
+        try {
+          const token = await firebaseAuth.currentUser.getIdToken(true); // Force refresh
+          sessionStorage.setItem("token", token); // Update sessionStorage too
+          return token;
+        } catch (error) {
+          console.error("Error getting ID token:", error);
+          window.showNotification(
+            "Session issue. Please try logging in again.",
+            "error"
+          );
+          if (firebaseAuth) firebaseAuth.signOut(); // Sign out if token refresh fails catastrophically
+          return null;
+        }
+      }
+
+      async function secureFetch(url, options = {}) {
+        const token = await getAuthToken();
+        if (!token) {
+          window.showNotification(
+            "Authentication failed. Please login.",
+            "error"
+          );
+          throw new Error("Auth token unavailable.");
+        }
+        const headers = {
+          ...options.headers,
+          Authorization: `Bearer ${token}`,
+        };
+        if (
+          !(options.body instanceof FormData) &&
+          options.method &&
+          options.method.toUpperCase() !== "GET"
+        ) {
+          headers["Content-Type"] = "application/json";
+        }
+        return fetch(url, { ...options, headers });
+      }
+
+      const BASE = "http://localhost:8000";
+      let fullTreeData = [];
+
+      const themeToggleButton = document.getElementById("theme-toggle-button");
+      const sunIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>`;
+      const moonIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>`;
+      function applyTheme(theme) {
+        if (theme === "light") {
+          document.body.classList.add("light-theme");
+          themeToggleButton.innerHTML = moonIcon;
+          localStorage.setItem("theme", "light");
+        } else {
+          document.body.classList.remove("light-theme");
+          themeToggleButton.innerHTML = sunIcon;
+          localStorage.setItem("theme", "dark");
+        }
+      }
+      themeToggleButton.addEventListener("click", () => {
+        applyTheme(
+          document.body.classList.contains("light-theme") ? "dark" : "light"
+        );
+      });
+      applyTheme(
+        localStorage.getItem("theme") ||
+          (window.matchMedia("(prefers-color-scheme: dark)").matches
+            ? "dark"
+            : "dark")
+      );
+
+      function escapeJSString(str) {
+        if (typeof str !== "string") return "";
+        return str
+          .replace(/\\/g, "\\\\")
+          .replace(/'/g, "\\'")
+          .replace(/"/g, '\\"')
+          .replace(/`/g, "\\`");
+      }
+
+      const searchTreeInput = document.getElementById("search-tree-input");
+      searchTreeInput.addEventListener("input", (e) => {
+        filterTreeDOM(e.target.value.toLowerCase());
+      });
+
+      function filterTreeDOM(searchTerm) {
+        const treeElement = document.getElementById("tree");
+        if (!treeElement) return;
+        function checkVisibility(element, term) {
+          let directMatch = (element.dataset.nodeName || "")
+            .toLowerCase()
+            .includes(term);
+          let childrenMatch = false;
+          if (element.classList.contains("tree-node")) {
+            const childrenContainer = element.querySelector(
+              ".tree-children-container"
+            );
+            if (childrenContainer) {
+              Array.from(childrenContainer.children).forEach((child) => {
+                if (checkVisibility(child, term)) childrenMatch = true;
+              });
+            }
+          }
+          const shouldBeVisible = directMatch || childrenMatch;
+          element.classList.toggle(
+            "hidden-node",
+            !shouldBeVisible && term.length > 0
+          );
+          if (
+            element.classList.contains("tree-node") &&
+            childrenMatch &&
+            !directMatch &&
+            term.length > 0
+          ) {
+            const nodeId = element.dataset.nodeId;
+            const childContainerEl = document.getElementById(
+              `children-${nodeId}`
+            );
+            if (childContainerEl?.classList.contains("collapsed"))
+              toggleTreeNode(nodeId, false); // Expand if child is visible
+          }
+          return shouldBeVisible;
+        }
+        Array.from(treeElement.children).forEach((node) =>
+          checkVisibility(node, searchTerm)
+        );
+      }
+
+      async function fetchUserRolesAndInitialize() {
+        try {
+          const response = await secureFetch(`${BASE}/api/auth`, {
+            method: "POST",
+          });
+          if (!response.ok) {
+            const errorData = await response
+              .json()
+              .catch(() => ({ detail: response.statusText }));
+            throw new Error(
+              errorData.detail ||
+                `Failed to fetch user roles (Status: ${response.status})`
+            );
+          }
+          const userData = await response.json();
+          currentUserRoles = userData.roles || []; // Expects roles: [{nodeId, role}, ...]
+          console.log("User roles fetched:", currentUserRoles);
+          initializeUserPanel();
+        } catch (error) {
+          console.error("Error fetching user roles:", error);
+          window.showNotification(
+            `Could not load user permissions: ${error.message}`,
+            "error",
+            6000
+          );
+          document.getElementById(
+            "tree"
+          ).innerHTML = `<p class="text-[var(--text-red-accent)] p-4">Error loading permissions. Tree view may be incomplete or unavailable.</p>`;
+        }
+      }
+
+      // --- Permission Helper Functions ---
+      function canPerformAction(nodeId, allowedRoles) {
+        const roleEntry = currentUserRoles.find(
+          (r) => String(r.nodeId) === String(nodeId)
+        );
+        return !!(roleEntry && allowedRoles.includes(roleEntry.role));
+      }
+      function canAddContentToNode(nodeId) {
+        return canPerformAction(nodeId, ["ADMIN", "EDITOR"]);
+      }
+      function canDeleteNode(nodeId) {
+        return canPerformAction(nodeId, ["ADMIN"]);
+      }
+      // For artifact deletion, typically tied to parent node's ADMIN/EDITOR rights.
+      // The deleteArtifact function will use the parent node ID for this check.
+      function canEditArtifactsInNode(parentNodeId) {
+        return canPerformAction(parentNodeId, ["ADMIN", "EDITOR"]);
+      }
+
+      async function fetchTree() {
+        try {
+          const res = await secureFetch(`${BASE}/api/tree`);
+          if (!res.ok)
+            throw new Error(
+              `HTTP error! status: ${res.status}. Ensure /api/tree filters by user permission.`
+            );
+          fullTreeData = await res.json();
+          document.getElementById("tree").innerHTML = renderTree(fullTreeData);
+        } catch (error) {
+          console.error("Failed to fetch tree:", error);
+          window.showNotification(
+            `Error loading structure: ${error.message}`,
+            "error",
+            6000
+          );
+          document.getElementById(
+            "tree"
+          ).innerHTML = `<p class="text-[var(--text-red-accent)] p-4">Error loading folder structure. Please ensure you have access and the service is available.</p>`;
+        }
+      }
+
+      function toggleTreeNode(nodeId, doToggle = true) {
+        const childrenContainer = document.getElementById(`children-${nodeId}`);
+        const toggleIcon = document.getElementById(`toggle-icon-${nodeId}`);
+        if (childrenContainer && toggleIcon) {
+          let isCollapsed = childrenContainer.classList.contains("collapsed");
+          if (doToggle) isCollapsed = !isCollapsed;
+          else isCollapsed = false;
+
+          childrenContainer.classList.toggle("collapsed", isCollapsed);
+          toggleIcon.classList.toggle("collapsed", isCollapsed);
+          toggleIcon.innerHTML = isCollapsed
+            ? `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>`
+            : `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" /></svg>`;
+        }
+      }
+
+      function showInlineForm(parentId, buttonElement) {
+        const form = document.getElementById(`form-${parentId}`);
+        if (form) {
+          const isVisible = form.style.display === "block";
+          form.style.display = isVisible ? "none" : "block";
+          if (!isVisible) {
+            form.querySelector('input[type="text"], select')?.focus();
+            toggleFileInput(parentId);
+          }
+        }
+      }
+
+      function toggleFileInput(parentId) {
+        const typeSelect = document.getElementById(`type-${parentId}`);
+        const fileMethodOptionsDiv = document.getElementById(
+          `file-method-options-${parentId}`
+        );
+        const descriptionTextarea = document.getElementById(
+          `description-${parentId}`
+        );
+
+        if (typeSelect.value === "FILE") {
+          fileMethodOptionsDiv.style.display = "block";
+          descriptionTextarea.placeholder = "Description (Optional for File)";
+          document.getElementById(`file-source-${parentId}`).value = "link";
+          toggleLinkOrUpload(parentId);
+        } else {
+          fileMethodOptionsDiv.style.display = "none";
+          descriptionTextarea.placeholder = "Description (Optional for Folder)";
+        }
+      }
+
+      function toggleLinkOrUpload(parentId) {
+        const fileSource = document.getElementById(
+          `file-source-${parentId}`
+        ).value;
+        document.getElementById(
+          `link-input-container-${parentId}`
+        ).style.display = fileSource === "link" ? "block" : "none";
+        document.getElementById(
+          `upload-input-container-${parentId}`
+        ).style.display = fileSource === "upload" ? "block" : "none";
+      }
+
+      async function submitInlineForm(parentId, buttonElement) {
+        const nameInput = document.getElementById(`name-${parentId}`);
+        const typeSelect = document.getElementById(`type-${parentId}`);
+        const descriptionInput = document.getElementById(
+          `description-${parentId}`
+        );
+
+        const name = nameInput.value.trim();
+        const type = typeSelect.value;
+        const description = descriptionInput.value.trim();
+
+        const originalButtonText =
+          buttonElement.querySelector(".button-text")?.textContent ||
+          buttonElement.textContent;
+        window.setButtonLoading(buttonElement, true, originalButtonText);
+
+        if (!name) {
+          window.showNotification("Name is required.", "error");
+          window.setButtonLoading(buttonElement, false, originalButtonText);
+          return;
+        }
+
+        try {
+          let response;
+          let endpoint;
+          let payload = {};
+
+          if (type === "FILE") {
+            const fileSource = document.getElementById(
+              `file-source-${parentId}`
+            ).value;
+            payload = { title: name, description, nodeId: parentId }; // Ensure nodeId is integer if backend expects
+            if (fileSource === "link") {
+              const linkInput = document.getElementById(`link-${parentId}`);
+              const link = linkInput.value.trim();
+              if (!link) {
+                throw new Error("Link is required for file type 'link'.");
+              }
+              payload.link = link;
+              endpoint = `${BASE}/api/artifacts`;
+              response = await secureFetch(endpoint, {
+                method: "POST",
+                body: JSON.stringify(payload),
+              });
+              if (response.ok) linkInput.value = ""; // Clear on success
+            } else {
+              const fileUploadInput = document.getElementById(
+                `file-upload-${parentId}`
+              );
+              const file = fileUploadInput.files[0];
+              if (!file) {
+                throw new Error("Please select a file to upload.");
+              }
+              const formData = new FormData();
+              formData.append("file", file);
+              formData.append("title", name);
+              formData.append("description", description);
+              formData.append("nodeId", String(parentId));
+              endpoint = `${BASE}/api/upload`;
+              response = await secureFetch(endpoint, {
+                method: "POST",
+                body: formData,
+              });
+              if (response.ok) fileUploadInput.value = null; // Clear on success
+            }
+          } else {
+            payload = { name, type: "FOLDER", parentId: parentId, description };
+            endpoint = `${BASE}/api/nodes`;
+            response = await secureFetch(endpoint, {
+              method: "POST",
+              body: JSON.stringify(payload),
+            });
+          }
+
+          if (!response.ok) {
+            const errorData = await response
+              .json()
+              .catch(() => ({ detail: response.statusText }));
+            throw new Error(
+              errorData.detail ||
+                `Failed to add item (Status: ${response.status})`
+            );
+          }
+          window.showNotification("Item added successfully! ✅", "success");
+
+          nameInput.value = ""; // Clear common fields
+          descriptionInput.value = "";
+          typeSelect.value = "SUBFOLDER"; // Reset type select if needed
+          document.getElementById(`form-${parentId}`).style.display = "none";
+          toggleFileInput(parentId); // Reset file/link visibility
+
+          fetchTree(); // Refresh tree
+        } catch (error) {
+          console.error("Error submitting inline form:", error);
+          window.showNotification(`Error: ${error.message}`, "error");
+        } finally {
+          window.setButtonLoading(buttonElement, false, originalButtonText);
+        }
+      }
+
+      async function deleteNode(nodeId) {
+        if (
+          !confirm(
+            "Are you sure you want to delete this folder and all its contents? This action cannot be undone."
+          )
+        )
+          return;
+        try {
+          const response = await secureFetch(`${BASE}/api/nodes/${nodeId}`, {
+            method: "DELETE",
+          });
+          if (!response.ok) {
+            const errorData = await response
+              .json()
+              .catch(() => ({ detail: response.statusText }));
+            throw new Error(
+              errorData.detail ||
+                "Failed to delete folder. Ensure you have permission."
+            );
+          }
+          window.showNotification("Folder deleted successfully. ✅", "success");
+          fetchTree();
+        } catch (error) {
+          console.error("Error deleting node:", error);
+          window.showNotification(`Error: ${error.message}`, "error");
+        }
+      }
+
+      async function deleteArtifact(artifactId, parentNodeId) {
+        // parentNodeId is passed to potentially re-check permissions or for context,
+        // but primary permission check should be on backend using artifactId
+        if (
+          !confirm(
+            "Are you sure you want to delete this file? This action cannot be undone."
+          )
+        )
+          return;
+        try {
+          const response = await secureFetch(
+            `${BASE}/api/artifacts/${artifactId}`,
+            { method: "DELETE" }
+          );
+          if (!response.ok) {
+            const errorData = await response
+              .json()
+              .catch(() => ({ detail: response.statusText }));
+            throw new Error(
+              errorData.detail ||
+                "Failed to delete file. Ensure you have permission."
+            );
+          }
+          window.showNotification("File deleted successfully. ✅", "success");
+          fetchTree();
+        } catch (error) {
+          console.error("Error deleting artifact:", error);
+          window.showNotification(`Error: ${error.message}`, "error");
+        }
+      }
+
+      function renderTree(nodes) {
+        return nodes
+          .map((n) => {
+            const hasChildren =
+              (n.children && n.children.length > 0) ||
+              (n.artifacts && n.artifacts.length > 0);
+            const userCanAdd = canAddContentToNode(n.id);
+            const userCanDeleteCurrentNode = canDeleteNode(n.id);
+
+            let actionsHTML = "";
+            if (userCanAdd || userCanDeleteCurrentNode) {
+              actionsHTML = `<div class="actions opacity-0 group-hover:opacity-100 transition-opacity space-x-1">`;
+              if (userCanAdd) {
+                actionsHTML += `<button title="Add item to this folder" class="action-icon-btn add" onclick="event.stopPropagation(); showInlineForm(${n.id}, this)">
+                                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                    </button>`;
+              }
+              // Assuming VERTICAL nodes (root folders) have special deletion rules or are admin-only to delete from admin panel
+              if (
+                userCanDeleteCurrentNode &&
+                n.type !== "VERTICAL" &&
+                n.parentId !== null
+              ) {
+                actionsHTML += `<button title="Delete folder" class="action-icon-btn delete" onclick="event.stopPropagation(); deleteNode(${n.id})">
+                                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                    </button>`;
+              }
+              actionsHTML += `</div>`;
+            }
+
+            const inlineFormHTML = userCanAdd
+              ? `
+                <div id="form-${n.id}" class="form-inline mt-2 ml-5 p-4 bg-[var(--bg-inline-form)] rounded-lg border border-[var(--border-primary)] shadow-md" style="display:none;">
+                    <form onsubmit="event.preventDefault(); submitInlineForm(${n.id}, this.querySelector('button[type=submit]'))">
+                        <input type="text" placeholder="Name (Folder/File)" id="name-${n.id}" class="input-field text-sm">
+                        <select id="type-${n.id}" class="input-field text-sm" onchange="toggleFileInput(${n.id})">
+                            <option value="SUBFOLDER">SUBFOLDER</option>
+                            <option value="FILE">FILE</option>
+                        </select>
+                        <textarea placeholder="Description (Optional)" id="description-${n.id}" class="input-field text-sm" rows="2"></textarea>
+                        <div id="file-method-options-${n.id}" style="display:none;">
+                            <div class="mb-2">
+                                <label class="label-text text-xs">File Source:</label>
+                                <select id="file-source-${n.id}" class="input-field text-xs py-1" onchange="toggleLinkOrUpload(${n.id})">
+                                    <option value="link">Enter Link</option>
+                                    <option value="upload">Upload File</option>
+                                </select>
+                            </div>
+                            <div id="link-input-container-${n.id}"><input type="text" placeholder="Link (e.g., https://...)" id="link-${n.id}" class="input-field text-sm"></div>
+                            <div id="upload-input-container-${n.id}" style="display:none;"><input type="file" id="file-upload-${n.id}" class="input-field text-sm p-2"></div>
+                        </div>
+                        <button type="submit" class="submit-button text-sm w-full py-2 mt-2">
+                            <span class="button-text">Add Item</span>
+                        </button>
+                    </form>
+                </div>`
+              : "";
+
+            const childrenHTML = n.children ? renderTree(n.children) : "";
+            const artifactsHTML = n.artifacts
+              ? n.artifacts
+                  .map((a) => {
+                    const titleContent = escapeJSString(a.title);
+                    const descriptionContent = escapeJSString(
+                      a.description || ""
+                    );
+                    const linkContent = escapeJSString(a.link || "#");
+                    const userCanDeleteThisArtifact = canEditArtifactsInNode(
+                      n.id
+                    ); // Use parent node ID for artifact edit/delete rights
+
+                    let artifactActionsHTML = "";
+                    if (userCanDeleteThisArtifact) {
+                      artifactActionsHTML = `<div class="actions opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <button title="Delete file" class="action-icon-btn delete" onclick="event.stopPropagation(); deleteArtifact(${a.id}, ${n.id})">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                        </button>
+                                      </div>`;
+                    }
+
+                    return `
+                <div class="tree-artifact-wrapper artifact-item" data-artifact-id="${a.id}" data-node-name="${titleContent}" data-node-type="ARTIFACT" data-parent-node-id="${n.id}">
+                  <div class="node-content group hover:bg-[var(--bg-card-hover)] rounded-md px-1 py-0.5">
+                    <span class="tree-artifact-text clickable flex items-center text-sm" title="View details for: ${titleContent}" onclick="showArtifactDetailsModal('${titleContent}', '${descriptionContent}', '${linkContent}')">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 tree-artifact-icon flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+                      <span>${titleContent}</span>
+                    </span>
+                    ${artifactActionsHTML}
+                  </div>
+                </div>`;
+                  })
+                  .join("")
+              : "";
+
+            return `
+              <div class="tree-node node-item" data-node-id="${
+                n.id
+              }" data-node-name="${escapeJSString(n.name)}" data-node-type="${
+              n.type || "NODE"
+            }">
+                <div class="node-content group hover:bg-[var(--bg-card-hover)] rounded-md px-1 py-0.5">
+                  <span class="font-medium tree-node-text cursor-pointer flex items-center" onclick="toggleTreeNode(${
+                    n.id
+                  })">
+                    ${
+                      hasChildren
+                        ? `<span id="toggle-icon-${n.id}" class="tree-toggle-icon"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" /></svg></span>`
+                        : '<span class="tree-toggle-icon"></span>'
+                    }
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1 tree-node-icon flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" /></svg>
+                    <span>${escapeJSString(n.name)}</span>
+                  </span>
+                  ${actionsHTML}
+                </div>
+                ${inlineFormHTML}
+                <div class="tree-children-container collapsed" id="children-${
+                  n.id
+                }">
+                  ${childrenHTML}
+                  ${artifactsHTML}
+                </div>
+              </div>`;
+          })
+          .join("");
+      }
+
+      function showArtifactDetailsModal(title, description, link) {
+        const modal = document.getElementById("artifact-details-modal");
+        document.getElementById("artifact-modal-title").textContent =
+          title || "Artifact Details";
+        document.getElementById(
+          "artifact-details-modal-description"
+        ).textContent = description || "No description provided.";
+        const linkEl = document.getElementById("artifact-modal-link");
+        let processedLink = link || "#";
+        if (
+          processedLink &&
+          !processedLink.startsWith("http://") &&
+          !processedLink.startsWith("https://") &&
+          processedLink !== "#"
+        ) {
+          processedLink = `https://${processedLink}`;
+        }
+        linkEl.href = processedLink;
+        if (!link || link === "#") {
+          linkEl.classList.add("opacity-50", "cursor-not-allowed");
+          linkEl.removeAttribute("target");
+          linkEl.onclick = (e) => e.preventDefault();
+        } else {
+          linkEl.classList.remove("opacity-50", "cursor-not-allowed");
+          linkEl.setAttribute("target", "_blank");
+          linkEl.onclick = null;
+        }
+        modal.classList.add("active");
+      }
+
+      function closeArtifactDetailsModal() {
+        document
+          .getElementById("artifact-details-modal")
+          .classList.remove("active");
+      }
+
+      if (userMenuButton && userDropdownMenu) {
+        userMenuButton.addEventListener("click", () => {
+          const isExpanded =
+            userMenuButton.getAttribute("aria-expanded") === "true";
+          userMenuButton.setAttribute("aria-expanded", String(!isExpanded));
+          userDropdownMenu.classList.toggle("hidden");
+        });
+        document.addEventListener("click", (event) => {
+          if (
+            userMenuButton &&
+            userDropdownMenu &&
+            !userMenuButton.contains(event.target) &&
+            !userDropdownMenu.contains(event.target)
+          ) {
+            userDropdownMenu.classList.add("hidden");
+            userMenuButton.setAttribute("aria-expanded", "false");
+          }
+        });
+      }
+      if (logoutButtonDropdown) {
+        logoutButtonDropdown.addEventListener("click", async () => {
+          if (firebaseAuth) {
+            try {
+              await firebaseAuth.signOut();
+              sessionStorage.removeItem("token");
+              window.showNotification("Logged out successfully.", "success");
+            } catch (error) {
+              console.error("Error signing out:", error);
+              window.showNotification(
+                "Logout failed. Please try again.",
+                "error"
+              );
+            }
+          }
+        });
+      }
+
+      function initializeUserPanel() {
+        console.log(
+          "Initializing User Panel data with roles:",
+          currentUserRoles
+        );
+        fetchTree();
+      }
+    </script>
+  </body>
+</html>

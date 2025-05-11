@@ -1101,11 +1101,11 @@
               "🚫 Admin Panel: No user logged in. Redirecting to login page."
             );
             sessionStorage.removeItem("token");
-            window.location.href = "login.html";
+            window.location.href = "login_admin.html";
           }
         });
       } else {
-        if (!window.location.pathname.endsWith("login.html")) {
+        if (!window.location.pathname.endsWith("login_admin.html")) {
           console.error(
             "Firebase Auth not initialized. Likely due to missing/incorrect config. Redirecting to login."
           );
