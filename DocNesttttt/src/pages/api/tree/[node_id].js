@@ -1,5 +1,5 @@
-import { db } from "../../../lib/db.js";
-import { getUserFromToken } from "../../../lib/auth.js";
+import { db } from "../../../../lib/db.js";
+import { getUserFromToken } from "../../../../lib/auth.js";
 
 function buildTree(flatNodes) {
   const nodeMap = {};
