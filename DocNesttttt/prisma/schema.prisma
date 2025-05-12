@@ -1,0 +1,61 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Node {
+  id        Int       @id @default(autoincrement())
+  name      String
+  type      String
+  parentId  Int?
+  parent    Node?     @relation("NodeParent", fields: [parentId], references: [id])
+  children  Node[]    @relation("NodeParent")
+  artifacts Artifact[]
+  access    Access[]
+  createdAt DateTime  @default(now())
+}
+
+model Artifact {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  link        String
+  nodeId      Int
+  node        Node     @relation(fields: [nodeId], references: [id])
+  createdBy   Int
+  creator     User     @relation(fields: [createdBy], references: [id], name: "UserArtifacts")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  access      Access[]
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  email     String    @unique
+  name      String?
+  access    Access[]
+  artifacts Artifact[] @relation("UserArtifacts")
+}
+
+model Access {
+  id         Int       @id @default(autoincrement())
+  userId     Int
+  nodeId     Int?
+  artifactId Int?
+  role       AccessRole
+  user       User      @relation(fields: [userId], references: [id])
+  node       Node?     @relation(fields: [nodeId], references: [id])
+  artifact   Artifact? @relation(fields: [artifactId], references: [id])
+
+  @@unique([userId, nodeId, artifactId])
+}
+
+enum AccessRole {
+  ADMIN
+  EDITOR
+  VIEWER
+}

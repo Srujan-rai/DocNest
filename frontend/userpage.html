@@ -6,7 +6,7 @@
     <title>DocNest - My Knowledge Base</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
@@ -14,134 +14,147 @@
 
     <style>
       :root {
-        /* Dark Theme (Default) */
-        --bg-primary: #0a0a0a;
-        --bg-card: #1a1a1a;
-        --bg-card-hover: #222222;
-        --bg-input: #2d2d2d;
-        --bg-input-readonly: #383838;
-        --bg-button-primary: #f0f0f0;
-        --bg-button-primary-hover: #ffffff;
-        --bg-button-destructive: #c53030;
-        --bg-button-destructive-hover: #b02a2a;
-        --bg-button-secondary: #4a5568;
-        --bg-button-secondary-hover: #2d3748;
-        --bg-action-icon-hover: #333;
-        --bg-inline-form: rgba(42, 42, 42, 0.85);
-        --bg-selected-node: #2a2a2a;
-        --bg-modal-overlay: rgba(0, 0, 0, 0.7);
+        /* Dark Theme (Enhanced) */
+        --bg-primary: #111827; /* Slightly richer dark blue-gray */
+        --bg-card: #1f2937; /* Darker blue-gray for cards */
+        --bg-card-hover: #374151; /* Slightly lighter for hover */
+        --bg-input: #374151;
+        --bg-input-readonly: #4b5563;
+        --bg-button-primary: #3b82f6; /* Vibrant blue for primary actions */
+        --bg-button-primary-hover: #2563eb;
+        --bg-button-destructive: #ef4444;
+        --bg-button-destructive-hover: #dc2626;
+        --bg-button-secondary: #4b5563; /* Gray for secondary */
+        --bg-button-secondary-hover: #6b7280;
+        --bg-action-icon-hover: #4b5563;
+        --bg-inline-form: #1f2937;
+        --bg-modal-overlay: rgba(0, 0, 0, 0.75);
         --bg-modal-content: #1f2937;
-        --bg-toast-success: #2f5c3b;
-        --bg-toast-error: #5c2f2f;
+        --bg-toast-success: #10b981; /* Emerald */
+        --bg-toast-error: #f43f5e; /* Rose */
         --bg-dropdown-menu: var(--bg-card);
+        --bg-breadcrumb: #1f2937; /* Consistent with cards */
+        --bg-breadcrumb-hover: #374151;
 
-        --text-primary: #e0e0e0;
-        --text-secondary: #bbb;
-        --text-tertiary: #999;
-        --text-placeholder: #888;
-        --text-button-primary: #111;
+        --text-primary: #f3f4f6; /* Lighter gray for primary text */
+        --text-secondary: #9ca3af; /* Medium gray */
+        --text-tertiary: #6b7280; /* Darker gray */
+        --text-placeholder: #9ca3af;
+        --text-button-primary: #ffffff;
         --text-button-destructive: #ffffff;
-        --text-button-secondary: #e2e8f0;
-        --text-card-header: #f0f0f0;
-        --text-link-hover: #0095ff;
-        --text-action-icon: #999;
-        --text-action-icon-hover: #ffffff;
-        --text-green-accent: #4ade80;
-        --text-red-accent: #f87171;
-        --text-yellow-accent: #facc15;
+        --text-button-secondary: #f3f4f6;
+        --text-card-header: #e5e7eb;
+        --text-link: #60a5fa;
+        --text-link-hover: #93c5fd;
+        --text-action-icon: #9ca3af;
+        --text-action-icon-hover: #e5e7eb;
+        --text-green-accent: #34d399; /* Emerald for icons */
+        --text-red-accent: #f87171; /* Red for icons */
+        --text-yellow-accent: #f59e0b; /* Amber for folder icons */
+        --text-blue-accent: #60a5fa; /* Blue for file icons */
         --text-toast: #ffffff;
         --text-dropdown-item-hover: var(--text-link-hover);
 
-        --border-primary: #333;
-        --border-input: #555;
-        --border-input-focus: #007acc;
-        --border-button-primary: #ccc; /* Used for inline form button */
-        --border-button-primary-hover: #bbb; /* Used for inline form button hover */
-        --border-button-destructive: #a02828;
-        --border-button-secondary: #4a5568;
-        --border-selected-node: #007acc;
-        --border-tree-children: rgba(107, 114, 128, 0.3);
-        --border-tree-line: #444;
-        --border-preview: #555;
-        --border-toast-success: #38a169;
-        --border-toast-error: #e53e3e;
+        --border-primary: #374151; /* Softer border */
+        --border-card: #4b5563;
+        --border-input: #4b5563;
+        --border-input-focus: var(--text-link);
+        --border-button-primary: transparent; /* Modern buttons often don't have borders */
+        --border-button-primary-hover: transparent;
+        --border-button-destructive: transparent;
+        --border-button-secondary: var(--border-primary);
+        --border-preview: #4b5563;
+        --border-toast-success: #059669;
+        --border-toast-error: #e11d48;
         --border-dropdown-menu: var(--border-primary);
+        --border-breadcrumb: var(--border-primary);
 
-        --shadow-card: 0 8px 20px rgba(0, 0, 0, 0.3);
-        --shadow-input-focus: 0 0 0 3px rgba(0, 122, 204, 0.3);
-        --shadow-selected-node: inset 2px 0 0 var(--border-selected-node);
-        --shadow-modal: 0 10px 25px rgba(0, 0, 0, 0.5);
-        --shadow-toast: 0 4px 12px rgba(0, 0, 0, 0.4);
-        --shadow-dropdown: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-          0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --shadow-card-item: 0 4px 6px -1px rgba(0, 0, 0, 0.3),
+          0 2px 4px -2px rgba(0, 0, 0, 0.3);
+        --shadow-card: 0 10px 15px -3px rgba(0, 0, 0, 0.3),
+          0 4px 6px -4px rgba(0, 0, 0, 0.3);
+        --shadow-input-focus: 0 0 0 2px var(--text-link); /* Softer focus ring */
+        --shadow-modal: 0 20px 25px -5px rgba(0, 0, 0, 0.4),
+          0 8px 10px -6px rgba(0, 0, 0, 0.4);
+        --shadow-toast: 0 4px 12px rgba(0, 0, 0, 0.5);
+        --shadow-dropdown: 0 10px 15px -3px rgba(0, 0, 0, 0.2),
+          0 4px 6px -2px rgba(0, 0, 0, 0.1);
 
-        --scrollbar-thumb: #4a4a4a;
-        --scrollbar-track: #1e1e1e;
+        --scrollbar-thumb: #4b5563;
+        --scrollbar-track: #1f2937;
       }
 
       .light-theme {
-        --bg-primary: #f4f4f5;
+        --bg-primary: #f9fafb; /* Very light gray */
         --bg-card: #ffffff;
-        --bg-card-hover: #f9fafb;
+        --bg-card-hover: #f3f4f6; /* Slightly off-white for hover */
         --bg-input: #ffffff;
         --bg-input-readonly: #e5e7eb;
-        --bg-button-primary: #27272a;
-        --bg-button-primary-hover: #18181b;
+        --bg-button-primary: #2563eb; /* Stronger blue for primary */
+        --bg-button-primary-hover: #1d4ed8;
         --bg-button-destructive: #ef4444;
         --bg-button-destructive-hover: #dc2626;
-        --bg-button-secondary: #e5e7eb;
+        --bg-button-secondary: #e5e7eb; /* Light gray for secondary */
         --bg-button-secondary-hover: #d1d5db;
         --bg-action-icon-hover: #e5e7eb;
-        --bg-inline-form: rgba(243, 244, 246, 0.9);
-        --bg-selected-node: #dbeafe;
-        --bg-modal-overlay: rgba(0, 0, 0, 0.3);
+        --bg-inline-form: #f9fafb;
+        --bg-modal-overlay: rgba(
+          17,
+          24,
+          39,
+          0.6
+        ); /* Darker overlay for better contrast */
         --bg-modal-content: #ffffff;
-        --bg-toast-success: #c6f6d5;
-        --bg-toast-error: #fed7d7;
+        --bg-toast-success: #ecfdf5; /* Lighter green bg */
+        --bg-toast-error: #fff1f2; /* Lighter red bg */
         --bg-dropdown-menu: var(--bg-card);
+        --bg-breadcrumb: #ffffff;
+        --bg-breadcrumb-hover: #f3f4f6;
 
-        --text-primary: #18181b;
-        --text-secondary: #52525b;
-        --text-tertiary: #71717a;
-        --text-placeholder: #a1a1aa;
+        --text-primary: #1f2937; /* Dark gray for primary text */
+        --text-secondary: #4b5563; /* Medium gray */
+        --text-tertiary: #6b7280; /* Lighter gray */
+        --text-placeholder: #9ca3af;
         --text-button-primary: #ffffff;
         --text-button-destructive: #ffffff;
-        --text-button-secondary: #1f2937;
-        --text-card-header: #1f2937;
-        --text-link-hover: #2563eb;
-        --text-action-icon: #71717a;
-        --text-action-icon-hover: #18181b;
-        --text-green-accent: #16a34a;
-        --text-red-accent: #dc2626;
-        --text-yellow-accent: #ca8a04;
-        --text-toast: #1a202c;
-        --text-dropdown-item-hover: var(--text-link-hover);
+        --text-button-secondary: #374151; /* Darker text for light secondary button */
+        --text-card-header: #111827;
+        --text-link: #2563eb;
+        --text-link-hover: #1d4ed8;
+        --text-action-icon: #6b7280;
+        --text-action-icon-hover: #1f2937;
+        --text-green-accent: #059669;
+        --text-red-accent: #e11d48;
+        --text-yellow-accent: #f59e0b;
+        --text-blue-accent: #3b82f6;
+        --text-toast: #065f46; /* Darker green text for success toast */
+        --text-toast-error: #c2410c; /* Darker red text for error toast */
+        --text-dropdown-item-hover: var(--text-link);
 
-        --border-primary: #d1d5db;
+        --border-primary: #e5e7eb; /* Lighter border */
+        --border-card: #e5e7eb;
         --border-input: #d1d5db;
-        --border-input-focus: #2563eb;
-        --border-button-primary: #27272a;
-        --border-button-primary-hover: #18181b;
-        --border-button-destructive: #ef4444;
+        --border-input-focus: var(--text-link);
         --border-button-secondary: #d1d5db;
-        --border-selected-node: #2563eb;
-        --border-tree-children: rgba(209, 213, 219, 0.5);
-        --border-tree-line: #ccc;
-        --border-preview: #d1d5db;
-        --border-toast-success: #68d391;
-        --border-toast-error: #fc8181;
+        --border-preview: #e5e7eb;
+        --border-toast-success: #6ee7b7;
+        --border-toast-error: #fda4af;
         --border-dropdown-menu: var(--border-primary);
+        --border-breadcrumb: var(--border-primary);
 
-        --shadow-card: 0 4px 15px rgba(0, 0, 0, 0.07);
-        --shadow-input-focus: 0 0 0 3px rgba(37, 99, 235, 0.2);
-        --shadow-selected-node: inset 2px 0 0 var(--border-selected-node);
-        --shadow-modal: 0 10px 25px rgba(0, 0, 0, 0.1);
-        --shadow-toast: 0 4px 12px rgba(0, 0, 0, 0.15);
-        --shadow-dropdown: 0 4px 6px -1px rgba(0, 0, 0, 0.07),
-          0 2px 4px -1px rgba(0, 0, 0, 0.04);
+        --shadow-card-item: 0 4px 6px -1px rgba(0, 0, 0, 0.07),
+          0 2px 4px -2px rgba(0, 0, 0, 0.07);
+        --shadow-card: 0 10px 15px -3px rgba(0, 0, 0, 0.07),
+          0 4px 6px -4px rgba(0, 0, 0, 0.07);
+        --shadow-input-focus: 0 0 0 2px var(--text-link);
+        --shadow-modal: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+          0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        --shadow-toast: 0 4px 12px rgba(0, 0, 0, 0.1);
+        --shadow-dropdown: 0 10px 15px -3px rgba(0, 0, 0, 0.05),
+          0 4px 6px -2px rgba(0, 0, 0, 0.05);
 
-        --scrollbar-thumb: #a1a1aa;
-        --scrollbar-track: #e5e7eb;
+        --scrollbar-thumb: #d1d5db;
+        --scrollbar-track: #f3f4f6;
       }
 
       body {
@@ -149,73 +162,200 @@
         background-color: var(--bg-primary);
         color: var(--text-primary);
         transition: background-color 0.3s ease, color 0.3s ease;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
       }
+
+      #folder-content-container {
+        display: grid;
+        grid-template-columns: repeat(
+          auto-fill,
+          minmax(260px, 1fr)
+        ); /* Slightly smaller min for more items */
+        gap: 1.25rem; /* Reduced gap slightly */
+      }
+
+      .item-card,
+      .search-result-card {
+        background-color: var(--bg-card);
+        border: 1px solid var(--border-card);
+        border-radius: 0.75rem; /* More rounded */
+        padding: 1.25rem;
+        display: flex;
+        flex-direction: column;
+        /* justify-content: space-between; -- Let content flow naturally */
+        transition: all 0.2s ease-in-out; /* Smoother all transitions */
+        box-shadow: var(--shadow-card-item);
+        cursor: pointer;
+        position: relative; /* For absolute positioned actions if needed */
+        min-height: 160px; /* Ensure cards have some min height */
+      }
+      .item-card:hover,
+      .search-result-card:hover {
+        transform: translateY(-5px) scale(1.02); /* More pronounced hover */
+        box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.2);
+        border-color: var(--text-link); /* Highlight border on hover */
+      }
+      .light-theme .item-card:hover,
+      .light-theme .search-result-card:hover {
+        box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.1);
+      }
+
+      .item-card-icon-wrapper {
+        /* Wrapper for icon */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 3rem; /* 48px */
+        height: 3rem; /* 48px */
+        border-radius: 0.5rem;
+        margin-bottom: 1rem;
+        background-color: rgba(127, 127, 127, 0.1); /* Subtle background */
+      }
+      .item-card-icon svg,
+      .search-result-icon svg {
+        width: 1.75rem; /* 28px */
+        height: 1.75rem;
+      }
+
+      .item-card-name,
+      .search-result-name {
+        font-weight: 600; /* Semibold */
+        font-size: 1.05rem; /* Slightly larger */
+        color: var(--text-primary);
+        margin-bottom: 0.375rem;
+        word-break: break-word;
+        line-height: 1.4;
+      }
+      .item-card-name .highlight,
+      .search-result-name .highlight {
+        background-color: var(--text-yellow-accent);
+        color: var(--bg-card) !important; /* Ensure contrast */
+        padding: 1px 3px;
+        border-radius: 3px;
+        font-weight: 700;
+      }
+      .light-theme .item-card-name .highlight,
+      .light-theme .search-result-name .highlight {
+        background-color: #fef9c3; /* Lighter yellow for highlight bg */
+        color: #713f12 !important; /* Darker text for highlight on light bg */
+      }
+
+      .item-card-type,
+      .search-result-type {
+        font-size: 0.8rem;
+        color: var(--text-tertiary);
+        margin-bottom: 0.75rem;
+      }
+      .search-result-path {
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+        margin-bottom: 0.5rem;
+        word-break: break-word;
+        line-height: 1.3;
+      }
+      .item-card-actions {
+        margin-top: auto;
+        padding-top: 1rem;
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.5rem;
+        opacity: 0;
+        transition: opacity 0.2s ease-in-out;
+      }
+      .item-card:hover .item-card-actions {
+        opacity: 1;
+      }
+
+      #breadcrumb-container {
+        background-color: transparent; /* Cleaner look */
+        padding: 0.5rem 0; /* Adjusted padding */
+        margin-bottom: 1.5rem;
+        border: none; /* Removed border */
+        border-bottom: 1px solid var(--border-primary); /* Underline instead */
+        border-radius: 0;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      .breadcrumb-item {
+        color: var(--text-link);
+        text-decoration: none;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: color 0.2s ease;
+      }
+      .breadcrumb-item:hover {
+        text-decoration: underline;
+        color: var(--text-link-hover);
+      }
+      .breadcrumb-separator {
+        margin: 0 0.6rem;
+        color: var(--text-tertiary);
+        font-size: 0.8rem;
+      }
+      .breadcrumb-current {
+        color: var(--text-primary);
+        font-weight: 500;
+        font-size: 0.9rem;
+      }
+      #add-item-form-container {
+        background-color: var(--bg-card); /* Match card bg */
+        padding: 1.5rem;
+        border-radius: 0.75rem; /* Match card radius */
+        margin-bottom: 2rem; /* More space */
+        border: 1px solid var(--border-card);
+        box-shadow: var(--shadow-card-item);
+      }
+      #current-folder-header h2 {
+        font-weight: 700; /* Bolder current folder name */
+      }
+
+      /* Other styles */
       .form-inline input,
       .form-inline select,
       .form-inline textarea {
         margin-bottom: 0.75rem;
       }
-      .node-item:hover .actions,
-      .artifact-item:hover .actions {
-        opacity: 1;
-      }
-      .actions {
-        transition: opacity 0.2s ease-in-out;
-      }
-      #tree-container,
       #artifact-details-modal-description {
-        max-height: 70vh;
+        max-height: 200px;
         overflow-y: auto;
         scrollbar-width: thin;
         scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
       }
-      #tree-container::-webkit-scrollbar,
       #artifact-details-modal-description::-webkit-scrollbar {
         width: 6px;
       }
-      #tree-container::-webkit-scrollbar-track,
       #artifact-details-modal-description::-webkit-scrollbar-track {
         background: var(--scrollbar-track);
       }
-      #tree-container::-webkit-scrollbar-thumb,
       #artifact-details-modal-description::-webkit-scrollbar-thumb {
         background-color: var(--scrollbar-thumb);
         border-radius: 3px;
       }
-      #artifact-details-modal-description {
-        max-height: 200px;
-      }
-
       .submit-button {
-        background-color: var(--bg-button-primary);
-        color: var(--text-button-primary);
-        font-weight: 600;
-        padding: 0.75rem 1.5rem;
-        border-radius: 0.375rem;
-        border: 1px solid var(--border-button-primary);
-        transition: background-color 0.2s ease-in-out,
-          transform 0.1s ease-in-out, border-color 0.2s ease-in-out;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        /* Refined button style */
+        font-weight: 500;
+        padding: 0.6rem 1.2rem;
+        border-radius: 0.5rem;
+        transition: all 0.2s ease-in-out;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1),
+          0 1px 2px -1px rgba(0, 0, 0, 0.1);
         display: inline-flex;
         align-items: center;
         justify-content: center;
+        border: 1px solid transparent; /* Default no border */
       }
-      .submit-button:hover {
+      .submit-button.primary {
+        background-color: var(--bg-button-primary);
+        color: var(--text-button-primary);
+      }
+      .submit-button.primary:hover {
         background-color: var(--bg-button-primary-hover);
-        border-color: var(--border-button-primary-hover);
-        transform: translateY(-1px);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+          0 2px 4px -1px rgba(0, 0, 0, 0.06);
       }
-      .submit-button:active {
-        transform: translateY(0px);
-      }
-      .submit-button.destructive {
-        background-color: var(--bg-button-destructive);
-        color: var(--text-button-destructive);
-        border-color: var(--border-button-destructive);
-      }
-      .submit-button.destructive:hover {
-        background-color: var(--bg-button-destructive-hover);
-      }
+
       .submit-button.secondary {
         background-color: var(--bg-button-secondary);
         color: var(--text-button-secondary);
@@ -224,60 +364,59 @@
       .submit-button.secondary:hover {
         background-color: var(--bg-button-secondary-hover);
       }
-      .submit-button:disabled {
-        opacity: 0.7;
-        cursor: not-allowed;
+
+      .submit-button.destructive {
+        background-color: var(--bg-button-destructive);
+        color: var(--text-button-destructive);
+      }
+      .submit-button.destructive:hover {
+        background-color: var(--bg-button-destructive-hover);
       }
 
+      .submit-button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
       .spinner {
         animation: spin 1s linear infinite;
-        border: 2px solid currentColor; /* currentColor will adapt to button's text color */
+        border: 2px solid currentColor;
         border-top-color: transparent;
         border-radius: 50%;
         width: 1em;
         height: 1em;
         margin-right: 0.5em;
       }
-      /* Specific spinner colors are handled by setButtonLoading if needed, or rely on currentColor */
 
       .input-field,
       textarea.input-field {
-        margin-top: 0.25rem;
-        display: block;
-        width: 100%;
-        border-radius: 0.375rem;
-        border: 1px solid var(--border-input);
         background-color: var(--bg-input);
         color: var(--text-primary);
-        padding: 0.75rem 1rem;
-        font-size: 0.875rem;
-        transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out,
-          background-color 0.2s ease;
+        border: 1px solid var(--border-input);
+        border-radius: 0.5rem; /* More rounded */
+        padding: 0.6rem 0.9rem; /* Adjusted padding */
       }
       textarea.input-field {
-        min-height: 60px;
+        min-height: 70px;
       }
       .input-field::placeholder,
       textarea.input-field::placeholder {
         color: var(--text-placeholder);
+        opacity: 0.8;
       }
       .input-field:focus,
       textarea.input-field:focus {
         border-color: var(--border-input-focus);
         outline: none;
         box-shadow: var(--shadow-input-focus);
-      }
-      .input-field.readonly {
-        background-color: var(--bg-input-readonly);
-        cursor: not-allowed;
-      }
+        background-color: var(--bg-card);
+      } /* Change bg on focus too */
 
       .label-text {
         display: block;
         font-size: 0.875rem;
         font-weight: 500;
         color: var(--text-secondary);
-        margin-bottom: 0.25rem;
+        margin-bottom: 0.375rem;
       }
       .card {
         background-color: var(--bg-card);
@@ -288,119 +427,20 @@
       }
       .card-header {
         color: var(--text-card-header);
-        font-weight: 600;
-      }
-
-      .tree-node,
-      .tree-artifact-wrapper {
-        position: relative;
-        padding-left: 20px;
-      }
-      .tree-node::before,
-      .tree-artifact-wrapper::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 8px;
-        width: 1px;
-        height: 100%;
-        background-color: var(--border-tree-line);
-      }
-      .tree-node > .node-content::before,
-      .tree-artifact-wrapper > .node-content::before {
-        content: "";
-        position: absolute;
-        top: 12px;
-        left: -11px; /* Adjusted for icon alignment */
-        width: 12px;
-        height: 1px;
-        background-color: var(--border-tree-line);
-      }
-      .tree-node:last-child::before,
-      .tree-artifact-wrapper:last-child::before {
-        height: 13px;
-      }
-      .tree-root > .tree-node::before,
-      .tree-root > .tree-artifact-wrapper::before {
-        display: none;
-      }
-      .tree-root > .tree-node > .node-content::before,
-      .tree-root > .tree-artifact-wrapper > .node-content::before {
-        display: none;
-      }
-
-      .node-content {
-        position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 2px 0;
-      }
-      .tree-children-container {
-        margin-left: 20px;
-      } /* Indent for children */
-      .tree-children-container.collapsed {
-        display: none;
-      }
-      .tree-toggle-icon {
-        cursor: pointer;
-        width: 1.25rem;
-        height: 1.25rem;
-        margin-right: 0.25rem;
-        color: var(--text-tertiary);
-        transition: transform 0.2s ease-in-out;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-      }
-      .tree-toggle-icon.collapsed svg {
-        transform: rotate(-90deg);
-      }
-
-      .tree-node-text,
-      .tree-artifact-text {
-        transition: color 0.2s ease-in-out;
-        display: flex;
-        align-items: center;
-        flex-grow: 1; /* Allow text to take available space */
-        min-width: 0; /* For text truncation if needed */
-      }
-      .tree-node-text span:not(.tree-toggle-icon),
-      .tree-artifact-text span {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-      .tree-node-text {
-        color: var(--text-primary);
-      }
-      .tree-artifact-text {
-        color: var(--text-tertiary);
-      }
-      .tree-artifact-text.clickable:hover {
-        color: var(--text-link-hover);
-        cursor: pointer;
-        text-decoration: underline;
-      }
-      .tree-node-icon {
-        color: var(--text-yellow-accent);
-        flex-shrink: 0;
-      }
-      .tree-artifact-icon {
-        color: var(--text-tertiary);
-        flex-shrink: 0;
-      }
+        font-weight: 700;
+      } /* Bolder card headers */
 
       .action-icon-btn {
         color: var(--text-action-icon);
-        padding: 0.3rem;
-        border-radius: 0.25rem;
-        transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
-        flex-shrink: 0; /* Prevent action icons from shrinking */
+        padding: 0.4rem;
+        border-radius: 0.375rem;
+        transition: all 0.2s ease-in-out;
+        flex-shrink: 0;
       }
       .action-icon-btn:hover {
         color: var(--text-action-icon-hover);
         background-color: var(--bg-action-icon-hover);
+        transform: scale(1.1);
       }
       .action-icon-btn.add {
         color: var(--text-green-accent);
@@ -408,23 +448,18 @@
       .action-icon-btn.delete {
         color: var(--text-red-accent);
       }
-      .action-icon-btn.add:hover {
-        color: var(--text-green-accent);
-      }
-      .action-icon-btn.delete:hover {
-        color: var(--text-red-accent);
-      }
 
       #theme-toggle-button {
         background-color: var(--bg-card);
         color: var(--text-secondary);
         border: 1px solid var(--border-primary);
+        padding: 0.5rem;
+        border-radius: 0.5rem;
       }
       #theme-toggle-button:hover {
         background-color: var(--bg-card-hover);
         color: var(--text-primary);
       }
-
       .modal-overlay {
         position: fixed;
         top: 0;
@@ -437,8 +472,7 @@
         justify-content: center;
         opacity: 0;
         visibility: hidden;
-        transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-          visibility 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        transition: opacity 0.3s ease, visibility 0.3s ease;
         z-index: 1000;
       }
       .modal-overlay.active {
@@ -455,8 +489,7 @@
         max-height: 90vh;
         overflow-y: auto;
         transform: scale(0.95) translateY(10px);
-        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-          opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        transition: transform 0.3s ease, opacity 0.3s ease;
         opacity: 0;
       }
       .modal-overlay.active .modal-content {
@@ -468,30 +501,46 @@
         justify-content: space-between;
         align-items: center;
         margin-bottom: 1.5rem;
+        border-bottom: 1px solid var(--border-primary);
+        padding-bottom: 1rem;
       }
       .modal-title {
-        font-size: 1.5rem;
+        font-size: 1.25rem;
         font-weight: 600;
         color: var(--text-card-header);
       }
       .modal-close-btn {
         background: none;
         border: none;
-        font-size: 1.5rem;
+        font-size: 1.75rem;
         cursor: pointer;
         color: var(--text-tertiary);
         transition: color 0.2s ease;
+        line-height: 1;
       }
       .modal-close-btn:hover {
         color: var(--text-primary);
       }
 
-      #search-tree-input {
+      #search-input-wrapper {
+        position: relative;
+      } /* For search icon */
+      #search-input {
         width: 100%;
         max-width: 400px;
         padding: 0.6rem 1rem;
         font-size: 0.9rem;
+        padding-left: 2.5rem; /* Space for icon */
       }
+      #search-input-icon {
+        position: absolute;
+        left: 0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-placeholder);
+        pointer-events: none;
+      }
+
       .header-controls {
         display: flex;
         align-items: center;
@@ -505,7 +554,7 @@
         color: var(--text-secondary);
         border: 1px solid var(--border-primary);
         padding: 0.5rem 0.75rem;
-        border-radius: 0.375rem;
+        border-radius: 0.5rem;
         display: flex;
         align-items: center;
         gap: 0.5rem;
@@ -519,15 +568,13 @@
         border: 1px solid var(--border-dropdown-menu);
         box-shadow: var(--shadow-dropdown);
         z-index: 1010;
+        border-radius: 0.5rem;
+        overflow: hidden;
       }
       #user-dropdown-menu button:hover {
         background-color: var(--bg-card-hover);
         color: var(--text-dropdown-item-hover);
       }
-      .hidden-node {
-        display: none !important;
-      }
-
       #toast-container {
         position: fixed;
         bottom: 20px;
@@ -535,8 +582,8 @@
         z-index: 2000;
         display: flex;
         flex-direction: column;
-        gap: 0.5rem;
-      }
+        gap: 0.75rem;
+      } /* Increased gap */
       .toast {
         padding: 1rem 1.5rem;
         border-radius: 0.5rem;
@@ -548,6 +595,8 @@
         display: flex;
         align-items: center;
         gap: 0.75rem;
+        border-width: 1px;
+        border-style: solid;
       }
       .toast.show {
         opacity: 1;
@@ -555,11 +604,19 @@
       }
       .toast.success {
         background-color: var(--bg-toast-success);
-        border: 1px solid var(--border-toast-success);
+        border-color: var(--border-toast-success);
+        color: var(--text-toast, #ffffff);
+      }
+      .light-theme .toast.success {
+        color: var(--text-toast, #065f46);
       }
       .toast.error {
         background-color: var(--bg-toast-error);
-        border: 1px solid var(--border-toast-error);
+        border-color: var(--border-toast-error);
+        color: var(--text-toast, #ffffff);
+      }
+      .light-theme .toast.error {
+        color: var(--text-toast-error, #c2410c);
       }
       .toast-icon {
         flex-shrink: 0;
@@ -578,7 +635,7 @@
     <div id="toast-container"></div>
     <div class="container mx-auto p-4 md:p-8">
       <header
-        class="mb-6 flex flex-col sm:flex-row justify-between items-center gap-4"
+        class="mb-8 flex flex-col sm:flex-row justify-between items-center gap-4 pb-6 border-b border-[var(--border-primary)]"
       >
         <div class="flex items-center">
           <img
@@ -587,21 +644,41 @@
             class="h-10 w-auto mr-3"
           />
           <h1
-            class="text-4xl sm:text-5xl font-bold tracking-tight text-[var(--text-card-header)]"
+            class="text-3xl sm:text-4xl font-extrabold tracking-tight text-[var(--text-card-header)]"
           >
             DocNest
           </h1>
         </div>
-        <div class="header-controls flex items-center gap-4 ml-auto">
-          <input
-            type="search"
-            id="search-tree-input"
-            class="input-field flex-grow max-w-xs sm:max-w-sm md:max-w-md"
-            placeholder="Search folders/files..."
-          />
+        <div class="header-controls flex items-center gap-3">
+          <div id="search-input-wrapper" class="relative">
+            <div
+              id="search-input-icon"
+              class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+            >
+              <svg
+                class="h-5 w-5 text-gray-400"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </div>
+            <input
+              type="search"
+              id="search-input"
+              class="input-field"
+              placeholder="Search knowledge base..."
+            />
+          </div>
           <button
             id="theme-toggle-button"
-            class="p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--border-input-focus)] flex-shrink-0"
+            class="p-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--border-input-focus)] flex-shrink-0"
             title="Toggle Theme"
           ></button>
           <div class="user-menu-container">
@@ -610,12 +687,13 @@
               type="button"
               aria-expanded="false"
               aria-haspopup="true"
+              class="p-2.5"
             >
               <span id="user-display-name" class="text-sm font-medium"
                 >User</span
               >
               <svg
-                class="h-5 w-5 text-[var(--text-tertiary)]"
+                class="h-5 w-5 text-[var(--text-tertiary)] ml-1"
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 20 20"
                 fill="currentColor"
@@ -652,7 +730,7 @@
                 </div>
                 <button
                   id="logout-button-dropdown"
-                  class="block w-full px-4 py-2 text-left text-sm text-[var(--text-red-accent)] hover:bg-[var(--bg-card-hover)]"
+                  class="block w-full px-4 py-2 text-left text-sm text-[var(--text-red-accent)] hover:bg-[var(--bg-card-hover)] hover:text-[var(--text-red-accent)]"
                   role="menuitem"
                 >
                   Logout
@@ -663,17 +741,56 @@
         </div>
       </header>
 
-      <div class="grid grid-cols-1 gap-10">
-        <div class="card p-6 rounded-xl shadow-2xl">
-          <div class="flex justify-between items-center mb-5">
-            <h2 class="text-2xl card-header">📁 Knowledge Base Structure</h2>
-          </div>
-          <div id="tree-container">
-            <div id="tree" class="tree-root space-y-0.5">
-              <p class="p-4 text-[var(--text-secondary)]">
-                Loading structure...
-              </p>
-            </div>
+      <div class="card p-6 sm:p-8 rounded-xl shadow-2xl">
+        <div id="breadcrumb-container" class="mb-6"></div>
+
+        <div
+          id="current-folder-header"
+          class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
+        >
+          <h2
+            id="current-folder-name"
+            class="text-2xl md:text-3xl font-bold text-[var(--text-card-header)]"
+          >
+            Knowledge Base
+          </h2>
+          <button
+            id="add-item-to-current-folder-button"
+            class="submit-button primary text-sm py-2 px-4 self-start sm:self-center"
+            style="display: none"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5 mr-2"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M12 4v16m8-8H4"
+              />
+            </svg>
+            <span class="button-text">Add Item Here</span>
+          </button>
+        </div>
+
+        <div
+          id="add-item-form-container"
+          class="form-inline mb-8 p-6"
+          style="display: none"
+        ></div>
+
+        <div id="folder-content-container" class="min-h-[300px] relative">
+          <div
+            id="loading-placeholder"
+            class="absolute inset-0 flex items-center justify-center text-center"
+          >
+            <p class="p-4 text-lg text-[var(--text-secondary)]">
+              Loading content...
+            </p>
           </div>
         </div>
       </div>
@@ -703,12 +820,12 @@
             id="artifact-modal-link"
             href="#"
             target="_blank"
-            class="submit-button inline-block"
+            class="submit-button primary inline-block"
           >
             Go to Resource
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              class="h-4 w-4 inline-block ml-1"
+              class="h-4 w-4 inline-block ml-1.5"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -742,6 +859,7 @@
         measurementId: "G-YRMBR8BVSE",
       };
 
+      // --- Global Helper Functions (Toast, Button Loading, Escape, Debounce) ---
       window.showNotification = function (
         message,
         type = "success",
@@ -753,9 +871,9 @@
         toast.classList.add("toast", type);
         let iconHtml = "";
         if (type === "success") {
-          iconHtml = `<svg class="toast-icon h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
+          iconHtml = `<svg class="toast-icon h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>`;
         } else if (type === "error") {
-          iconHtml = `<svg class="toast-icon h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
+          iconHtml = `<svg class="toast-icon h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.293-10.293a1 1 0 00-1.414 0L9 8.586l-.293-.293a1 1 0 10-1.414 1.414L7.586 10l-.293.293a1 1 0 101.414 1.414L9 11.414l.293.293a1 1 0 001.414-1.414L10.414 10l.293-.293a1 1 0 000-1.414z" clip-rule="evenodd" /></svg>`;
         }
         toast.innerHTML = `${iconHtml}<span>${message}</span>`;
         toastContainer.appendChild(toast);
@@ -768,7 +886,6 @@
           }, 300);
         }, duration);
       };
-
       window.setButtonLoading = function (
         button,
         isLoading,
@@ -786,11 +903,17 @@
         if (isLoading) {
           button.disabled = true;
           if (buttonTextSpan) {
-            if (originalText !== null && !buttonTextSpan.dataset.originalText)
+            if (
+              originalText !== null &&
+              typeof buttonTextSpan.dataset.originalText === "undefined"
+            )
               buttonTextSpan.dataset.originalText = defaultOriginal;
             buttonTextSpan.innerHTML = `<span class="spinner"></span>Processing...`;
           } else {
-            if (originalText !== null && !button.dataset.originalText)
+            if (
+              originalText !== null &&
+              typeof button.dataset.originalText === "undefined"
+            )
               button.dataset.originalText = defaultOriginal;
             button.innerHTML = `<span class="spinner"></span>Processing...`;
           }
@@ -805,14 +928,31 @@
           }
         }
       };
+      function escapeJSString(str) {
+        if (typeof str !== "string") return "";
+        return str
+          .replace(/\\/g, "\\\\")
+          .replace(/'/g, "\\'")
+          .replace(/"/g, '\\"')
+          .replace(/`/g, "\\`");
+      }
+      function debounce(func, delay) {
+        let timeoutId;
+        return function (...args) {
+          clearTimeout(timeoutId);
+          timeoutId = setTimeout(() => {
+            func.apply(this, args);
+          }, delay);
+        };
+      }
 
+      // --- Firebase Initialization ---
       let firebaseApp;
       let firebaseAuth;
       if (
         firebaseConfig.apiKey &&
         firebaseConfig.apiKey !== "YOUR_FIREBASE_API_KEY"
       ) {
-        // Basic check
         try {
           firebaseApp = firebase.initializeApp(firebaseConfig);
           firebaseAuth = firebase.auth();
@@ -833,6 +973,7 @@
         );
       }
 
+      // --- DOM Elements ---
       const userMenuButton = document.getElementById("user-menu-button");
       const userDisplayNameSpan = document.getElementById("user-display-name");
       const userDropdownMenu = document.getElementById("user-dropdown-menu");
@@ -841,67 +982,82 @@
       const logoutButtonDropdown = document.getElementById(
         "logout-button-dropdown"
       );
+      const searchInputElement = document.getElementById("search-input");
+      const breadcrumbContainer = document.getElementById(
+        "breadcrumb-container"
+      );
+      const folderContentContainer = document.getElementById(
+        "folder-content-container"
+      );
+      const addItemToFolderBtn = document.getElementById(
+        "add-item-to-current-folder-button"
+      );
+      const addItemFormContainer = document.getElementById(
+        "add-item-form-container"
+      );
+      const currentFolderNameEl = document.getElementById(
+        "current-folder-name"
+      );
+      const loadingPlaceholder = document.getElementById("loading-placeholder");
 
+      // --- Global State ---
       let currentUserRoles = [];
+      let fullTreeData = [];
+      let currentPath = [];
+      let currentViewNodeId = null;
+      let isSearchViewActive = false;
 
+      // --- Authentication & Authorization ---
       if (firebaseAuth) {
         firebaseAuth.onAuthStateChanged(async (user) => {
           if (user) {
-            console.log("✅ User Panel: Logged in as", user.email);
             if (userDisplayNameSpan)
               userDisplayNameSpan.textContent =
                 user.displayName || user.email.split("@")[0];
             if (dropdownUserName)
               dropdownUserName.textContent = user.displayName || "N/A";
             if (dropdownUserEmail) dropdownUserEmail.textContent = user.email;
-            await fetchUserRolesAndInitialize();
+            await loadInitialDataConcurrently();
           } else {
-            console.log("🚫 User Panel: No user. Redirecting to login.");
             sessionStorage.removeItem("token");
             currentUserRoles = [];
+            fullTreeData = [];
             window.location.href = "user_login.html";
           }
         });
       } else {
         if (!window.location.pathname.endsWith("user_login.html")) {
-          // Prevent redirect loop if on login page
-          console.error("Firebase Auth not initialized. Redirecting to login.");
-          window.showNotification(
-            "Authentication service unavailable. Redirecting...",
-            "error",
-            5000
-          );
+          console.error("Firebase Auth not initialized, redirecting to login.");
           setTimeout(() => {
             window.location.href = "user_login.html";
-          }, 5000);
+          }, 200);
         }
       }
 
       async function getAuthToken() {
-        const cachedToken = sessionStorage.getItem("token");
-        // If token exists from login page, use it, but Firebase SDK will manage refresh.
-        // For subsequent calls, always prefer SDK's currentUser.getIdToken for freshness.
         if (!firebaseAuth || !firebaseAuth.currentUser) {
-          console.warn("No Firebase current user for token refresh.");
-          // If no user, signOut might have been called or session expired.
-          // onAuthStateChanged should handle redirect.
+          console.warn("No Firebase current user for token request.");
           return null;
         }
         try {
-          const token = await firebaseAuth.currentUser.getIdToken(true); // Force refresh
-          sessionStorage.setItem("token", token); // Update sessionStorage too
+          const token = await firebaseAuth.currentUser.getIdToken(true);
+          sessionStorage.setItem("token", token);
           return token;
         } catch (error) {
           console.error("Error getting ID token:", error);
           window.showNotification(
-            "Session issue. Please try logging in again.",
+            "Session issue. Please log in again.",
             "error"
           );
-          if (firebaseAuth) firebaseAuth.signOut(); // Sign out if token refresh fails catastrophically
+          if (firebaseAuth)
+            firebaseAuth
+              .signOut()
+              .catch((e) =>
+                console.error("Signout failed after token error", e)
+              );
           return null;
         }
       }
-
       async function secureFetch(url, options = {}) {
         const token = await getAuthToken();
         if (!token) {
@@ -926,124 +1082,80 @@
       }
 
       const BASE = "http://localhost:8000";
-      let fullTreeData = [];
 
-      const themeToggleButton = document.getElementById("theme-toggle-button");
-      const sunIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>`;
-      const moonIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>`;
-      function applyTheme(theme) {
-        if (theme === "light") {
-          document.body.classList.add("light-theme");
-          themeToggleButton.innerHTML = moonIcon;
-          localStorage.setItem("theme", "light");
-        } else {
-          document.body.classList.remove("light-theme");
-          themeToggleButton.innerHTML = sunIcon;
-          localStorage.setItem("theme", "dark");
+      // --- Initial Data Loading (Parallel) ---
+      async function fetchRoles() {
+        const response = await secureFetch(`${BASE}/api/auth`, {
+          method: "POST",
+        });
+        if (!response.ok) {
+          const errorData = await response
+            .json()
+            .catch(() => ({
+              detail: `Roles fetch failed (Status: ${response.status})`,
+            }));
+          throw new Error(errorData.detail);
         }
-      }
-      themeToggleButton.addEventListener("click", () => {
-        applyTheme(
-          document.body.classList.contains("light-theme") ? "dark" : "light"
-        );
-      });
-      applyTheme(
-        localStorage.getItem("theme") ||
-          (window.matchMedia("(prefers-color-scheme: dark)").matches
-            ? "dark"
-            : "dark")
-      );
-
-      function escapeJSString(str) {
-        if (typeof str !== "string") return "";
-        return str
-          .replace(/\\/g, "\\\\")
-          .replace(/'/g, "\\'")
-          .replace(/"/g, '\\"')
-          .replace(/`/g, "\\`");
+        const userData = await response.json();
+        currentUserRoles = userData.roles || [];
+        console.log("User roles fetched:", currentUserRoles);
       }
 
-      const searchTreeInput = document.getElementById("search-tree-input");
-      searchTreeInput.addEventListener("input", (e) => {
-        filterTreeDOM(e.target.value.toLowerCase());
-      });
-
-      function filterTreeDOM(searchTerm) {
-        const treeElement = document.getElementById("tree");
-        if (!treeElement) return;
-        function checkVisibility(element, term) {
-          let directMatch = (element.dataset.nodeName || "")
-            .toLowerCase()
-            .includes(term);
-          let childrenMatch = false;
-          if (element.classList.contains("tree-node")) {
-            const childrenContainer = element.querySelector(
-              ".tree-children-container"
-            );
-            if (childrenContainer) {
-              Array.from(childrenContainer.children).forEach((child) => {
-                if (checkVisibility(child, term)) childrenMatch = true;
-              });
-            }
-          }
-          const shouldBeVisible = directMatch || childrenMatch;
-          element.classList.toggle(
-            "hidden-node",
-            !shouldBeVisible && term.length > 0
-          );
-          if (
-            element.classList.contains("tree-node") &&
-            childrenMatch &&
-            !directMatch &&
-            term.length > 0
-          ) {
-            const nodeId = element.dataset.nodeId;
-            const childContainerEl = document.getElementById(
-              `children-${nodeId}`
-            );
-            if (childContainerEl?.classList.contains("collapsed"))
-              toggleTreeNode(nodeId, false); // Expand if child is visible
-          }
-          return shouldBeVisible;
+      async function fetchTreeDataOnly() {
+        if (loadingPlaceholder && !isSearchViewActive) {
+          // Only show structure loading if not in search
+          loadingPlaceholder.innerHTML =
+            '<p class="p-4 text-lg text-[var(--text-secondary)]">Loading structure...</p>';
+          loadingPlaceholder.style.display = "flex"; // Changed to flex for centering
         }
-        Array.from(treeElement.children).forEach((node) =>
-          checkVisibility(node, searchTerm)
-        );
-      }
+        // folderContentContainer.innerHTML = ''; // Clear only when starting to fetch tree -- NO, let navigateToFolder handle this
 
-      async function fetchUserRolesAndInitialize() {
         try {
-          const response = await secureFetch(`${BASE}/api/auth`, {
-            method: "POST",
-          });
-          if (!response.ok) {
-            const errorData = await response
-              .json()
-              .catch(() => ({ detail: response.statusText }));
+          const res = await secureFetch(`${BASE}/api/tree`);
+          if (!res.ok)
             throw new Error(
-              errorData.detail ||
-                `Failed to fetch user roles (Status: ${response.status})`
+              `HTTP ${res.status}. Ensure /api/tree filters by user permission.`
             );
+          const data = await res.json();
+          if (!Array.isArray(data)) {
+            console.error("Fetched tree data is not an array:", data);
+            throw new Error("Received invalid tree structure from server.");
           }
-          const userData = await response.json();
-          currentUserRoles = userData.roles || []; // Expects roles: [{nodeId, role}, ...]
-          console.log("User roles fetched:", currentUserRoles);
-          initializeUserPanel();
+          fullTreeData = data;
+          console.log("Full tree data fetched:", fullTreeData);
         } catch (error) {
-          console.error("Error fetching user roles:", error);
-          window.showNotification(
-            `Could not load user permissions: ${error.message}`,
-            "error",
-            6000
-          );
-          document.getElementById(
-            "tree"
-          ).innerHTML = `<p class="text-[var(--text-red-accent)] p-4">Error loading permissions. Tree view may be incomplete or unavailable.</p>`;
+          console.error("Failed to fetch full tree:", error);
+          fullTreeData = [];
+          throw error;
         }
       }
 
-      // --- Permission Helper Functions ---
+      async function loadInitialDataConcurrently() {
+        if (loadingPlaceholder) {
+          loadingPlaceholder.innerHTML =
+            '<p class="p-4 text-lg text-[var(--text-secondary)]">Initializing...</p>';
+          loadingPlaceholder.style.display = "flex";
+        }
+        isSearchViewActive = false;
+
+        try {
+          await Promise.all([fetchRoles(), fetchTreeDataOnly()]);
+          navigateToFolder(null);
+        } catch (error) {
+          console.error("Error during initial data load:", error);
+          window.showNotification(
+            `Could not load page data: ${error.message || "Unknown error"}`,
+            "error",
+            7000
+          );
+          folderContentContainer.innerHTML = `<p class="text-[var(--text-red-accent)] p-4 text-center">Critical error loading initial page data. <br>Please try refreshing or contact support if the issue persists.</p>`;
+        } finally {
+          if (loadingPlaceholder) loadingPlaceholder.style.display = "none";
+        }
+      }
+
       function canPerformAction(nodeId, allowedRoles) {
+        if (nodeId === null || typeof nodeId === "undefined") return false;
         const roleEntry = currentUserRoles.find(
           (r) => String(r.nodeId) === String(nodeId)
         );
@@ -1055,104 +1167,336 @@
       function canDeleteNode(nodeId) {
         return canPerformAction(nodeId, ["ADMIN"]);
       }
-      // For artifact deletion, typically tied to parent node's ADMIN/EDITOR rights.
-      // The deleteArtifact function will use the parent node ID for this check.
       function canEditArtifactsInNode(parentNodeId) {
         return canPerformAction(parentNodeId, ["ADMIN", "EDITOR"]);
       }
 
-      async function fetchTree() {
-        try {
-          const res = await secureFetch(`${BASE}/api/tree`);
-          if (!res.ok)
-            throw new Error(
-              `HTTP error! status: ${res.status}. Ensure /api/tree filters by user permission.`
+      // --- Navigation and Rendering ---
+      function findNodeInTree(nodeId, nodesToSearch = fullTreeData) {
+        if (nodeId === null || typeof nodeId === "undefined") {
+          return {
+            id: null,
+            name: "Knowledge Base",
+            children: nodesToSearch,
+            artifacts: [],
+            type: "ROOT",
+          };
+        }
+        for (const node of nodesToSearch) {
+          if (String(node.id) === String(nodeId)) return node;
+          if (node.children && Array.isArray(node.children)) {
+            const found = findNodeInTree(nodeId, node.children);
+            if (found) return found;
+          }
+        }
+        return null;
+      }
+
+      function buildPathSegmentsRecursive(
+        targetNodeId,
+        nodesToSearch,
+        currentStack
+      ) {
+        for (const node of nodesToSearch) {
+          const nodePathSegment = { id: node.id, name: node.name };
+          if (String(node.id) === String(targetNodeId)) {
+            return [...currentStack, nodePathSegment];
+          }
+          if (node.children && Array.isArray(node.children)) {
+            const foundPath = buildPathSegmentsRecursive(
+              targetNodeId,
+              node.children,
+              [...currentStack, nodePathSegment]
             );
-          fullTreeData = await res.json();
-          document.getElementById("tree").innerHTML = renderTree(fullTreeData);
-        } catch (error) {
-          console.error("Failed to fetch tree:", error);
-          window.showNotification(
-            `Error loading structure: ${error.message}`,
-            "error",
-            6000
+            if (foundPath) return foundPath;
+          }
+        }
+        return null;
+      }
+
+      function renderBreadcrumbs() {
+        breadcrumbContainer.innerHTML = "";
+        if (!currentPath || currentPath.length === 0) {
+          currentPath = [{ id: null, name: "Knowledge Base" }];
+        }
+        currentPath.forEach((segment, index) => {
+          const segEl = document.createElement("span");
+          if (index < currentPath.length - 1) {
+            const link = document.createElement("a");
+            link.textContent = segment.name;
+            link.href = "#";
+            link.classList.add("breadcrumb-item");
+            link.onclick = (e) => {
+              e.preventDefault();
+              if (!isSearchViewActive) navigateToFolder(segment.id);
+              else {
+                isSearchViewActive = false;
+                searchInputElement.value = "";
+                navigateToFolder(segment.id);
+              }
+            };
+            segEl.appendChild(link);
+            breadcrumbContainer.appendChild(segEl);
+
+            const separator = document.createElement("span");
+            separator.classList.add("breadcrumb-separator");
+            separator.innerHTML = "&gt;";
+            breadcrumbContainer.appendChild(separator);
+          } else {
+            segEl.textContent = segment.name;
+            segEl.classList.add("breadcrumb-current");
+            breadcrumbContainer.appendChild(segEl);
+          }
+        });
+      }
+
+      function navigateToFolder(nodeId) {
+        currentViewNodeId =
+          nodeId === undefined || nodeId === null ? null : nodeId;
+
+        // If not in search view, clear search input
+        if (!isSearchViewActive && searchInputElement)
+          searchInputElement.value = "";
+
+        let newPath;
+        if (currentViewNodeId === null) {
+          newPath = [{ id: null, name: "Knowledge Base" }];
+        } else {
+          const pathSegments = buildPathSegmentsRecursive(
+            currentViewNodeId,
+            fullTreeData,
+            []
           );
-          document.getElementById(
-            "tree"
-          ).innerHTML = `<p class="text-[var(--text-red-accent)] p-4">Error loading folder structure. Please ensure you have access and the service is available.</p>`;
+          if (pathSegments) {
+            newPath = [{ id: null, name: "Knowledge Base" }, ...pathSegments];
+          } else {
+            console.warn(
+              `Node ID ${currentViewNodeId} not found for path. Navigating to root.`
+            );
+            newPath = [{ id: null, name: "Knowledge Base" }];
+            currentViewNodeId = null;
+          }
         }
-      }
+        currentPath = newPath;
 
-      function toggleTreeNode(nodeId, doToggle = true) {
-        const childrenContainer = document.getElementById(`children-${nodeId}`);
-        const toggleIcon = document.getElementById(`toggle-icon-${nodeId}`);
-        if (childrenContainer && toggleIcon) {
-          let isCollapsed = childrenContainer.classList.contains("collapsed");
-          if (doToggle) isCollapsed = !isCollapsed;
-          else isCollapsed = false;
-
-          childrenContainer.classList.toggle("collapsed", isCollapsed);
-          toggleIcon.classList.toggle("collapsed", isCollapsed);
-          toggleIcon.innerHTML = isCollapsed
-            ? `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>`
-            : `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" /></svg>`;
+        renderBreadcrumbs();
+        if (!isSearchViewActive) {
+          // Only render folder contents if not in search view
+          renderFolderContents();
         }
-      }
 
-      function showInlineForm(parentId, buttonElement) {
-        const form = document.getElementById(`form-${parentId}`);
-        if (form) {
-          const isVisible = form.style.display === "block";
-          form.style.display = isVisible ? "none" : "block";
-          if (!isVisible) {
-            form.querySelector('input[type="text"], select')?.focus();
-            toggleFileInput(parentId);
+        const currentFolderObject = currentPath[currentPath.length - 1];
+        currentFolderNameEl.textContent = currentFolderObject
+          ? currentFolderObject.name
+          : "Knowledge Base";
+
+        if (addItemToFolderBtn) {
+          if (
+            currentViewNodeId !== null &&
+            canAddContentToNode(currentViewNodeId) &&
+            !isSearchViewActive
+          ) {
+            addItemToFolderBtn.style.display = "inline-flex";
+            addItemToFolderBtn.onclick = () => toggleAddItemForm(true);
+          } else {
+            addItemToFolderBtn.style.display = "none";
+            toggleAddItemForm(false);
           }
         }
       }
 
-      function toggleFileInput(parentId) {
-        const typeSelect = document.getElementById(`type-${parentId}`);
+      function renderFolderContents() {
+        folderContentContainer.innerHTML = "";
+        const nodeToDisplay = findNodeInTree(currentViewNodeId, fullTreeData);
+
+        if (loadingPlaceholder) loadingPlaceholder.style.display = "flex";
+
+        if (!nodeToDisplay) {
+          folderContentContainer.innerHTML =
+            '<p class="p-4 text-[var(--text-tertiary)] text-center">Folder not found or access denied.</p>';
+          if (loadingPlaceholder) loadingPlaceholder.style.display = "none";
+          return;
+        }
+
+        const itemsToShow = [];
+        if (nodeToDisplay.children && Array.isArray(nodeToDisplay.children)) {
+          itemsToShow.push(
+            ...nodeToDisplay.children.map((c) => ({
+              ...c,
+              itemType: "folder",
+              parentIdActual: nodeToDisplay.id,
+            }))
+          );
+        }
+        if (nodeToDisplay.artifacts && Array.isArray(nodeToDisplay.artifacts)) {
+          itemsToShow.push(
+            ...nodeToDisplay.artifacts.map((a) => ({
+              ...a,
+              itemType: "artifact",
+              parentIdActual: nodeToDisplay.id,
+            }))
+          );
+        }
+
+        if (itemsToShow.length === 0) {
+          folderContentContainer.innerHTML =
+            '<p class="p-4 text-lg text-[var(--text-tertiary)] text-center">This folder is empty.</p>';
+        } else {
+          itemsToShow.forEach((item) => {
+            const card = document.createElement("div");
+            card.classList.add("item-card");
+            card.dataset.itemId = item.id;
+            card.dataset.itemType = item.itemType;
+
+            const itemName = escapeJSString(item.name || item.title);
+            const iconClass =
+              item.itemType === "folder"
+                ? "text-[var(--text-yellow-accent)]"
+                : "text-[var(--text-blue-accent)]";
+            const iconSVG =
+              item.itemType === "folder"
+                ? `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 0 1 4.5 9.75h15A2.25 2.25 0 0 1 21.75 12v.75m-8.69-6.44-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z" /></svg>`
+                : `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>`;
+
+            let actionsDivContent = "";
+            const parentIdForPerms =
+              item.parentIdActual !== undefined
+                ? item.parentIdActual
+                : currentViewNodeId;
+
+            if (
+              item.itemType === "folder" &&
+              canDeleteNode(item.id) &&
+              item.id !== null &&
+              parentIdForPerms !== null
+            ) {
+              actionsDivContent += `<button title="Delete folder" class="action-icon-btn delete" onclick="event.stopPropagation(); deleteNode(${item.id})">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                  </button>`;
+            } else if (
+              item.itemType === "artifact" &&
+              canEditArtifactsInNode(parentIdForPerms)
+            ) {
+              actionsDivContent += `<button title="Delete file" class="action-icon-btn delete" onclick="event.stopPropagation(); deleteArtifact(${item.id}, ${parentIdForPerms})">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                  </button>`;
+            }
+            card.innerHTML = `
+                    <div>
+                        <div class="item-card-icon-wrapper"><span class="item-card-icon ${iconClass}">${iconSVG}</span></div>
+                        <h3 class="item-card-name">${itemName}</h3>
+                        <p class="item-card-type">${
+                          item.itemType === "folder" ? "Folder" : "File"
+                        }</p>
+                    </div>
+                    ${
+                      actionsDivContent
+                        ? `<div class="item-card-actions">${actionsDivContent}</div>`
+                        : ""
+                    }
+                `;
+
+            if (item.itemType === "folder") {
+              card.onclick = () => navigateToFolder(item.id);
+            } else {
+              card.onclick = () =>
+                showArtifactDetailsModal(
+                  item.title,
+                  item.description,
+                  item.link
+                );
+            }
+            folderContentContainer.appendChild(card);
+          });
+        }
+        if (loadingPlaceholder) loadingPlaceholder.style.display = "none";
+      }
+
+      // --- Inline Add Item Form Logic ---
+      function toggleAddItemForm(show) {
+        if (show && currentViewNodeId !== null) {
+          populateAddItemForm();
+          addItemFormContainer.style.display = "block";
+          document.getElementById("addItemName")?.focus();
+        } else {
+          addItemFormContainer.style.display = "none";
+        }
+      }
+      function populateAddItemForm() {
+        const parentId = currentViewNodeId;
+        if (parentId === null) {
+          addItemFormContainer.innerHTML =
+            '<p class="text-[var(--text-tertiary)]">Adding items to the root is not directly supported here. Please select a folder.</p>';
+          return;
+        }
+        const currentFolder = findNodeInTree(parentId, fullTreeData);
+        const currentFolderName = currentFolder
+          ? currentFolder.name
+          : "Selected Folder";
+
+        addItemFormContainer.innerHTML = `
+            <h3 class="text-xl font-semibold mb-4 text-[var(--text-primary)]">Add to '${escapeJSString(
+              currentFolderName
+            )}'</h3>
+            <form onsubmit="event.preventDefault(); submitAddItemForm(this.querySelector('button[type=submit]'))">
+                <input type="hidden" id="addItemParentId" value="${parentId}">
+                <div class="mb-4"><label for="addItemName" class="label-text">Name (Folder/File)</label><input type="text" id="addItemName" class="input-field text-sm" required></div>
+                <div class="mb-4"><label for="addItemType" class="label-text">Type</label><select id="addItemType" class="input-field text-sm" onchange="toggleAddItemFileOptions()"><option value="SUBFOLDER">Subfolder</option><option value="FILE">File</option></select></div>
+                <div class="mb-4"><label for="addItemDescription" class="label-text">Description (Optional)</label><textarea id="addItemDescription" class="input-field text-sm" rows="2"></textarea></div>
+                <div id="addItemFileMethodOptions" style="display:none;" class="mt-2 mb-4">
+                    <div><label for="addItemFileSource" class="label-text text-xs">File Source:</label><select id="addItemFileSource" class="input-field text-xs py-1" onchange="toggleAddItemLinkOrUpload()"><option value="link">Enter Link</option><option value="upload">Upload File</option></select></div>
+                    <div id="addItemLinkInputContainer" class="mt-2"><input type="url" placeholder="Link (e.g., https://...)" id="addItemLink" class="input-field text-sm"></div>
+                    <div id="addItemUploadInputContainer" style="display:none;" class="mt-2"><input type="file" id="addItemFileUpload" class="input-field text-sm p-2"></div>
+                </div>
+                <div class="mt-6 flex items-center gap-3">
+                    <button type="submit" class="submit-button primary">
+                        <span class="button-text">Add Item</span>
+                    </button>
+                    <button type="button" class="submit-button secondary" onclick="toggleAddItemForm(false)">
+                        <span class="button-text">Cancel</span>
+                    </button>
+                </div>
+            </form>`;
+        toggleAddItemFileOptions();
+      }
+      function toggleAddItemFileOptions() {
+        const typeSelect = document.getElementById("addItemType");
         const fileMethodOptionsDiv = document.getElementById(
-          `file-method-options-${parentId}`
+          "addItemFileMethodOptions"
         );
-        const descriptionTextarea = document.getElementById(
-          `description-${parentId}`
-        );
+        if (!typeSelect || !fileMethodOptionsDiv) return;
 
         if (typeSelect.value === "FILE") {
           fileMethodOptionsDiv.style.display = "block";
-          descriptionTextarea.placeholder = "Description (Optional for File)";
-          document.getElementById(`file-source-${parentId}`).value = "link";
-          toggleLinkOrUpload(parentId);
+          const fileSourceSelect = document.getElementById("addItemFileSource");
+          if (fileSourceSelect) fileSourceSelect.value = "link";
+          toggleAddItemLinkOrUpload();
         } else {
           fileMethodOptionsDiv.style.display = "none";
-          descriptionTextarea.placeholder = "Description (Optional for Folder)";
         }
       }
-
-      function toggleLinkOrUpload(parentId) {
-        const fileSource = document.getElementById(
-          `file-source-${parentId}`
-        ).value;
-        document.getElementById(
-          `link-input-container-${parentId}`
-        ).style.display = fileSource === "link" ? "block" : "none";
-        document.getElementById(
-          `upload-input-container-${parentId}`
-        ).style.display = fileSource === "upload" ? "block" : "none";
-      }
-
-      async function submitInlineForm(parentId, buttonElement) {
-        const nameInput = document.getElementById(`name-${parentId}`);
-        const typeSelect = document.getElementById(`type-${parentId}`);
-        const descriptionInput = document.getElementById(
-          `description-${parentId}`
+      function toggleAddItemLinkOrUpload() {
+        const fileSourceSelect = document.getElementById("addItemFileSource");
+        const linkContainer = document.getElementById(
+          "addItemLinkInputContainer"
         );
+        const uploadContainer = document.getElementById(
+          "addItemUploadInputContainer"
+        );
+        if (!fileSourceSelect || !linkContainer || !uploadContainer) return;
 
-        const name = nameInput.value.trim();
-        const type = typeSelect.value;
-        const description = descriptionInput.value.trim();
+        const fileSource = fileSourceSelect.value;
+        linkContainer.style.display = fileSource === "link" ? "block" : "none";
+        uploadContainer.style.display =
+          fileSource === "upload" ? "block" : "none";
+      }
+      async function submitAddItemForm(buttonElement) {
+        const parentId = document.getElementById("addItemParentId").value;
+        const name = document.getElementById("addItemName").value.trim();
+        const type = document.getElementById("addItemType").value;
+        const description = document
+          .getElementById("addItemDescription")
+          .value.trim();
 
         const originalButtonText =
           buttonElement.querySelector(".button-text")?.textContent ||
@@ -1164,54 +1508,60 @@
           window.setButtonLoading(buttonElement, false, originalButtonText);
           return;
         }
+        if (
+          parentId === null ||
+          typeof parentId === "undefined" ||
+          parentId === "null"
+        ) {
+          window.showNotification(
+            "Cannot add item: No parent folder selected.",
+            "error"
+          );
+          window.setButtonLoading(buttonElement, false, originalButtonText);
+          return;
+        }
 
         try {
           let response;
-          let endpoint;
-          let payload = {};
-
           if (type === "FILE") {
-            const fileSource = document.getElementById(
-              `file-source-${parentId}`
-            ).value;
-            payload = { title: name, description, nodeId: parentId }; // Ensure nodeId is integer if backend expects
+            const fileSource =
+              document.getElementById("addItemFileSource").value;
+            let payload = {
+              title: name,
+              description,
+              nodeId: parseInt(parentId),
+            };
             if (fileSource === "link") {
-              const linkInput = document.getElementById(`link-${parentId}`);
-              const link = linkInput.value.trim();
-              if (!link) {
+              const link = document.getElementById("addItemLink").value.trim();
+              if (!link)
                 throw new Error("Link is required for file type 'link'.");
-              }
               payload.link = link;
-              endpoint = `${BASE}/api/artifacts`;
-              response = await secureFetch(endpoint, {
+              response = await secureFetch(`${BASE}/api/artifacts`, {
                 method: "POST",
                 body: JSON.stringify(payload),
               });
-              if (response.ok) linkInput.value = ""; // Clear on success
             } else {
-              const fileUploadInput = document.getElementById(
-                `file-upload-${parentId}`
-              );
-              const file = fileUploadInput.files[0];
-              if (!file) {
-                throw new Error("Please select a file to upload.");
-              }
+              const fileInput = document.getElementById("addItemFileUpload");
+              const file = fileInput.files[0];
+              if (!file) throw new Error("Please select a file to upload.");
               const formData = new FormData();
               formData.append("file", file);
               formData.append("title", name);
               formData.append("description", description);
               formData.append("nodeId", String(parentId));
-              endpoint = `${BASE}/api/upload`;
-              response = await secureFetch(endpoint, {
+              response = await secureFetch(`${BASE}/api/upload`, {
                 method: "POST",
                 body: formData,
               });
-              if (response.ok) fileUploadInput.value = null; // Clear on success
             }
           } else {
-            payload = { name, type: "FOLDER", parentId: parentId, description };
-            endpoint = `${BASE}/api/nodes`;
-            response = await secureFetch(endpoint, {
+            let payload = {
+              name,
+              type: "FOLDER",
+              parentId: parseInt(parentId),
+              description,
+            };
+            response = await secureFetch(`${BASE}/api/nodes`, {
               method: "POST",
               body: JSON.stringify(payload),
             });
@@ -1227,22 +1577,18 @@
             );
           }
           window.showNotification("Item added successfully! ✅", "success");
-
-          nameInput.value = ""; // Clear common fields
-          descriptionInput.value = "";
-          typeSelect.value = "SUBFOLDER"; // Reset type select if needed
-          document.getElementById(`form-${parentId}`).style.display = "none";
-          toggleFileInput(parentId); // Reset file/link visibility
-
-          fetchTree(); // Refresh tree
+          toggleAddItemForm(false);
+          await fetchTreeDataOnly();
+          navigateToFolder(currentViewNodeId);
         } catch (error) {
-          console.error("Error submitting inline form:", error);
+          console.error("Error submitting add item form:", error);
           window.showNotification(`Error: ${error.message}`, "error");
         } finally {
           window.setButtonLoading(buttonElement, false, originalButtonText);
         }
       }
 
+      // --- CRUD Operations (Delete) ---
       async function deleteNode(nodeId) {
         if (
           !confirm(
@@ -1258,22 +1604,36 @@
             const errorData = await response
               .json()
               .catch(() => ({ detail: response.statusText }));
-            throw new Error(
-              errorData.detail ||
-                "Failed to delete folder. Ensure you have permission."
-            );
+            throw new Error(errorData.detail || "Failed to delete folder.");
           }
           window.showNotification("Folder deleted successfully. ✅", "success");
-          fetchTree();
+
+          let parentToNavigate = null;
+          const deletedNodePathIndex = currentPath.findIndex(
+            (p) => String(p.id) === String(nodeId)
+          );
+
+          await fetchTreeDataOnly();
+
+          if (deletedNodePathIndex > 0) {
+            parentToNavigate = currentPath[deletedNodePathIndex - 1].id;
+          } else if (String(currentViewNodeId) === String(nodeId)) {
+            parentToNavigate =
+              currentPath.length > 1 && currentPath[currentPath.length - 2]
+                ? currentPath[currentPath.length - 2].id
+                : null;
+          } else {
+            parentToNavigate = currentViewNodeId;
+            if (String(parentToNavigate) === String(nodeId))
+              parentToNavigate = null;
+          }
+          navigateToFolder(parentToNavigate);
         } catch (error) {
           console.error("Error deleting node:", error);
           window.showNotification(`Error: ${error.message}`, "error");
         }
       }
-
       async function deleteArtifact(artifactId, parentNodeId) {
-        // parentNodeId is passed to potentially re-check permissions or for context,
-        // but primary permission check should be on backend using artifactId
         if (
           !confirm(
             "Are you sure you want to delete this file? This action cannot be undone."
@@ -1289,145 +1649,18 @@
             const errorData = await response
               .json()
               .catch(() => ({ detail: response.statusText }));
-            throw new Error(
-              errorData.detail ||
-                "Failed to delete file. Ensure you have permission."
-            );
+            throw new Error(errorData.detail || "Failed to delete file.");
           }
           window.showNotification("File deleted successfully. ✅", "success");
-          fetchTree();
+          await fetchTreeDataOnly();
+          navigateToFolder(currentViewNodeId);
         } catch (error) {
           console.error("Error deleting artifact:", error);
           window.showNotification(`Error: ${error.message}`, "error");
         }
       }
 
-      function renderTree(nodes) {
-        return nodes
-          .map((n) => {
-            const hasChildren =
-              (n.children && n.children.length > 0) ||
-              (n.artifacts && n.artifacts.length > 0);
-            const userCanAdd = canAddContentToNode(n.id);
-            const userCanDeleteCurrentNode = canDeleteNode(n.id);
-
-            let actionsHTML = "";
-            if (userCanAdd || userCanDeleteCurrentNode) {
-              actionsHTML = `<div class="actions opacity-0 group-hover:opacity-100 transition-opacity space-x-1">`;
-              if (userCanAdd) {
-                actionsHTML += `<button title="Add item to this folder" class="action-icon-btn add" onclick="event.stopPropagation(); showInlineForm(${n.id}, this)">
-                                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                    </button>`;
-              }
-              // Assuming VERTICAL nodes (root folders) have special deletion rules or are admin-only to delete from admin panel
-              if (
-                userCanDeleteCurrentNode &&
-                n.type !== "VERTICAL" &&
-                n.parentId !== null
-              ) {
-                actionsHTML += `<button title="Delete folder" class="action-icon-btn delete" onclick="event.stopPropagation(); deleteNode(${n.id})">
-                                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                                    </button>`;
-              }
-              actionsHTML += `</div>`;
-            }
-
-            const inlineFormHTML = userCanAdd
-              ? `
-                <div id="form-${n.id}" class="form-inline mt-2 ml-5 p-4 bg-[var(--bg-inline-form)] rounded-lg border border-[var(--border-primary)] shadow-md" style="display:none;">
-                    <form onsubmit="event.preventDefault(); submitInlineForm(${n.id}, this.querySelector('button[type=submit]'))">
-                        <input type="text" placeholder="Name (Folder/File)" id="name-${n.id}" class="input-field text-sm">
-                        <select id="type-${n.id}" class="input-field text-sm" onchange="toggleFileInput(${n.id})">
-                            <option value="SUBFOLDER">SUBFOLDER</option>
-                            <option value="FILE">FILE</option>
-                        </select>
-                        <textarea placeholder="Description (Optional)" id="description-${n.id}" class="input-field text-sm" rows="2"></textarea>
-                        <div id="file-method-options-${n.id}" style="display:none;">
-                            <div class="mb-2">
-                                <label class="label-text text-xs">File Source:</label>
-                                <select id="file-source-${n.id}" class="input-field text-xs py-1" onchange="toggleLinkOrUpload(${n.id})">
-                                    <option value="link">Enter Link</option>
-                                    <option value="upload">Upload File</option>
-                                </select>
-                            </div>
-                            <div id="link-input-container-${n.id}"><input type="text" placeholder="Link (e.g., https://...)" id="link-${n.id}" class="input-field text-sm"></div>
-                            <div id="upload-input-container-${n.id}" style="display:none;"><input type="file" id="file-upload-${n.id}" class="input-field text-sm p-2"></div>
-                        </div>
-                        <button type="submit" class="submit-button text-sm w-full py-2 mt-2">
-                            <span class="button-text">Add Item</span>
-                        </button>
-                    </form>
-                </div>`
-              : "";
-
-            const childrenHTML = n.children ? renderTree(n.children) : "";
-            const artifactsHTML = n.artifacts
-              ? n.artifacts
-                  .map((a) => {
-                    const titleContent = escapeJSString(a.title);
-                    const descriptionContent = escapeJSString(
-                      a.description || ""
-                    );
-                    const linkContent = escapeJSString(a.link || "#");
-                    const userCanDeleteThisArtifact = canEditArtifactsInNode(
-                      n.id
-                    ); // Use parent node ID for artifact edit/delete rights
-
-                    let artifactActionsHTML = "";
-                    if (userCanDeleteThisArtifact) {
-                      artifactActionsHTML = `<div class="actions opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <button title="Delete file" class="action-icon-btn delete" onclick="event.stopPropagation(); deleteArtifact(${a.id}, ${n.id})">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                                        </button>
-                                      </div>`;
-                    }
-
-                    return `
-                <div class="tree-artifact-wrapper artifact-item" data-artifact-id="${a.id}" data-node-name="${titleContent}" data-node-type="ARTIFACT" data-parent-node-id="${n.id}">
-                  <div class="node-content group hover:bg-[var(--bg-card-hover)] rounded-md px-1 py-0.5">
-                    <span class="tree-artifact-text clickable flex items-center text-sm" title="View details for: ${titleContent}" onclick="showArtifactDetailsModal('${titleContent}', '${descriptionContent}', '${linkContent}')">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 tree-artifact-icon flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
-                      <span>${titleContent}</span>
-                    </span>
-                    ${artifactActionsHTML}
-                  </div>
-                </div>`;
-                  })
-                  .join("")
-              : "";
-
-            return `
-              <div class="tree-node node-item" data-node-id="${
-                n.id
-              }" data-node-name="${escapeJSString(n.name)}" data-node-type="${
-              n.type || "NODE"
-            }">
-                <div class="node-content group hover:bg-[var(--bg-card-hover)] rounded-md px-1 py-0.5">
-                  <span class="font-medium tree-node-text cursor-pointer flex items-center" onclick="toggleTreeNode(${
-                    n.id
-                  })">
-                    ${
-                      hasChildren
-                        ? `<span id="toggle-icon-${n.id}" class="tree-toggle-icon"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" /></svg></span>`
-                        : '<span class="tree-toggle-icon"></span>'
-                    }
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1 tree-node-icon flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" /></svg>
-                    <span>${escapeJSString(n.name)}</span>
-                  </span>
-                  ${actionsHTML}
-                </div>
-                ${inlineFormHTML}
-                <div class="tree-children-container collapsed" id="children-${
-                  n.id
-                }">
-                  ${childrenHTML}
-                  ${artifactsHTML}
-                </div>
-              </div>`;
-          })
-          .join("");
-      }
-
+      // --- Modals & UI Toggles ---
       function showArtifactDetailsModal(title, description, link) {
         const modal = document.getElementById("artifact-details-modal");
         document.getElementById("artifact-modal-title").textContent =
@@ -1457,13 +1690,40 @@
         }
         modal.classList.add("active");
       }
-
       function closeArtifactDetailsModal() {
         document
           .getElementById("artifact-details-modal")
           .classList.remove("active");
       }
 
+      // Theme Toggle
+      const themeToggleButton = document.getElementById("theme-toggle-button");
+      const sunIconHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>`;
+      const moonIconHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>`;
+      function applyTheme(theme) {
+        if (theme === "light") {
+          document.body.classList.add("light-theme");
+          themeToggleButton.innerHTML = moonIconHTML;
+          localStorage.setItem("theme", "light");
+        } else {
+          document.body.classList.remove("light-theme");
+          themeToggleButton.innerHTML = sunIconHTML;
+          localStorage.setItem("theme", "dark");
+        }
+      }
+      themeToggleButton.addEventListener("click", () => {
+        applyTheme(
+          document.body.classList.contains("light-theme") ? "dark" : "light"
+        );
+      });
+      applyTheme(
+        localStorage.getItem("theme") ||
+          (window.matchMedia("(prefers-color-scheme: dark)").matches
+            ? "dark"
+            : "dark")
+      );
+
+      // User Menu Dropdown
       if (userMenuButton && userDropdownMenu) {
         userMenuButton.addEventListener("click", () => {
           const isExpanded =
@@ -1501,12 +1761,158 @@
         });
       }
 
-      function initializeUserPanel() {
-        console.log(
-          "Initializing User Panel data with roles:",
-          currentUserRoles
+      // --- Search Functionality ---
+      let searchResults = [];
+
+      function highlightText(text, query) {
+        if (!query || typeof text !== "string")
+          return escapeJSString(text || "");
+        const safeQuery = escapeJSString(query).replace(
+          /[.*+?^${}()|[\]\\]/g,
+          "\\$&"
         );
-        fetchTree();
+        const regex = new RegExp(`(${safeQuery})`, "gi");
+        return escapeJSString(text).replace(
+          regex,
+          '<span class="highlight">$1</span>'
+        );
+      }
+
+      const debouncedPerformGlobalSearch = debounce(performGlobalSearch, 350); // Adjusted debounce time
+
+      searchInputElement.addEventListener("input", (e) => {
+        debouncedPerformGlobalSearch(e.target.value);
+      });
+
+      function performGlobalSearch(term) {
+        searchResults = [];
+        const searchTerm = term.trim().toLowerCase();
+        if (!searchTerm) {
+          isSearchViewActive = false;
+          navigateToFolder(currentViewNodeId);
+          return;
+        }
+        isSearchViewActive = true;
+
+        function recurseSearch(nodes, pathStack) {
+          for (const node of nodes) {
+            const currentItemPath = [
+              ...pathStack,
+              { id: node.id, name: node.name },
+            ];
+
+            if (node.name && node.name.toLowerCase().includes(searchTerm)) {
+              searchResults.push({
+                item: node,
+                path: currentItemPath,
+                itemType: "folder",
+                matchSource: "name",
+              });
+            }
+
+            if (node.artifacts && Array.isArray(node.artifacts)) {
+              for (const artifact of node.artifacts) {
+                let artifactMatched = false;
+                if (
+                  artifact.title &&
+                  artifact.title.toLowerCase().includes(searchTerm)
+                ) {
+                  searchResults.push({
+                    item: artifact,
+                    path: currentItemPath,
+                    itemType: "artifact",
+                    matchSource: "title",
+                  });
+                  artifactMatched = true;
+                }
+                // Optional: Also search artifact descriptions
+                // if (!artifactMatched && artifact.description && artifact.description.toLowerCase().includes(searchTerm)) {
+                //     searchResults.push({ item: artifact, path: currentItemPath, itemType: 'artifact', matchSource: 'description' });
+                // }
+              }
+            }
+            if (node.children && Array.isArray(node.children)) {
+              recurseSearch(node.children, currentItemPath);
+            }
+          }
+        }
+        recurseSearch(fullTreeData, [{ id: null, name: "Knowledge Base" }]);
+        renderSearchResults(searchResults, searchTerm);
+      }
+
+      function renderSearchResults(results, searchTerm = "") {
+        folderContentContainer.innerHTML = "";
+        toggleAddItemForm(false);
+        if (addItemToFolderBtn) addItemToFolderBtn.style.display = "none";
+        currentFolderNameEl.textContent =
+          results.length > 0
+            ? `Search Results for "${escapeJSString(searchTerm)}"`
+            : `No Results for "${escapeJSString(searchTerm)}"`;
+        breadcrumbContainer.innerHTML = `<span class="breadcrumb-current">Search Results</span>`;
+
+        if (results.length === 0) {
+          folderContentContainer.innerHTML = `<p class="p-4 text-lg text-[var(--text-tertiary)] text-center">No items found matching your search.</p>`;
+          return;
+        }
+
+        results.forEach((result) => {
+          const card = document.createElement("div");
+          card.classList.add("search-result-card");
+
+          const itemName = result.item.name || result.item.title;
+          const itemTypeDisplay =
+            result.itemType.charAt(0).toUpperCase() + result.itemType.slice(1);
+
+          let displayPathString = result.path.map((p) => p.name).join(" > ");
+          if (result.itemType === "folder") {
+            // The path is already to the folder itself
+          } else if (result.itemType === "artifact") {
+            // The path is to the parent folder, so append artifact title for clarity
+            // displayPathString += ` > ${itemName}`; // This can make the path very long, consider if needed
+          }
+
+          const iconClass =
+            result.itemType === "folder"
+              ? "text-[var(--text-yellow-accent)]"
+              : "text-[var(--text-blue-accent)]";
+          const iconSVG =
+            result.itemType === "folder"
+              ? `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 0 1 4.5 9.75h15A2.25 2.25 0 0 1 21.75 12v.75m-8.69-6.44-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z" /></svg>`
+              : `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>`;
+
+          card.innerHTML = `
+                <div>
+                    <div class="item-card-icon-wrapper"><span class="search-result-icon ${iconClass}">${iconSVG}</span></div>
+                    <h3 class="search-result-name">${highlightText(
+                      itemName,
+                      searchTerm
+                    )}</h3>
+                    <p class="search-result-type">${itemTypeDisplay}</p>
+                    <p class="search-result-path">In: ${escapeJSString(
+                      displayPathString
+                    )}</p>
+                </div>
+            `;
+          card.onclick = () => {
+            isSearchViewActive = false;
+            if (searchInputElement) searchInputElement.value = "";
+            if (result.itemType === "folder") {
+              navigateToFolder(result.item.id);
+            } else {
+              // artifact
+              const parentFolderId = result.path[result.path.length - 1].id;
+              navigateToFolder(parentFolderId);
+              setTimeout(() => {
+                showArtifactDetailsModal(
+                  result.item.title,
+                  result.item.description,
+                  result.item.link
+                );
+              }, 150); // Slightly increased delay for smoother transition
+            }
+          };
+          folderContentContainer.appendChild(card);
+        });
       }
     </script>
   </body>
