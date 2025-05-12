@@ -16,6 +16,17 @@ class UserUpdate(BaseModel):
 
 @router.get("/api/users")
 async def list_users(user=Depends(get_current_user)):
+    # Check if current user has any ADMIN role
+    admin_access = await db.access.find_first(
+        where={
+            "userId": user.id,
+            "role": "ADMIN"
+        }
+    )
+    if not admin_access:
+        raise HTTPException(status_code=403, detail="Access denied. Admins only.")
+
+    # Proceed to fetch users if the user is an admin
     users = await db.user.find_many(
         include={
             "access": {
@@ -38,6 +49,7 @@ async def list_users(user=Depends(get_current_user)):
         }
         for u in users
     ]
+
 
 @router.post("/api/users")
 async def create_user(payload: UserCreate, user=Depends(get_current_user)):
