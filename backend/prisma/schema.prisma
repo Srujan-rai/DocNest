@@ -28,8 +28,10 @@ model Artifact {
   link        String
   nodeId      Int
   node        Node     @relation(fields: [nodeId], references: [id])
-  createdBy   Int
-  creator     User     @relation(fields: [createdBy], references: [id], name: "UserArtifacts")
+
+  createdBy   Int?     // make this optional (nullable)
+  creator     User?    @relation(fields: [createdBy], references: [id], name: "UserArtifacts", onDelete: SetNull)
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   access      Access[]

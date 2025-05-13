@@ -215,7 +215,7 @@
         /* Specific height for user list */
         max-height: 400px; /* Adjust as needed */
         min-height: 200px; /* Ensure it has some height even when empty */
-        border: 1px solid var(--border-primary);
+        border: 1px solid var(--border-primary); /* Use theme border */
         border-radius: 0.5rem;
         padding: 0.5rem;
       }
@@ -327,7 +327,7 @@
       .card {
         background-color: var(--bg-card);
         border: 1px solid var(--border-primary);
-        border-radius: 0.75rem;
+        border-radius: 0.75rem; /* Reduced from rounded-xl for consistency */
         box-shadow: var(--shadow-card);
         transition: background-color 0.3s ease, border-color 0.3s ease;
       }
@@ -471,10 +471,10 @@
         color: var(--text-red-accent);
       }
       .action-icon-btn.add:hover {
-        color: var(--text-green-accent);
+        color: var(--text-green-accent); /* Maintain color */
       }
       .action-icon-btn.delete:hover {
-        color: var(--text-red-accent);
+        color: var(--text-red-accent); /* Maintain color */
       }
 
       .user-action-button {
@@ -594,10 +594,7 @@
         font-size: 0.9rem;
       }
       #search-users-input {
-        /* For user search */
-        width: 100%;
-        padding: 0.6rem 1rem;
-        font-size: 0.9rem;
+        /* Style inherited via .input-field */
         margin-bottom: 1rem; /* Space below user search */
       }
       .header-controls {
@@ -670,6 +667,17 @@
       .toast.error {
         background-color: var(--bg-toast-error);
         border: 1px solid var(--border-toast-error);
+      }
+      .toast.info {
+        /* Added styling for info toasts */
+        background-color: var(--bg-button-secondary); /* Example */
+        border: 1px solid var(--border-button-secondary);
+        color: var(--text-button-secondary);
+      }
+      .light-theme .toast.info {
+        background-color: #e2e8f0; /* Example light info */
+        border: 1px solid #cbd5e1;
+        color: #475569;
       }
       .toast-icon {
         flex-shrink: 0;
@@ -776,7 +784,7 @@
 
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
         <div class="lg:col-span-1 space-y-8">
-          <div class="card p-6 rounded-xl shadow-2xl">
+          <div class="card p-6 shadow-2xl">
             <div class="flex justify-between items-center mb-5">
               <h2 class="text-2xl card-header">📁 Folder Structure</h2>
               <button
@@ -807,11 +815,13 @@
         </div>
 
         <div class="lg:col-span-2 space-y-8">
-          <div class="card p-6 rounded-xl shadow-2xl">
+          <div class="card p-6 shadow-2xl">
             <h2 class="text-2xl card-header mb-6">👤 Add New User</h2>
             <form id="addUserForm" class="space-y-5">
               <div>
-                <label for="newUserEmail" class="label-text">Email Address</label>
+                <label for="newUserEmail" class="label-text"
+                  >Email Address</label
+                >
                 <input
                   type="email"
                   id="newUserEmail"
@@ -821,7 +831,9 @@
                 />
               </div>
               <div>
-                <label for="newUserRole" class="label-text">Assign Global Role</label>
+                <label for="newUserRole" class="label-text"
+                  >Assign Global Role</label
+                >
                 <select id="newUserRole" class="input-field">
                   <option value="ADMIN">ADMIN</option>
                   <option value="EDITOR">EDITOR</option>
@@ -829,22 +841,31 @@
                 </select>
               </div>
               <div>
-                <label for="newUserNodeAccess" class="label-text">Grant Initial Node Access (Optional)</label>
+                <label for="newUserNodeAccess" class="label-text"
+                  >Grant Initial Node Access (Optional)</label
+                >
                 <select id="newUserNodeAccess" class="input-field">
                   <option value="">None - Global Role Only</option>
-                  </select>
+                </select>
               </div>
-        
-              <div class="flex items-center mt-1 mb-3"> <input
+
+              <div class="flex items-center mt-1 mb-3">
+                <input
                   type="checkbox"
                   id="applyGlobalRoleToAllNodesCheckbox"
                   class="h-4 w-4 text-[var(--text-link-hover)] border-[var(--border-input)] rounded focus:ring-[var(--text-link-hover)] mr-2"
                 />
-                <label for="applyGlobalRoleToAllNodesCheckbox" class="label-text !mb-0 !font-normal text-sm"> Apply global role to all nodes (if 'None' selected above)
+                <label
+                  for="applyGlobalRoleToAllNodesCheckbox"
+                  class="label-text !mb-0 !font-normal text-sm"
+                >
+                  Apply global role to all nodes (if 'None' selected above)
                 </label>
               </div>
               <div>
-                <label for="newUserNodeRole" class="label-text">Role for Selected Node</label>
+                <label for="newUserNodeRole" class="label-text"
+                  >Role for Selected Node</label
+                >
                 <select id="newUserNodeRole" class="input-field">
                   <option value="ADMIN">ADMIN</option>
                   <option value="EDITOR">EDITOR</option>
@@ -856,28 +877,65 @@
               </button>
             </form>
           </div>
-        
-          </div>
 
-          <div class="card p-6 rounded-xl shadow-2xl">
-            <div class="flex justify-between items-center mb-4">
-              <h2 class="text-2xl card-header">👥 All Users</h2>
-            </div>
-            <input
-              type="search"
-              id="search-users-input"
-              class="input-field"
-              placeholder="Search users by email..."
-            />
-            <div id="userListContainer">
-              <ul id="userList" class="space-y-4"></ul>
-              <p
-                id="user-list-loading-indicator"
-                class="text-center text-[var(--text-secondary)] py-4"
-                style="display: none"
+          <div class="card p-6 shadow-2xl">
+            <div
+              class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 border-b border-[var(--border-primary)] pb-4"
+            >
+              <h2
+                class="text-2xl sm:text-3xl card-header flex items-center gap-2 mb-3 sm:mb-0"
               >
-                Loading more users...
-              </p>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-7 w-7"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+                  />
+                </svg>
+                All Users
+              </h2>
+            </div>
+
+            <div class="mb-4">
+              <input type="search" id="search-users-input" class="input-field
+              w-full" /* Changed: Applied .input-field class */
+              placeholder="Search users by email..." />
+            </div>
+
+            <div id="userListContainer">
+              <div
+                id="user-list-initial-spinner"
+                class="text-center py-6 hidden"
+              >
+                <div
+                  class="inline-block w-10 h-10 border-4 border-[var(--border-primary)] border-t-[var(--text-link-hover)] rounded-full animate-spin"
+                ></div>
+                <p class="text-[var(--text-secondary)] mt-3">
+                  Loading Users...
+                </p>
+              </div>
+
+              <ul id="userList" class="space-y-3"></ul>
+              <div
+                id="user-list-loading-indicator"
+                class="text-center py-4 hidden"
+              >
+                <div
+                  class="inline-block w-8 h-8 border-2 border-[var(--border-primary)] border-t-[var(--text-link-hover)] rounded-full animate-spin"
+                ></div>
+              </div>
+
+              <div
+                id="user-list-message-area"
+                class="text-center text-[var(--text-tertiary)] py-6 hidden"
+              ></div>
             </div>
           </div>
         </div>
@@ -904,9 +962,7 @@
           id="access-management-modal-current-access"
           class="mb-6 space-y-0 border border-[var(--border-primary)] rounded-md"
         >
-          <p class="text-[var(--text-tertiary)] p-3">
-            No specific node access granted.
-          </p>
+          <p class="text-[var(--text-tertiary)] p-3">Loading access...</p>
         </div>
 
         <h4 class="text-lg font-semibold mb-3 text-[var(--text-secondary)]">
@@ -1048,834 +1104,1833 @@
     </div>
 
     <script>
-              // --- Firebase Configuration ---
-              const firebaseConfig = {
-                apiKey: "AIzaSyCbHWUEzqGjzeanOiMG0Z5Lb4wIjWWEMUQ",
-                authDomain: "docnest-f85e2.firebaseapp.com",
-                projectId: "docnest-f85e2",
-                storageBucket: "docnest-f85e2.appspot.com",
-                messagingSenderId: "102395439437",
-                appId: "1:102395439437:web:84e6676388b5d54395af04",
-                measurementId: "G-YRMBR8BVSE",
-              };
-        
-              // --- Global Helper Functions (defined early) ---
-              window.showNotification = function (
-                message,
-                type = "success",
-                duration = 3000
-              ) {
-                const toastContainer = document.getElementById("toast-container");
-                if (!toastContainer) return;
-        
-                const toast = document.createElement("div");
-                toast.classList.add("toast", type);
-        
-                let iconHtml = "";
-                if (type === "success") {
-                  iconHtml = `<svg class="toast-icon h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
-                } else if (type === "error") {
-                  iconHtml = `<svg class="toast-icon h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
-                } else if (type === "info") { // Added info type for longer messages
-                  iconHtml = `<svg class="toast-icon h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
-                }
-        
-        
-                toast.innerHTML = `${iconHtml}<span>${message}</span>`;
-                toastContainer.appendChild(toast);
-        
-                toast.offsetHeight; // Trigger reflow
-        
-                toast.classList.add("show");
-        
-                setTimeout(() => {
-                  toast.classList.remove("show");
-                  setTimeout(() => {
-                    toast.remove();
-                  }, 300);
-                }, duration);
-              };
-        
-              window.setButtonLoading = function (
-                button,
-                isLoading,
-                originalText = null
-              ) {
-                if (!(button instanceof HTMLElement)) {
-                  console.error("setButtonLoading: button argument is not an HTMLElement", button);
-                  return;
-                }
-                const buttonTextSpan = button.querySelector(".button-text");
-                if (isLoading) {
-                  button.disabled = true;
-                  if (buttonTextSpan) {
-                    if (originalText !== null && typeof buttonTextSpan.dataset.originalText === 'undefined') { // Store original text only once
-                         buttonTextSpan.dataset.originalText = buttonTextSpan.innerHTML;
-                    }
-                    buttonTextSpan.innerHTML = `<span class="spinner"></span>Processing...`;
-                  } else {
-                    if (originalText !== null && typeof button.dataset.originalText === 'undefined') {
-                         button.dataset.originalText = button.innerHTML;
-                    }
-                    button.innerHTML = `<span class="spinner"></span>Processing...`;
-                  }
-                } else {
-                  button.disabled = false;
-                  if (buttonTextSpan) {
-                    buttonTextSpan.innerHTML = buttonTextSpan.dataset.originalText || originalText || "Submit";
-                    delete buttonTextSpan.dataset.originalText; // Clean up
-                  } else {
-                    button.innerHTML = button.dataset.originalText || originalText || "Submit";
-                    delete button.dataset.originalText; // Clean up
-                  }
-                }
-              };
-              // --- End Global Helper Functions ---
-        
-              // Initialize Firebase (compat version)
-              let firebaseApp;
-              let firebaseAuth;
-        
-              try {
-                firebaseApp = firebase.initializeApp(firebaseConfig);
-                firebaseAuth = firebase.auth();
-                console.log("Firebase initialized successfully.");
-              } catch (e) {
-                console.error("Error initializing Firebase:", e);
-                window.showNotification("Critical Error: Could not initialize Firebase. Check console.", "error", 10000);
-              }
-        
-              // --- Auth State Management ---
-              const userMenuButton = document.getElementById("user-menu-button");
-              const userDisplayNameSpan = document.getElementById("user-display-name");
-              const userDropdownMenu = document.getElementById("user-dropdown-menu");
-              const dropdownUserName = document.getElementById("dropdown-user-name");
-              const dropdownUserEmail = document.getElementById("dropdown-user-email");
-              const logoutButtonDropdown = document.getElementById("logout-button-dropdown");
-        
-              if (firebaseAuth) {
-                firebaseAuth.onAuthStateChanged((user) => {
-                  if (user) {
-                    console.log("✅ Admin Panel: Logged in as", user.email);
-                    if (userDisplayNameSpan) userDisplayNameSpan.textContent = user.displayName || user.email.split("@")[0];
-                    if (dropdownUserName) dropdownUserName.textContent = user.displayName || "N/A";
-                    if (dropdownUserEmail) dropdownUserEmail.textContent = user.email;
-                    initializeAdminPanel();
-                  } else {
-                    console.log("🚫 Admin Panel: No user logged in. Redirecting...");
-                    sessionStorage.removeItem("token");
-                    if (!window.location.pathname.endsWith("login_admin.html")) {
-                      window.location.href = "login_admin.html";
-                    }
-                  }
-                });
-              } else {
-                console.error("Firebase Auth is not available. Admin panel features requiring authentication will not work.");
-                if (document.body && !window.location.pathname.endsWith("login_admin.html")) { // Ensure body exists for notification
-                   window.showNotification("Authentication service unavailable. Please check console.", "error",10000);
-                }
-              }
-        
-              async function getAuthToken() {
-                if (!firebaseAuth || !firebaseAuth.currentUser) {
-                  console.warn("No current user for getAuthToken.");
-                  if (firebaseAuth) window.showNotification("Session expired or not logged in.", "error");
-                  return null;
-                }
-                try {
-                  const token = await firebaseAuth.currentUser.getIdToken(true);
-                  sessionStorage.setItem("token", token);
-                  return token;
-                } catch (error) {
-                  console.error("Error getting ID token:", error);
-                  window.showNotification("Could not refresh auth token. Please log in again.", "error");
-                  if (error.code === "auth/user-token-expired" || error.code === "auth/invalid-user-token") {
-                    // if (!window.location.pathname.endsWith("login_admin.html")) {
-                    // window.location.href = "login_admin.html";
-                    // }
-                  }
-                  return null;
-                }
-              }
-        
-              async function secureFetch(url, options = {}) {
-                const token = await getAuthToken();
-                if (!token && url !== `${BASE}/api/tree`) { // Tree might be public, other calls need token
-                  console.error("Auth token not available for secureFetch to " + url);
-                  throw new Error("Authentication token not available. Please log in.");
-                }
-                const headers = { ...options.headers };
-                if (token) headers["Authorization"] = `Bearer ${token}`;
-                if (!(options.body instanceof FormData)) headers["Content-Type"] = "application/json";
-        
-                try {
-                  const response = await fetch(url, { ...options, headers });
-                  return response;
-                } catch (networkError) {
-                  console.error("Network error during secureFetch:", networkError);
-                  window.showNotification("Network error. Check connection.", "error");
-                  throw networkError;
-                }
-              }
-        
-              const BASE = "http://localhost:8000";
-              let fullTreeData = [];
-              let flatNodeList = []; // Used for dropdowns and new feature
-        
-              // --- Theme Toggle (existing code) ---
-              const themeToggleButton = document.getElementById("theme-toggle-button");
-              const sunIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>`;
-              const moonIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>`;
-              function applyTheme(theme) { /* ... (no changes to this function) ... */
-                if (theme === "light") {
-                  document.body.classList.add("light-theme");
-                  themeToggleButton.innerHTML = moonIcon;
-                  localStorage.setItem("theme", "light");
-                } else {
-                  document.body.classList.remove("light-theme");
-                  themeToggleButton.innerHTML = sunIcon;
-                  localStorage.setItem("theme", "dark");
-                }
-              }
-              themeToggleButton.addEventListener("click", () => applyTheme(document.body.classList.contains("light-theme") ? "dark" : "light"));
-              applyTheme(localStorage.getItem("theme") || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "dark"));
-        
-              function escapeJSString(str) { /* ... (no changes to this function) ... */
-                if (typeof str !== "string") return "";
-                return str.replace(/\\/g, "\\\\").replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/`/g, "\\`");
-              }
-        
-              // --- Tree Search (existing code) ---
-              const searchTreeInput = document.getElementById("search-tree-input");
-              searchTreeInput.addEventListener("input", (e) => filterTreeDOM(e.target.value.toLowerCase()));
-              function filterTreeDOM(searchTerm) { /* ... (no changes to this function) ... */
-                const treeElement = document.getElementById("tree");
-                if (!treeElement) return;
-        
-                function checkVisibility(element, term) {
-                  let directMatch = false;
-                  const nodeName = (element.dataset.nodeName || "").toLowerCase();
-                  if (nodeName.includes(term)) {
-                    directMatch = true;
-                  }
-        
-                  let childrenMatch = false;
-                  if (element.classList.contains("tree-node")) {
-                    const childrenContainer = element.querySelector(".tree-children-container");
-                    if (childrenContainer) {
-                      const childrenElements = childrenContainer.children;
-                      for (const child of childrenElements) {
-                        if (checkVisibility(child, term)) {
-                          childrenMatch = true;
-                          break; // Found a match in children, no need to check further for this parent
-                        }
-                      }
-                    }
-                  }
-        
-                  const shouldBeVisible = directMatch || childrenMatch;
-                  element.classList.toggle("hidden-node", !shouldBeVisible && term.length > 0);
-                  
-                  // Expand parent if a child matches and parent itself doesn't
-                  if (shouldBeVisible && childrenMatch && element.classList.contains("tree-node")) {
-                    const childrenContainer = document.getElementById(`children-${element.dataset.nodeId}`);
-                    const toggleIcon = document.getElementById(`toggle-icon-${element.dataset.nodeId}`);
-                    if (childrenContainer && childrenContainer.classList.contains("collapsed") && term.length > 0) {
-                        toggleTreeNode(element.dataset.nodeId, false); // Expand, don't toggle
-                    }
-                  }
-                  return shouldBeVisible;
-                }
-        
-                if (searchTerm.length === 0) {
-                  treeElement.querySelectorAll(".hidden-node").forEach((el) => el.classList.remove("hidden-node"));
-                  return;
-                }
-        
-                const topLevelNodes = Array.from(treeElement.children);
-                topLevelNodes.forEach(node => checkVisibility(node, searchTerm));
-              }
-        
-              // --- Tree and Node Dropdown Population (existing code) ---
-              function generateFlatNodeList(nodes, prefix = "", level = 0) { /* ... (no changes) ... */
-                let list = [];
-                nodes.forEach((node) => {
-                  list.push({ id: node.id, name: `${"—".repeat(level)} ${node.name} (Folder)`, type: "NODE" });
-                  if (node.artifacts) {
-                    node.artifacts.forEach((artifact) => {
-                      list.push({ id: artifact.id, name: `${"—".repeat(level + 1)} ${artifact.title} (File)`, type: "ARTIFACT", nodeId: artifact.id });
-                    });
-                  }
-                  if (node.children) {
-                    list = list.concat(generateFlatNodeList(node.children, prefix + "—", level + 1));
-                  }
-                });
-                return list;
-              }
-              function populateNodeDropdowns() { /* ... (no changes) ... */
-                flatNodeList = generateFlatNodeList(fullTreeData);
-                const newUserNodeSelect = document.getElementById("newUserNodeAccess");
-                const modalNodeSelect = document.getElementById("modalNodeSelect");
-                if (!newUserNodeSelect || !modalNodeSelect) return;
-                newUserNodeSelect.length = 1; // Keep "None" option
-                modalNodeSelect.length = 1;   // Keep "-- Select Node --" option
-                flatNodeList.forEach((item) => {
-                  const option = new Option(item.name, item.id);
-                  newUserNodeSelect.add(option.cloneNode(true));
-                  modalNodeSelect.add(option);
-                });
-              }
-              async function fetchTree() { /* ... (no changes) ... */
-                try {
-                  const res = await secureFetch(`${BASE}/api/tree`);
-                  if (!res.ok) { /* ... error handling ... */ throw new Error(`HTTP error! status: ${res.status}`);}
-                  fullTreeData = await res.json();
-                  document.getElementById("tree").innerHTML = renderTree(fullTreeData);
-                  populateNodeDropdowns();
-                } catch (error) { /* ... error handling ... */ 
-                    console.error("Failed to fetch tree:", error);
-                    window.showNotification(`Error loading folder structure: ${error.message}`, "error");
-                    document.getElementById("tree").innerHTML = `<p class="text-[var(--text-red-accent)] p-4">Error loading folder structure.</p>`;
-                }
-              }
-              function toggleTreeNode(nodeId, doToggle = true) { // Added doToggle parameter
-                const childrenContainer = document.getElementById(`children-${nodeId}`);
-                const toggleIcon = document.getElementById(`toggle-icon-${nodeId}`);
-                if (childrenContainer && toggleIcon) {
-                    let isCollapsed;
-                    if (doToggle) {
-                        isCollapsed = childrenContainer.classList.toggle("collapsed");
-                    } else {
-                        childrenContainer.classList.remove("collapsed"); // Ensure expanded
-                        isCollapsed = false;
-                    }
-                    toggleIcon.classList.toggle("collapsed", isCollapsed);
-                    toggleIcon.innerHTML = isCollapsed
-                        ? `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>`
-                        : `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" /></svg>`;
-                }
-            }
-              function renderTree(nodes) { /* ... (no changes to this function, assuming it's correct) ... */
-                if (!Array.isArray(nodes)) { return '<p class="text-[var(--text-red-accent)] p-2">Invalid tree data.</p>';}
-                return nodes.map((n) => {
-                    const hasChildrenOrArtifacts = (n.children && n.children.length > 0) || (n.artifacts && n.artifacts.length > 0);
-                    const childrenHTML = n.children ? renderTree(n.children) : "";
-                    const nodeNameSafe = escapeJSString(n.name);
-                    const artifactsHTML = n.artifacts ? n.artifacts.map(a => {
-                      const titleContent = escapeJSString(a.title);
-                      const descriptionContent = escapeJSString(a.description || "");
-                      const linkContent = escapeJSString(a.link || "#");
-                      return `
-                        <div class="tree-artifact-wrapper" data-artifact-id="${a.id}" data-node-id="${a.id}" data-node-name="${titleContent}" data-node-type="ARTIFACT" data-parent-node-id="${n.id}">
-                            <div class="node-content group hover:bg-[var(--bg-card-hover)] rounded-md px-1 py-0.5">
-                                <span class="tree-artifact-text clickable flex items-center text-sm flex-grow" title="View details for: ${titleContent}" onclick="showArtifactDetailsModal('${titleContent}', '${descriptionContent}', '${linkContent}')">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 tree-artifact-icon flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
-                                    <span>${titleContent}</span>
-                                </span>
-                                <div class="actions opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <button title="Delete file" class="action-icon-btn delete" onclick="event.stopPropagation(); openDeleteConfirmationModal(${a.id}, 'artifact', '${titleContent}')"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>
-                                </div>
-                            </div>
-                        </div>`;
-                    }).join("") : "";
-                    return `
-                        <div class="tree-node" data-node-id="${n.id}" data-node-name="${nodeNameSafe}" data-node-type="NODE">
-                            <div class="node-content group hover:bg-[var(--bg-card-hover)] rounded-md px-1 py-0.5">
-                                <span class="font-medium tree-node-text cursor-pointer flex items-center flex-grow" onclick="toggleTreeNode(${n.id})">
-                                    ${hasChildrenOrArtifacts ? `<span id="toggle-icon-${n.id}" class="tree-toggle-icon"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" /></svg></span>` : '<span class="tree-toggle-icon w-5 h-5 mr-1"></span>'}
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1 tree-node-icon flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" /></svg>
-                                    <span>${nodeNameSafe}</span> <span class="text-xs text-[var(--text-tertiary)] ml-1.5">(ID: ${n.id})</span>
-                                </span>
-                                <div class="actions opacity-0 group-hover:opacity-100 transition-opacity space-x-1">
-                                    <button title="Add item to this folder" class="action-icon-btn add" onclick="event.stopPropagation(); showInlineForm(${n.id}, this)"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></button>
-                                    <button title="Delete folder" class="action-icon-btn delete" onclick="event.stopPropagation(); openDeleteConfirmationModal(${n.id}, 'node', '${nodeNameSafe}')"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>
-                                </div>
-                            </div>
-                            <div id="form-${n.id}" class="form-inline mt-2 ml-5 p-4 bg-[var(--bg-inline-form)] rounded-lg border border-[var(--border-primary)] shadow-md" style="display:none;">
-                                <input type="text" placeholder="Name (Folder/File)" id="name-${n.id}" class="input-field text-sm">
-                                <select id="type-${n.id}" class="input-field text-sm" onchange="toggleFileInput(${n.id})"><option value="FOLDER">FOLDER</option><option value="SUBFOLDER">SUBFOLDER</option><option value="FILE">FILE</option></select>
-                                <textarea placeholder="Description (Optional)" id="description-${n.id}" class="input-field text-sm" rows="2"></textarea>
-                                <div id="file-method-options-${n.id}" style="display:none;">
-                                    <div class="mb-2"><label class="label-text text-xs">File Source:</label><select id="file-source-${n.id}" class="input-field text-xs py-1" onchange="toggleLinkOrUpload(${n.id})"><option value="link">Enter Link</option><option value="upload">Upload File</option></select></div>
-                                    <div id="link-input-container-${n.id}"><input type="text" placeholder="Link (e.g., https://...)" id="link-${n.id}" class="input-field text-sm"></div>
-                                    <div id="upload-input-container-${n.id}" style="display:none;"><input type="file" id="file-upload-${n.id}" class="input-field text-sm p-2"></div>
-                                </div>
-                                <button onclick="submitInlineForm(${n.id}, this)" class="submit-button text-sm w-full py-2"><span class="button-text">Add Item</span></button>
-                            </div>
-                            <div class="tree-children-container collapsed" id="children-${n.id}">${childrenHTML}${artifactsHTML}</div>
-                        </div>`;
-                }).join("");
-              }
-              async function fetchNodeName(nodeId) { /* ... (no changes to this function) ... */
-                if (!nodeId || String(nodeId).toLowerCase() === "null" || typeof nodeId === "undefined") { return "Global / Unspecified Node"; }
-                const localNode = flatNodeList.find((n) => String(n.id) === String(nodeId));
-                if (localNode) { return `${localNode.name.replace(/—/g, "").trim()} (ID: ${nodeId})`;}
-                try {
-                    let res = await secureFetch(`${BASE}/api/nodes/${nodeId}`);
-                    if (res.ok) { const data = await res.json(); return data.name ? `${data.name} (Folder) (ID: ${data.id})` : `Item ${nodeId}`; }
-                    res = await secureFetch(`${BASE}/api/artifacts/${nodeId}`);
-                    if (res.ok) { const data = await res.json(); return data.title ? `${data.title} (File) (ID: ${data.id})` : `Item ${nodeId}`; }
-                    console.warn(`Node/Artifact fetch failed for ID ${nodeId} (status: ${res.status}).`); return `Item ${nodeId}`;
-                } catch (error) { console.error(`Error fetching details for ID ${nodeId}:`, error); window.showNotification(`Error: ${error.message}`, "error"); return `Item ${nodeId}`; }
-              }
-        
-              // --- User Management (existing code with modifications) ---
-              let allUsersMasterList = [];
-              let currentUsersToDisplay = [];
-              let displayedUserCount = 0;
-              const usersPerPage = 10;
-              let isLoadingUsers = false; // Global lock for fetchUsers operation and pagination
-              const userSearchInput = document.getElementById("search-users-input");
-              const userListContainer = document.getElementById("userListContainer");
-              const userListElement = document.getElementById("userList");
-              const userListLoadingIndicator = document.getElementById("user-list-loading-indicator");
-        
-              async function fetchUsers() {
-                if (isLoadingUsers) return;
-                isLoadingUsers = true;
-                userListLoadingIndicator.style.display = "block"; // Show "Loading more users..."
-        
-                try {
-                  const res = await secureFetch(`${BASE}/api/users`);
-                  if (!res.ok) {
-                    let errorMsg = `HTTP error! status: ${res.status}`;
-                    try { const errData = await res.json(); errorMsg += ` - ${errData.message || errData.error || JSON.stringify(errData)}`; } catch (e) { /* ignore */ }
-                    throw new Error(errorMsg);
-                  }
-                  const users = await res.json();
-                  allUsersMasterList = users.reverse();
-                  applyUserSearchFilter();
-                } catch (error) {
-                  console.error("Failed to fetch users:", error);
-                  window.showNotification(`Error loading users: ${error.message}`, "error");
-                  userListElement.innerHTML = `<p class="text-[var(--text-red-accent)] p-2">Failed to load users.</p>`;
-                } finally {
-                  isLoadingUsers = false;
-                  userListLoadingIndicator.style.display = "none"; // Hide "Loading more users..."
-                }
-              }
-        
-              function applyUserSearchFilter() {
-                const searchTerm = userSearchInput.value.toLowerCase().trim();
-                currentUsersToDisplay = searchTerm === "" ? [...allUsersMasterList] : allUsersMasterList.filter(user => user.email.toLowerCase().includes(searchTerm));
-                userListElement.innerHTML = "";
-                displayedUserCount = 0;
-                renderPaginatedUsers(); // Call with loadMore = false
-              }
-        
-              userSearchInput.addEventListener("input", applyUserSearchFilter);
-        
-              async function renderPaginatedUsers(loadMore = false) {
-                // FIX for initial users not showing: Removed the problematic first condition
-                // Original: if (isLoadingUsers && !loadMore) return;
-        
-                // This condition prevents multiple scroll-triggered loads if a fetch is active OR another scroll-load is already setting isLoadingUsers
-                if (isLoadingUsers && loadMore) {
-                    console.log("RenderPaginatedUsers: A user list operation is already in progress, or main fetch active.");
-                    return;
-                }
-        
-                const isCurrentlyPaginatingOperation = loadMore; // True if this specific call is for pagination
-        
-                if (isCurrentlyPaginatingOperation) {
-                    isLoadingUsers = true; // Use global lock to signify this pagination operation is active
-                    userListLoadingIndicator.style.display = "block";
-                }
-                // For !loadMore (initial/filter), isLoadingUsers is managed by fetchUsers or is false for search.
-        
-                const usersToRender = currentUsersToDisplay.slice(displayedUserCount, displayedUserCount + usersPerPage);
-        
-                if (usersToRender.length === 0) {
-                  if (displayedUserCount === 0) {
-                    userListElement.innerHTML = `<p class="text-[var(--text-tertiary)] p-3 text-center">No users found matching your criteria.</p>`;
-                  }
-                  if (isCurrentlyPaginatingOperation) {
-                      isLoadingUsers = false; // Release lock if it was set for pagination
-                      userListLoadingIndicator.style.display = "none";
-                  }
-                  return;
-                }
-        
-                const userListPromises = usersToRender.map(async (u) => {
-                  let nodeAccessSummary = "No specific node roles.";
-                  if (u.roles && u.roles.length > 0) {
-                    nodeAccessSummary = `Node Access: ${u.roles.length} role${u.roles.length > 1 ? "s" : ""}`;
-                  }
-                  return `
-                    <li class="user-list-item p-4 rounded-lg shadow-md flex flex-col sm:flex-row justify-between sm:items-center space-y-3 sm:space-y-0">
-                        <div class="flex-grow">
-                            <span class="font-semibold user-email-text block text-md">${escapeJSString(u.email)}</span>
-                            <span class="text-sm user-role-text block">${u.role ? `Global: ${u.role}` : "No Global Role"}</span>
-                            <span class="user-node-role-summary block mt-1">${nodeAccessSummary}</span>
-                        </div>
-                        <div class="user-actions space-x-2 flex-shrink-0 mt-3 sm:mt-0">
-                            <button class="user-action-button manage-access" title="Manage User Access" onclick="openAccessModal('${escapeJSString(u.email)}')">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                                Manage Access
-                            </button>
-                            <button class="user-action-button delete-user" title="Delete User & All Access" onclick="deleteUser('${escapeJSString(u.email)}')">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                                Delete User
-                            </button>
-                        </div>
-                    </li>`;
-                });
-                const userListHtmlChunk = await Promise.all(userListPromises);
-                userListElement.insertAdjacentHTML("beforeend", userListHtmlChunk.join(""));
-                displayedUserCount += usersToRender.length;
-        
-                if (isCurrentlyPaginatingOperation) {
-                    isLoadingUsers = false; // Release lock if it was set for pagination
-                    userListLoadingIndicator.style.display = "none";
-                }
-              }
-        
-        
-              userListContainer.addEventListener("scroll", () => {
-                // The isLoadingUsers check here prevents starting a new pagination
-                // if a main fetch (fetchUsers) is running OR if a previous pagination
-                // (which also uses isLoadingUsers as its lock in the modified renderPaginatedUsers) is running.
-                if (isLoadingUsers) return;
-        
-                const { scrollTop, scrollHeight, clientHeight } = userListContainer;
-                if (scrollTop + clientHeight >= scrollHeight - 100) {
-                  if (displayedUserCount < currentUsersToDisplay.length) {
-                    renderPaginatedUsers(true);
-                  }
-                }
-              });
-        
-              async function deleteUser(email) { /* ... (no changes to this function) ... */
-                if (!confirm(`Are you sure you want to delete all access roles and user data for ${email}? This action cannot be undone.`)) return;
-                try {
-                    const response = await secureFetch(`${BASE}/api/users/${email}`, { method: "DELETE" });
-                    if (!response.ok) { const errorData = await response.json().catch(() => ({ message: response.statusText })); throw new Error(`HTTP error! status: ${errorData.message || response.statusText}`); }
-                    window.showNotification("User deleted successfully. ✅", "success");
-                    fetchUsers(); 
-                } catch (error) { console.error("Failed to delete user:", error); window.showNotification(`Error deleting user: ${error.message}`, "error");}
-              }
-              function showInlineForm(parentId, buttonElement) { /* ... (no changes) ... */
-                const form = document.getElementById(`form-${parentId}`);
-                if (form) {
-                    const isVisible = form.style.display === "block";
-                    form.style.display = isVisible ? "none" : "block";
-                    if (!isVisible) { form.querySelector('input[type="text"], select')?.focus(); toggleFileInput(parentId); }
-                }
-              }
-              function toggleFileInput(parentId) { /* ... (no changes) ... */
-                const typeSelect = document.getElementById(`type-${parentId}`);
-                const fileMethodOptionsDiv = document.getElementById(`file-method-options-${parentId}`);
-                const descriptionTextarea = document.getElementById(`description-${parentId}`);
-                if (typeSelect.value === "FILE") {
-                    fileMethodOptionsDiv.style.display = "block";
-                    descriptionTextarea.placeholder = "Description (Optional for File)";
-                    document.getElementById(`file-source-${parentId}`).value = "link";
-                    toggleLinkOrUpload(parentId);
-                } else {
-                    fileMethodOptionsDiv.style.display = "none";
-                    descriptionTextarea.placeholder = "Description (Optional for Folder)";
-                }
-              }
-              function toggleLinkOrUpload(parentId) { /* ... (no changes) ... */
-                const fileSource = document.getElementById(`file-source-${parentId}`).value;
-                const linkInputContainer = document.getElementById(`link-input-container-${parentId}`);
-                const uploadInputContainer = document.getElementById(`upload-input-container-${parentId}`);
-                linkInputContainer.style.display = fileSource === "link" ? "block" : "none";
-                uploadInputContainer.style.display = fileSource === "upload" ? "block" : "none";
-              }
-              async function submitInlineForm(parentId, buttonElement) { /* ... (no changes) ... */
-                const name = document.getElementById(`name-${parentId}`).value.trim();
-                const type = document.getElementById(`type-${parentId}`).value;
-                const description = document.getElementById(`description-${parentId}`).value.trim();
-                const originalButtonText = buttonElement.querySelector(".button-text")?.textContent || buttonElement.textContent;
-                window.setButtonLoading(buttonElement, true, originalButtonText);
-                if (!name) { window.showNotification("Name is required.", "error"); window.setButtonLoading(buttonElement, false, originalButtonText); return; }
-                try {
-                    let response;
-                    if (type === "FILE") {
-                        const fileSource = document.getElementById(`file-source-${parentId}`).value;
-                        if (fileSource === "link") {
-                            const link = document.getElementById(`link-${parentId}`).value.trim();
-                            if (!link) { window.showNotification("Link is required.", "error"); window.setButtonLoading(buttonElement, false, originalButtonText); return; }
-                            response = await secureFetch(`${BASE}/api/artifacts`, { method: "POST", body: JSON.stringify({ title: name, description, link, nodeId: parentId }) });
-                        } else {
-                            const fileInput = document.getElementById(`file-upload-${parentId}`); const file = fileInput.files[0];
-                            if (!file) { window.showNotification("Please select a file.", "error"); window.setButtonLoading(buttonElement, false, originalButtonText); return; }
-                            const formData = new FormData(); formData.append("file", file); formData.append("title", name); formData.append("description", description); formData.append("nodeId", parentId);
-                            response = await secureFetch(`${BASE}/api/upload`, { method: "POST", body: formData });
-                        }
-                    } else { response = await secureFetch(`${BASE}/api/nodes`, { method: "POST", body: JSON.stringify({ name, type, parentId, description }) }); }
-                    if (!response.ok) { const errorData = await response.json().catch(() => ({ message: response.statusText })); throw new Error(`Failed: ${errorData.message || response.statusText}`);}
-                    window.showNotification("Item added! ✅", "success"); fetchTree();
-                    document.getElementById(`form-${parentId}`).style.display = "none"; /* Reset form */
-                } catch (error) { console.error("Error submitting inline form:", error); window.showNotification(`Error: ${error.message}`, "error"); }
-                finally { window.setButtonLoading(buttonElement, false, originalButtonText); }
-              }
-              // --- Delete Confirmation Modal Logic (existing code) ---
-              const deleteConfirmationModal = document.getElementById("delete-confirmation-modal");
-              const deleteModalTitle = document.getElementById("delete-modal-title");
-              const deleteModalMessage = document.getElementById("delete-modal-message");
-              const deleteConfirmInput = document.getElementById("delete-confirm-input");
-              const confirmDeleteButton = document.getElementById("confirm-delete-button");
-              let itemToDelete = { id: null, type: null, name: "" };
-              function openDeleteConfirmationModal(itemId, itemType, itemName) { /* ... (no changes) ... */
-                itemToDelete = { id: itemId, type: itemType, name: itemName };
-                deleteModalTitle.textContent = `Confirm Deletion: ${escapeJSString(itemName)}`;
-                deleteModalMessage.textContent = `Are you sure you want to delete the ${itemType} "${escapeJSString(itemName)}"? This action cannot be undone.`;
-                if (itemType === 'node') deleteModalMessage.textContent += " All its contents will also be deleted.";
-                deleteConfirmInput.value = ""; confirmDeleteButton.disabled = true; deleteConfirmationModal.classList.add("active"); deleteConfirmInput.focus();
-              }
-              function closeDeleteConfirmationModal() { deleteConfirmationModal.classList.remove("active"); }
-              deleteConfirmInput.addEventListener("input", () => { confirmDeleteButton.disabled = deleteConfirmInput.value.trim().toLowerCase() !== "delete"; });
-              confirmDeleteButton.addEventListener("click", async () => { /* ... (no changes) ... */
-                if (deleteConfirmInput.value.trim().toLowerCase() !== "delete" || !itemToDelete.id) { window.showNotification("Deletion not confirmed.", "error"); return; }
-                const originalButtonText = confirmDeleteButton.querySelector(".button-text")?.textContent || confirmDeleteButton.textContent;
-                window.setButtonLoading(confirmDeleteButton, true, originalButtonText);
-                try {
-                    let endpoint = itemToDelete.type === "node" ? `${BASE}/api/nodes/${itemToDelete.id}` : `${BASE}/api/artifacts/${itemToDelete.id}`;
-                    const response = await secureFetch(endpoint, { method: "DELETE" });
-                    if (!response.ok) { const err = await response.json().catch(() => ({message: response.statusText})); throw new Error(`Failed: ${err.message || response.statusText}`);}
-                    window.showNotification(`${itemToDelete.type.charAt(0).toUpperCase() + itemToDelete.type.slice(1)} "${escapeJSString(itemToDelete.name)}" deleted. ✅`, "success");
-                    fetchTree(); closeDeleteConfirmationModal();
-                } catch (error) { console.error(`Error deleting ${itemToDelete.type}:`, error); window.showNotification(`Error: ${error.message}`, "error");}
-                finally { window.setButtonLoading(confirmDeleteButton, false, originalButtonText); }
-              });
-              async function promptNewRoot() { /* ... (no changes) ... */
-                const name = prompt("Enter new root folder name (e.g., Vertical name):");
-                if (!name?.trim()) return;
-                try {
-                    const response = await secureFetch(`${BASE}/api/nodes`, { method: "POST", body: JSON.stringify({ name: name.trim(), type: "VERTICAL", parentId: null, description: "Root Vertical Folder" }) });
-                    if (!response.ok) { const err = await response.json().catch(()=>({message: response.statusText})); throw new Error(`Failed: ${err.message || response.statusText}`);}
-                    window.showNotification("New root folder created! ✅", "success"); fetchTree();
-                } catch (error) { console.error("Error creating new root:", error); window.showNotification(`Error: ${error.message}`, "error"); }
-              }
-        
-        
-              // MODIFIED ADD USER FORM SUBMIT HANDLER
-              document.getElementById("addUserForm").addEventListener("submit", async (e) => {
-                e.preventDefault();
-                const submitButton = e.target.querySelector('button[type="submit"]');
-                const originalButtonText = submitButton.querySelector(".button-text")?.textContent || submitButton.textContent;
-                window.setButtonLoading(submitButton, true, originalButtonText);
-        
-                const email = document.getElementById("newUserEmail").value.trim();
-                const globalRole = document.getElementById("newUserRole").value;
-                const selectedNodeIdForAccess = document.getElementById("newUserNodeAccess").value;
-                const selectedNodeRoleForAccess = document.getElementById("newUserNodeRole").value;
-                const applyGlobalToAllNodes = document.getElementById("applyGlobalRoleToAllNodesCheckbox").checked;
-        
-                if (!email || !globalRole) {
-                  window.showNotification("Email and Global Role are required.", "error");
-                  window.setButtonLoading(submitButton, false, originalButtonText);
-                  return;
-                }
-        
-                try {
-                  // 1. Create the user with the global role
-                  let userCreationResponse = await secureFetch(`${BASE}/api/users`, {
-                    method: "POST",
-                    body: JSON.stringify({ email, role: globalRole }),
-                  });
-        
-                  if (!userCreationResponse.ok) {
-                    const errorData = await userCreationResponse.json().catch(() => ({ message: userCreationResponse.statusText }));
-                    throw new Error(`Failed to add user: ${errorData.message || userCreationResponse.statusText}`);
-                  }
-        
-                  let overallSuccessMessage = "User added successfully! ✅";
-        
-                  // 2. Handle node-specific access
-                  if (selectedNodeIdForAccess) {
-                    // Grant access to a single selected node
-                    const accessResponse = await secureFetch(`${BASE}/api/access`, {
-                      method: "PUT",
-                      body: JSON.stringify({
-                        email,
-                        nodeId: parseInt(selectedNodeIdForAccess),
-                        role: selectedNodeRoleForAccess,
-                      }),
-                    });
-                    if (!accessResponse.ok) {
-                      const errorData = await accessResponse.json().catch(() => ({ message: accessResponse.statusText }));
-                      overallSuccessMessage += `\n⚠️ Could not grant initial node access: ${errorData.message || accessResponse.statusText}`;
-                      window.showNotification(overallSuccessMessage, "error", 5000); // Show combined message as error
-                    } else {
-                      overallSuccessMessage += ` Initial node access granted.`;
-                        window.showNotification(overallSuccessMessage, "success", 5000);
-                    }
-                  } else if (applyGlobalToAllNodes) {
-                    // Grant selected global role to all nodes
-                    window.showNotification(`User created. Now applying '${globalRole}' role to all nodes. This may take a moment...`, "info", 8000);
-        
-                    if (!flatNodeList || flatNodeList.length === 0) {
-                        console.warn("flatNodeList is empty or not yet populated. Cannot apply global role to all nodes.");
-                        overallSuccessMessage += "\n⚠️ No nodes found to apply global role to (tree data might be loading or empty).";
-                        window.showNotification(overallSuccessMessage, "warn", 5000);
-                    } else {
-                        let nodesProcessedCount = 0;
-                        let nodesFailedCount = 0;
-                        // It's better to run these sequentially to avoid overwhelming the server or hitting rate limits
-                        for (const item of flatNodeList) {
-                            // Assuming item.id is the correct identifier for nodes/artifacts in /api/access
-                            // And assuming globalRole is the role to be applied
-                            try {
-                                const nodeAccessResponse = await secureFetch(`${BASE}/api/access`, {
-                                    method: "PUT",
-                                    body: JSON.stringify({
-                                        email,
-                                        nodeId: parseInt(item.id),
-                                        role: globalRole, // Use the selected global role
-                                    }),
-                                });
-                                if (nodeAccessResponse.ok) {
-                                    nodesProcessedCount++;
-                                } else {
-                                    nodesFailedCount++;
-                                    const errorData = await nodeAccessResponse.json().catch(() => ({ message: nodeAccessResponse.statusText }));
-                                    console.warn(`Failed to apply role to node ${item.id} ('${item.name}'): ${errorData.message || nodeAccessResponse.statusText}`);
-                                }
-                            } catch (loopError) {
-                                nodesFailedCount++;
-                                console.error(`Error applying role to node ${item.id} ('${item.name}'):`, loopError);
-                            }
-                        }
-        
-                        if (nodesFailedCount > 0) {
-                            overallSuccessMessage += `\n⚠️ Applied '${globalRole}' to ${nodesProcessedCount} nodes, but failed for ${nodesFailedCount}. Check console.`;
-                            window.showNotification(overallSuccessMessage, "error", 7000);
-                        } else {
-                            overallSuccessMessage += `\nSuccessfully applied '${globalRole}' role to all ${nodesProcessedCount} nodes.`;
-                            window.showNotification(overallSuccessMessage, "success", 7000);
-                        }
-                    }
-                  } else {
-                    // Just user creation, no specific node access or apply-to-all
-                    window.showNotification(overallSuccessMessage, "success");
-                  }
-        
-                  fetchUsers(); // Refresh user list
-                  document.getElementById("addUserForm").reset();
-                  // Uncheck the checkbox manually if it's not part of form.reset()
-                  const applyToAllCheckbox = document.getElementById("applyGlobalRoleToAllNodesCheckbox");
-                  if (applyToAllCheckbox) applyToAllCheckbox.checked = false;
-        
-                } catch (error) {
-                  console.error("Error in add user process:", error);
-                  window.showNotification(`Error: ${error.message}`, "error", 5000);
-                } finally {
-                  window.setButtonLoading(submitButton, false, originalButtonText);
-                }
-              });
-        
-        
-              // --- Access Management Modal Logic (existing code) ---
-              const accessModal = document.getElementById("access-management-modal");
-              const modalUserEmailSpan = document.getElementById("modal-user-email");
-              const modalCurrentAccessDiv = document.getElementById("access-management-modal-current-access");
-              const modalEditingUserEmailHidden = document.getElementById("modal-editing-user-email-hidden");
-              async function openAccessModal(email) { /* ... (no changes) ... */
-                modalUserEmailSpan.textContent = email; modalEditingUserEmailHidden.value = email;
-                accessModal.classList.add("active"); await loadUserAccessRolesForModal(email);
-              }
-              function closeAccessModal() { /* ... (no changes) ... */
-                accessModal.classList.remove("active"); modalCurrentAccessDiv.innerHTML = `<p class="text-[var(--text-tertiary)] p-3">Loading access...</p>`;
-              }
-              async function loadUserAccessRolesForModal(email) { /* ... (no changes) ... */
-                modalCurrentAccessDiv.innerHTML = `<div class="flex justify-center items-center p-4"><div class="spinner" style="border-color: var(--text-primary); border-top-color: transparent;"></div><span class="ml-2 text-[var(--text-secondary)]">Loading...</span></div>`;
-                try {
-                    const res = await secureFetch(`${BASE}/api/users`); if (!res.ok) throw new Error("Failed to fetch user data");
-                    const users = await res.json(); const user = users.find(u => u.email === email);
-                    if (!user || !user.roles || user.roles.length === 0) { modalCurrentAccessDiv.innerHTML = `<p class="text-[var(--text-tertiary)] p-3">No specific node access.</p>`; return; }
-                    const items = await Promise.all(user.roles.map(async role => {
-                        const nodeName = await fetchNodeName(role.nodeId);
-                        return `<div class="access-item flex justify-between items-center p-2.5 border-b border-[var(--border-primary)] last:border-b-0"><div><span class="font-medium text-[var(--text-primary)]">${escapeJSString(nodeName)}</span></div><div class="flex items-center gap-2"><select class="input-field text-xs py-1 px-2 w-auto bg-[var(--bg-input)] border-[var(--border-input)]" data-node-id="${role.nodeId}" data-original-role="${role.role}" onchange="updateNodeAccessInModal(this, '${escapeJSString(email)}', ${role.nodeId})"><option value="ADMIN" ${role.role === "ADMIN" ? "selected" : ""}>ADMIN</option><option value="EDITOR" ${role.role === "EDITOR" ? "selected" : ""}>EDITOR</option><option value="VIEWER" ${role.role === "VIEWER" ? "selected" : ""}>VIEWER</option></select><button class="action-icon-btn delete text-sm" title="Revoke Access" onclick="revokeNodeAccessInModal('${escapeJSString(email)}', ${role.nodeId})"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button></div></div>`;
-                    }));
-                    modalCurrentAccessDiv.innerHTML = items.join("");
-                } catch (error) { console.error("Error loading user access for modal:", error); modalCurrentAccessDiv.innerHTML = `<p class="text-[var(--text-red-accent)] p-3">Error: ${error.message}</p>`;}
-              }
-              async function updateNodeAccessInModal(selectElement, email, nodeId) { /* ... (no changes) ... */
-                const newRole = selectElement.value; const originalRole = selectElement.dataset.originalRole; if (newRole === originalRole) return;
-                try {
-                    const response = await secureFetch(`${BASE}/api/access`, { method: "PUT", body: JSON.stringify({ email, nodeId, role: newRole }) });
-                    if (!response.ok) { const err = await response.json().catch(()=>({message:response.statusText})); throw new Error(`Failed: ${err.message || response.statusText}`);}
-                    window.showNotification("Access updated! ✅", "success"); selectElement.dataset.originalRole = newRole; fetchUsers();
-                } catch (error) { console.error("Error updating access:", error); window.showNotification(`Error: ${error.message}`, "error"); selectElement.value = originalRole;}
-              }
-              async function revokeNodeAccessInModal(email, nodeId) { /* ... (no changes) ... */
-                if (!confirm(`Revoke access for ${email} from node ID ${nodeId}?`)) return;
-                try {
-                    const response = await secureFetch(`${BASE}/api/access`, { method: "DELETE", body: JSON.stringify({ email, nodeId }) });
-                    if (!response.ok) { const err = await response.json().catch(()=>({message:response.statusText})); throw new Error(`Failed: ${err.message || response.statusText}`);}
-                    window.showNotification("Access revoked! ✅", "success"); loadUserAccessRolesForModal(email); fetchUsers();
-                } catch (error) { console.error("Error revoking access:", error); window.showNotification(`Error: ${error.message}`, "error");}
-              }
-              document.getElementById("grantNewAccessForm").addEventListener("submit", async (e) => { /* ... (no changes) ... */
-                e.preventDefault(); const btn = e.target.querySelector('button[type="submit"]'); const originalText = btn.querySelector('.button-text')?.textContent || btn.textContent;
-                window.setButtonLoading(btn, true, originalText);
-                const email = modalEditingUserEmailHidden.value; const nodeId = document.getElementById("modalNodeSelect").value; const role = document.getElementById("modalNodeRoleSelect").value;
-                if (!email || !nodeId || !role) { window.showNotification("Select user, node, and role.", "error"); window.setButtonLoading(btn, false, originalText); return; }
-                try {
-                    const response = await secureFetch(`${BASE}/api/access`, { method: "PUT", body: JSON.stringify({ email, nodeId: parseInt(nodeId), role }) });
-                    if (!response.ok) { const err = await response.json().catch(()=>({message:response.statusText})); throw new Error(`Failed: ${err.message || response.statusText}`);}
-                    window.showNotification("Access granted! ✅", "success"); loadUserAccessRolesForModal(email); fetchUsers();
-                    e.target.reset(); document.getElementById("modalNodeSelect").value = "";
-                } catch (error) { console.error("Error granting new access:", error); window.showNotification(`Error: ${error.message}`, "error");}
-                finally { window.setButtonLoading(btn, false, originalText); }
-              });
-        
-              // --- Artifact Details Modal Logic (existing code) ---
-              const artifactDetailsModalEl = document.getElementById("artifact-details-modal");
-              function showArtifactDetailsModal(title, description, link) { /* ... (no changes) ... */
-                const titleEl = document.getElementById("artifact-modal-title"); const descEl = document.getElementById("artifact-details-modal-description"); const linkEl = document.getElementById("artifact-modal-link");
-                if (!artifactDetailsModalEl || !titleEl || !descEl || !linkEl) { console.error("Artifact modal elements not found."); return; }
-                titleEl.textContent = title || "Artifact Details"; descEl.innerHTML = description ? description.replace(/\n/g, "<br>") : "No description.";
-                let pLink = link || "#"; if (pLink && !pLink.startsWith("http") && pLink !== "#") pLink = `https://${pLink}`; linkEl.href = pLink;
-                if (!link || link === "#") { linkEl.classList.add("opacity-50", "cursor-not-allowed"); linkEl.removeAttribute("target"); linkEl.onclick = (ev) => ev.preventDefault(); }
-                else { linkEl.classList.remove("opacity-50", "cursor-not-allowed"); linkEl.setAttribute("target", "_blank"); linkEl.onclick = null; }
-                artifactDetailsModalEl.classList.add("active");
-              }
-              function closeArtifactDetailsModal() { if (artifactDetailsModalEl) artifactDetailsModalEl.classList.remove("active"); }
-        
-              // --- User Menu Dropdown Logic (existing code) ---
-              if (userMenuButton && userDropdownMenu) { /* ... (no changes) ... */
-                userMenuButton.addEventListener("click", () => {
-                    const isExpanded = userMenuButton.getAttribute("aria-expanded") === "true" || false;
-                    userMenuButton.setAttribute("aria-expanded", !isExpanded); userDropdownMenu.classList.toggle("hidden");
-                });
-                document.addEventListener("click", (event) => {
-                    if (!userMenuButton.contains(event.target) && !userDropdownMenu.contains(event.target)) {
-                        userDropdownMenu.classList.add("hidden"); userMenuButton.setAttribute("aria-expanded", "false");
-                    }
-                });
-              }
-              if (logoutButtonDropdown) { /* ... (no changes) ... */
-                logoutButtonDropdown.addEventListener("click", async () => {
-                    if (firebaseAuth) { try { await firebaseAuth.signOut(); sessionStorage.removeItem("token"); window.showNotification("Logged out.", "success");}
-                    catch (error) { console.error("Error signing out:", error); window.showNotification("Logout failed.", "error");}}
-                });
-              }
-        
-              function initializeAdminPanel() {
-                console.log("Initializing Admin Panel data...");
-                if (firebaseAuth && firebaseAuth.currentUser) {
-                  fetchTree(); // Populates fullTreeData and flatNodeList
-                  fetchUsers();
-                } else {
-                  console.log("User not logged in, skipping data fetch.");
-                  if(userListElement) userListElement.innerHTML = `<p class="text-[var(--text-tertiary)] p-3 text-center">Please log in to view users.</p>`;
-                  if(userListLoadingIndicator) userListLoadingIndicator.style.display = "none";
-                }
-              }
-        
-              document.addEventListener("keydown", (event) => { /* ... (no changes) ... */
-                if (event.key === "Escape") {
-                    if (accessModal.classList.contains("active")) closeAccessModal();
-                    if (artifactDetailsModalEl?.classList.contains("active")) closeArtifactDetailsModal();
-                    if (deleteConfirmationModal.classList.contains("active")) closeDeleteConfirmationModal();
-                }
-              });
+      // --- Firebase Configuration ---
+      const firebaseConfig = {
+        apiKey: "AIzaSyCbHWUEzqGjzeanOiMG0Z5Lb4wIjWWEMUQ", // Replace with your actual API key
+        authDomain: "docnest-f85e2.firebaseapp.com", // Replace with your actual auth domain
+        projectId: "docnest-f85e2", // Replace with your actual project ID
+        storageBucket: "docnest-f85e2.appspot.com", // Replace with your actual storage bucket
+        messagingSenderId: "102395439437", // Replace with your actual sender ID
+        appId: "1:102395439437:web:84e6676388b5d54395af04", // Replace with your actual App ID
+        measurementId: "G-YRMBR8BVSE", // Optional: Replace with your actual Measurement ID
+      };
 
-      
+      // --- Global Helper Functions (defined early) ---
+      window.showNotification = function (
+        message,
+        type = "success",
+        duration = 3000
+      ) {
+        const toastContainer = document.getElementById("toast-container");
+        if (!toastContainer) return;
+
+        const toast = document.createElement("div");
+        toast.classList.add("toast", type);
+
+        let iconHtml = "";
+        if (type === "success") {
+          iconHtml = `<svg class="toast-icon h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
+        } else if (type === "error") {
+          iconHtml = `<svg class="toast-icon h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
+        } else if (type === "info") {
+          // Added info type for longer messages
+          iconHtml = `<svg class="toast-icon h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
+        }
+
+        toast.innerHTML = `${iconHtml}<span>${message}</span>`;
+        toastContainer.appendChild(toast);
+
+        toast.offsetHeight; // Trigger reflow
+
+        toast.classList.add("show");
+
+        setTimeout(() => {
+          toast.classList.remove("show");
+          setTimeout(() => {
+            toast.remove();
+          }, 300);
+        }, duration);
+      };
+
+      window.setButtonLoading = function (
+        button,
+        isLoading,
+        originalText = null
+      ) {
+        if (!(button instanceof HTMLElement)) {
+          console.error(
+            "setButtonLoading: button argument is not an HTMLElement",
+            button
+          );
+          return;
+        }
+        const buttonTextSpan = button.querySelector(".button-text");
+        if (isLoading) {
+          button.disabled = true;
+          if (buttonTextSpan) {
+            if (
+              originalText !== null &&
+              typeof buttonTextSpan.dataset.originalText === "undefined"
+            ) {
+              // Store original text only once
+              buttonTextSpan.dataset.originalText = buttonTextSpan.innerHTML;
+            }
+            buttonTextSpan.innerHTML = `<span class="spinner"></span>Processing...`;
+          } else {
+            if (
+              originalText !== null &&
+              typeof button.dataset.originalText === "undefined"
+            ) {
+              button.dataset.originalText = button.innerHTML;
+            }
+            button.innerHTML = `<span class="spinner"></span>Processing...`;
+          }
+        } else {
+          button.disabled = false;
+          if (buttonTextSpan) {
+            buttonTextSpan.innerHTML =
+              buttonTextSpan.dataset.originalText || originalText || "Submit";
+            delete buttonTextSpan.dataset.originalText; // Clean up
+          } else {
+            button.innerHTML =
+              button.dataset.originalText || originalText || "Submit";
+            delete button.dataset.originalText; // Clean up
+          }
+        }
+      };
+      // --- End Global Helper Functions ---
+
+      // Initialize Firebase (compat version)
+      let firebaseApp;
+      let firebaseAuth;
+
+      try {
+        firebaseApp = firebase.initializeApp(firebaseConfig);
+        firebaseAuth = firebase.auth();
+        console.log("Firebase initialized successfully.");
+      } catch (e) {
+        console.error("Error initializing Firebase:", e);
+        window.showNotification(
+          "Critical Error: Could not initialize Firebase. Check console.",
+          "error",
+          10000
+        );
+      }
+
+      // --- Auth State Management ---
+      const userMenuButton = document.getElementById("user-menu-button");
+      const userDisplayNameSpan = document.getElementById("user-display-name");
+      const userDropdownMenu = document.getElementById("user-dropdown-menu");
+      const dropdownUserName = document.getElementById("dropdown-user-name");
+      const dropdownUserEmail = document.getElementById("dropdown-user-email");
+      const logoutButtonDropdown = document.getElementById(
+        "logout-button-dropdown"
+      );
+
+      if (firebaseAuth) {
+        firebaseAuth.onAuthStateChanged((user) => {
+          if (user) {
+            console.log("✅ Admin Panel: Logged in as", user.email);
+            if (userDisplayNameSpan)
+              userDisplayNameSpan.textContent =
+                user.displayName || user.email.split("@")[0];
+            if (dropdownUserName)
+              dropdownUserName.textContent = user.displayName || "N/A";
+            if (dropdownUserEmail) dropdownUserEmail.textContent = user.email;
+            initializeAdminPanel();
+          } else {
+            console.log("🚫 Admin Panel: No user logged in. Redirecting...");
+            sessionStorage.removeItem("token");
+            if (!window.location.pathname.endsWith("login_admin.html")) {
+              // Uncomment the line below to enable redirection
+              window.location.href = "login_admin.html";
+              console.warn("Redirect to login page is commented out."); // Added warning
+              window.showNotification(
+                "Not logged in. Please login via login_admin.html.",
+                "error",
+                10000
+              ); // Show error if not logged in
+            }
+          }
+        });
+      } else {
+        console.error(
+          "Firebase Auth is not available. Admin panel features requiring authentication will not work."
+        );
+        if (
+          document.body &&
+          !window.location.pathname.endsWith("login_admin.html")
+        ) {
+          // Ensure body exists for notification
+          window.showNotification(
+            "Authentication service unavailable. Please check console.",
+            "error",
+            10000
+          );
+        }
+      }
+
+      async function getAuthToken() {
+        if (!firebaseAuth || !firebaseAuth.currentUser) {
+          console.warn("No current user for getAuthToken.");
+          // Removed automatic redirect from here, handled by onAuthStateChanged
+          if (
+            firebaseAuth &&
+            !window.location.pathname.endsWith("login_admin.html")
+          ) {
+            window.showNotification(
+              "Session expired or not logged in. Please log in again via login_admin.html",
+              "error",
+              5000
+            );
+          }
+          return null;
+        }
+        try {
+          const token = await firebaseAuth.currentUser.getIdToken(true); // Force refresh
+          sessionStorage.setItem("token", token);
+          return token;
+        } catch (error) {
+          console.error("Error getting ID token:", error);
+          window.showNotification(
+            "Could not refresh auth token. Please log in again.",
+            "error"
+          );
+          if (
+            error.code === "auth/user-token-expired" ||
+            error.code === "auth/invalid-user-token"
+          ) {
+            // Redirect logic is handled by onAuthStateChanged
+            console.warn("Auth token expired or invalid.");
+          }
+          return null;
+        }
+      }
+
+      async function secureFetch(url, options = {}) {
+        const token = await getAuthToken();
+        // Allow tree fetch without token (assuming it might be public/partially public)
+        // All other fetches strictly require a token
+        if (!token && !url.endsWith("/api/tree")) {
+          console.error("Auth token not available for secureFetch to " + url);
+          throw new Error("Authentication token not available. Please log in.");
+        }
+        const headers = { ...options.headers };
+        if (token) headers["Authorization"] = `Bearer ${token}`;
+        if (!(options.body instanceof FormData) && options.body) {
+          // Only set Content-Type if body exists and is not FormData
+          headers["Content-Type"] = "application/json";
+        }
+
+        try {
+          const response = await fetch(url, { ...options, headers });
+          // Check for 401/403 specifically after fetch
+          if (response.status === 401 || response.status === 403) {
+            console.error(
+              `Authorization error (${response.status}) for ${url}.`
+            );
+            window.showNotification(
+              "Authorization error. You might need to log in again.",
+              "error"
+            );
+            // Consider triggering a logout or redirect here if desired
+            // Example: if (firebaseAuth) firebaseAuth.signOut();
+            throw new Error(`Authorization failed (${response.status})`);
+          }
+          return response;
+        } catch (networkError) {
+          console.error("Network error during secureFetch:", networkError);
+          window.showNotification(
+            `Network Error: ${networkError.message}. Check connection or console.`,
+            "error"
+          );
+          throw networkError; // Re-throw original network error
+        }
+      }
+
+      const BASE = "http://localhost:8000"; // Ensure this is your backend URL
+      let fullTreeData = [];
+      let flatNodeList = []; // Used for dropdowns and new feature
+
+      // --- Theme Toggle ---
+      const themeToggleButton = document.getElementById("theme-toggle-button");
+      const sunIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>`;
+      const moonIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>`;
+      function applyTheme(theme) {
+        if (theme === "light") {
+          document.body.classList.add("light-theme");
+          themeToggleButton.innerHTML = moonIcon;
+          localStorage.setItem("theme", "light");
+        } else {
+          document.body.classList.remove("light-theme");
+          themeToggleButton.innerHTML = sunIcon;
+          localStorage.setItem("theme", "dark");
+        }
+      }
+      themeToggleButton.addEventListener("click", () =>
+        applyTheme(
+          document.body.classList.contains("light-theme") ? "dark" : "light"
+        )
+      );
+      applyTheme(
+        localStorage.getItem("theme") ||
+          (window.matchMedia("(prefers-color-scheme: dark)").matches
+            ? "dark"
+            : "dark")
+      ); // Default to system or dark
+
+      function escapeJSString(str) {
+        if (typeof str !== "string") return "";
+        // Simplified escaping for HTML attributes and simple display
+        return str
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;") // Use HTML entity for single quote
+          .replace(/`/g, "&#96;"); // Use HTML entity for backtick
+      }
+
+      // --- Tree Search ---
+      const searchTreeInput = document.getElementById("search-tree-input");
+      searchTreeInput.addEventListener("input", (e) =>
+        filterTreeDOM(e.target.value.toLowerCase())
+      );
+      function filterTreeDOM(searchTerm) {
+        const treeElement = document.getElementById("tree");
+        if (!treeElement) return;
+
+        function checkVisibility(element, term) {
+          let directMatch = false;
+          const nodeName = (element.dataset.nodeName || "").toLowerCase();
+          if (nodeName.includes(term)) {
+            directMatch = true;
+          }
+
+          let childrenMatch = false;
+          if (element.classList.contains("tree-node")) {
+            const childrenContainer = element.querySelector(
+              ".tree-children-container"
+            );
+            if (childrenContainer) {
+              const childrenElements = childrenContainer.children;
+              for (const child of childrenElements) {
+                // Recurse only on direct children that are nodes or artifact wrappers
+                if (
+                  child.classList.contains("tree-node") ||
+                  child.classList.contains("tree-artifact-wrapper")
+                ) {
+                  if (checkVisibility(child, term)) {
+                    childrenMatch = true;
+                    // Don't break here, need to evaluate all children for visibility setting
+                  }
+                }
+              }
+            }
+          }
+
+          const shouldBeVisible = directMatch || childrenMatch;
+          element.classList.toggle(
+            "hidden-node",
+            !shouldBeVisible && term.length > 0
+          );
+
+          // Expand parent if a child matches and parent itself doesn't (or does)
+          if (
+            shouldBeVisible &&
+            childrenMatch &&
+            element.classList.contains("tree-node")
+          ) {
+            const childrenContainer = document.getElementById(
+              `children-${element.dataset.nodeId}`
+            );
+            if (
+              childrenContainer &&
+              childrenContainer.classList.contains("collapsed") &&
+              term.length > 0
+            ) {
+              toggleTreeNode(element.dataset.nodeId, false); // Expand, don't toggle
+            }
+          } else if (
+            !shouldBeVisible &&
+            element.classList.contains("tree-node") &&
+            term.length > 0
+          ) {
+            // Optional: Collapse parent if it doesn't match and has no visible children (might be complex)
+          }
+
+          return shouldBeVisible;
+        }
+
+        if (searchTerm.length === 0) {
+          treeElement
+            .querySelectorAll(".hidden-node")
+            .forEach((el) => el.classList.remove("hidden-node"));
+          // Optional: Restore collapsed state based on user interaction? Might be complex.
+          return;
+        }
+
+        const topLevelNodes = Array.from(treeElement.children);
+        topLevelNodes.forEach((node) => {
+          if (
+            node.classList.contains("tree-node") ||
+            node.classList.contains("tree-artifact-wrapper")
+          ) {
+            checkVisibility(node, searchTerm);
+          }
+        });
+      }
+
+      // --- Tree and Node Dropdown Population ---
+      function generateFlatNodeList(nodes, prefix = "", level = 0) {
+        let list = [];
+        nodes.forEach((node) => {
+          const nodeType = node.type || "NODE"; // Assuming type exists in node data
+          const displayName = `${"—".repeat(level)} ${node.name}`;
+          if (nodeType !== "ARTIFACT") {
+            // Don't add artifacts directly here, they are handled below
+            list.push({
+              id: node.id,
+              name: `${displayName} (Folder)`,
+              type: "NODE",
+            });
+          }
+
+          // Add artifacts under this node
+          if (node.artifacts) {
+            node.artifacts.forEach((artifact) => {
+              // Add 1 level deeper for artifacts
+              list.push({
+                id: artifact.id,
+                name: `${"—".repeat(level + 1)} ${artifact.title} (File)`,
+                type: "ARTIFACT",
+                nodeId: artifact.id,
+              }); // Use artifact ID as nodeId for consistency
+            });
+          }
+          // Recurse for children nodes
+          if (node.children) {
+            list = list.concat(
+              generateFlatNodeList(node.children, prefix + "—", level + 1)
+            );
+          }
+        });
+        return list;
+      }
+
+      function populateNodeDropdowns() {
+        flatNodeList = generateFlatNodeList(fullTreeData);
+        const newUserNodeSelect = document.getElementById("newUserNodeAccess");
+        const modalNodeSelect = document.getElementById("modalNodeSelect");
+        if (!newUserNodeSelect || !modalNodeSelect) return;
+        newUserNodeSelect.length = 1; // Keep "None" option
+        modalNodeSelect.length = 1; // Keep "-- Select Node --" option
+        flatNodeList.forEach((item) => {
+          // Use item.nodeId if it's an artifact, otherwise item.id
+          const valueId = item.type === "ARTIFACT" ? item.nodeId : item.id;
+          const option = new Option(item.name, valueId);
+          option.dataset.type = item.type; // Store type if needed later
+
+          newUserNodeSelect.add(option.cloneNode(true));
+          modalNodeSelect.add(option);
+        });
+      }
+
+      async function fetchTree() {
+        console.log("Fetching tree data...");
+        const treeDiv = document.getElementById("tree");
+        treeDiv.innerHTML = `<p class="text-[var(--text-secondary)] p-2">Loading structure...</p>`; // Loading indicator
+        try {
+          // Use secureFetch even if token might not be strictly needed, for consistency
+          const res = await secureFetch(`${BASE}/api/tree`);
+          if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
+          }
+          fullTreeData = await res.json();
+          if (!Array.isArray(fullTreeData)) {
+            console.error("Invalid tree data received:", fullTreeData);
+            throw new Error("Invalid tree data format received from server.");
+          }
+          treeDiv.innerHTML = renderTree(fullTreeData);
+          populateNodeDropdowns();
+        } catch (error) {
+          console.error("Failed to fetch tree:", error);
+          window.showNotification(
+            `Error loading folder structure: ${error.message}`,
+            "error"
+          );
+          treeDiv.innerHTML = `<p class="text-[var(--text-red-accent)] p-4">Error loading folder structure. Check console for details.</p>`;
+        }
+      }
+
+      function toggleTreeNode(nodeId, doToggle = true) {
+        const childrenContainer = document.getElementById(`children-${nodeId}`);
+        const toggleIcon = document.getElementById(`toggle-icon-${nodeId}`);
+        if (childrenContainer && toggleIcon) {
+          let isCollapsed;
+          if (doToggle) {
+            isCollapsed = childrenContainer.classList.toggle("collapsed");
+          } else {
+            childrenContainer.classList.remove("collapsed"); // Ensure expanded
+            isCollapsed = false;
+          }
+          toggleIcon.classList.toggle("collapsed", isCollapsed);
+          // Use down arrow for expanded, right arrow for collapsed
+          toggleIcon.innerHTML = isCollapsed
+            ? `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>` // Right arrow
+            : `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" /></svg>`; // Down arrow
+        }
+      }
+
+      function renderTree(nodes) {
+        if (!Array.isArray(nodes)) {
+          return '<p class="text-[var(--text-red-accent)] p-2">Invalid tree data.</p>';
+        }
+        return nodes
+          .map((n) => {
+            if (
+              !n ||
+              typeof n.id === "undefined" ||
+              typeof n.name === "undefined"
+            ) {
+              console.warn("Skipping invalid node:", n);
+              return ""; // Skip rendering this invalid node
+            }
+            const hasChildren = n.children && n.children.length > 0;
+            const hasArtifacts = n.artifacts && n.artifacts.length > 0;
+            const isExpandable = hasChildren || hasArtifacts;
+
+            const childrenHTML = hasChildren ? renderTree(n.children) : "";
+            const nodeNameSafe = escapeJSString(n.name);
+
+            const artifactsHTML = hasArtifacts
+              ? n.artifacts
+                  .map((a) => {
+                    if (
+                      !a ||
+                      typeof a.id === "undefined" ||
+                      typeof a.title === "undefined"
+                    ) {
+                      console.warn("Skipping invalid artifact:", a);
+                      return ""; // Skip rendering this invalid artifact
+                    }
+                    const titleContent = escapeJSString(a.title);
+                    const descriptionContent = escapeJSString(
+                      a.description || ""
+                    );
+                    const linkContent = escapeJSString(a.link || "#");
+                    return `
+                      <div class="tree-artifact-wrapper" data-artifact-id="${a.id}" data-node-id="${a.id}" data-node-name="${titleContent}" data-node-type="ARTIFACT" data-parent-node-id="${n.id}">
+                          <div class="node-content group hover:bg-[var(--bg-card-hover)] rounded-md px-1 py-0.5">
+                              <span class="tree-artifact-text clickable flex items-center text-sm flex-grow" title="View details for: ${titleContent}" onclick="showArtifactDetailsModal('${titleContent}', '${descriptionContent}', '${linkContent}')">
+                                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 tree-artifact-icon flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+                                  <span class="truncate pr-1">${titleContent}</span>
+                              </span>
+                              <div class="actions opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
+                                  <button title="Delete file" class="action-icon-btn delete" onclick="event.stopPropagation(); openDeleteConfirmationModal(${a.id}, 'artifact', '${titleContent}')"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>
+                              </div>
+                          </div>
+                      </div>`;
+                  })
+                  .join("")
+              : "";
+
+            // Initial state: collapsed (down arrow)
+            const initialToggleIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" /></svg>`;
+
+            return `
+                  <div class="tree-node" data-node-id="${
+                    n.id
+                  }" data-node-name="${nodeNameSafe}" data-node-type="NODE">
+                      <div class="node-content group hover:bg-[var(--bg-card-hover)] rounded-md px-1 py-0.5">
+                          <span class="font-medium tree-node-text cursor-pointer flex items-center flex-grow min-w-0" onclick="toggleTreeNode(${
+                            n.id
+                          })">
+                               ${
+                                 isExpandable
+                                   ? `<span id="toggle-icon-${n.id}" class="tree-toggle-icon">${initialToggleIcon}</span>`
+                                   : '<span class="tree-toggle-icon w-5 h-5 mr-1"></span>'
+                               }
+                              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1 tree-node-icon flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" /></svg>
+                              <span class="truncate pr-1">${nodeNameSafe}</span> <span class="text-xs text-[var(--text-tertiary)] ml-1.5 flex-shrink-0">(ID: ${
+              n.id
+            })</span>
+                          </span>
+                          <div class="actions opacity-0 group-hover:opacity-100 transition-opacity space-x-1 flex-shrink-0">
+                              <button title="Add item to this folder" class="action-icon-btn add" onclick="event.stopPropagation(); showInlineForm(${
+                                n.id
+                              }, this)"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></button>
+                              <button title="Delete folder" class="action-icon-btn delete" onclick="event.stopPropagation(); openDeleteConfirmationModal(${
+                                n.id
+                              }, 'node', '${nodeNameSafe}')"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>
+                          </div>
+                      </div>
+                      <div id="form-${
+                        n.id
+                      }" class="form-inline mt-2 ml-5 p-4 bg-[var(--bg-inline-form)] rounded-lg border border-[var(--border-primary)] shadow-md" style="display:none;">
+                          <input type="text" placeholder="Name (Folder/File)" id="name-${
+                            n.id
+                          }" class="input-field text-sm">
+                          <select id="type-${
+                            n.id
+                          }" class="input-field text-sm" onchange="toggleFileInput(${
+              n.id
+            })"><option value="FOLDER">FOLDER</option><option value="SUBFOLDER">SUBFOLDER</option><option value="FILE">FILE</option></select>
+                          <textarea placeholder="Description (Optional)" id="description-${
+                            n.id
+                          }" class="input-field text-sm" rows="2"></textarea>
+                          <div id="file-method-options-${
+                            n.id
+                          }" style="display:none;">
+                              <div class="mb-2"><label class="label-text text-xs">File Source:</label><select id="file-source-${
+                                n.id
+                              }" class="input-field text-xs py-1" onchange="toggleLinkOrUpload(${
+              n.id
+            })"><option value="link">Enter Link</option><option value="upload">Upload File</option></select></div>
+                              <div id="link-input-container-${
+                                n.id
+                              }"><input type="text" placeholder="Link (e.g., https://...)" id="link-${
+              n.id
+            }" class="input-field text-sm"></div>
+                              <div id="upload-input-container-${
+                                n.id
+                              }" style="display:none;"><input type="file" id="file-upload-${
+              n.id
+            }" class="input-field text-sm p-2"></div>
+                          </div>
+                          <button onclick="submitInlineForm(${
+                            n.id
+                          }, this)" class="submit-button text-sm w-full py-2"><span class="button-text">Add Item</span></button>
+                      </div>
+                       <div class="tree-children-container collapsed" id="children-${
+                         n.id
+                       }">${childrenHTML}${artifactsHTML}</div>
+                  </div>`;
+          })
+          .join("");
+      }
+
+      async function fetchNodeName(nodeId) {
+        if (
+          !nodeId ||
+          String(nodeId).toLowerCase() === "null" ||
+          typeof nodeId === "undefined"
+        ) {
+          return "Global / Unspecified Node";
+        }
+        const localNode = flatNodeList.find(
+          (n) => String(n.id) === String(nodeId)
+        );
+        if (localNode) {
+          // Extract only the name part before "(Folder)" or "(File)"
+          const nameMatch = localNode.name.match(
+            /^(—*\s*)(.*)\s+\((Folder|File)\)$/
+          );
+          const cleanName = nameMatch
+            ? nameMatch[2].trim()
+            : localNode.name.replace(/—/g, "").trim();
+          const typeSuffix = localNode.type === "NODE" ? "(Folder)" : "(File)";
+          return `${cleanName} ${typeSuffix} (ID: ${nodeId})`;
+        }
+
+        // Fallback to API if not found locally (less efficient)
+        console.warn(
+          `Node/Artifact ID ${nodeId} not found in local flat list, attempting API fallback.`
+        );
+        try {
+          let resNode = await secureFetch(`${BASE}/api/nodes/${nodeId}`);
+          if (resNode.ok) {
+            const data = await resNode.json();
+            return data.name
+              ? `${data.name} (Folder) (ID: ${data.id})`
+              : `Item ${nodeId}`;
+          }
+          let resArtifact = await secureFetch(
+            `${BASE}/api/artifacts/${nodeId}`
+          );
+          if (resArtifact.ok) {
+            const data = await resArtifact.json();
+            return data.title
+              ? `${data.title} (File) (ID: ${data.id})`
+              : `Item ${nodeId}`;
+          }
+          console.warn(
+            `API fallback failed for ID ${nodeId} (Node Status: ${resNode.status}, Artifact Status: ${resArtifact.status}).`
+          );
+          return `Item ${nodeId}`;
+        } catch (error) {
+          console.error(`Error fetching details for ID ${nodeId}:`, error);
+          // Don't show notification here, it's a fallback
+          return `Item ${nodeId}`;
+        }
+      }
+
+      // --- User Management ---
+      let allUsersMasterList = [];
+      let currentUsersToDisplay = [];
+      let displayedUserCount = 0;
+      const usersPerPage = 10; // Adjust as needed
+      let isLoadingUsers = false; // Global lock for fetchUsers operation and pagination
+      const userSearchInput = document.getElementById("search-users-input");
+      const userListContainer = document.getElementById("userListContainer");
+      const userListElement = document.getElementById("userList");
+      const userListLoadingIndicator = document.getElementById(
+        "user-list-loading-indicator"
+      );
+      const userListInitialSpinner = document.getElementById(
+        "user-list-initial-spinner"
+      );
+      const userListMessageArea = document.getElementById(
+        "user-list-message-area"
+      );
+
+      function showUserListMessage(message) {
+        userListMessageArea.textContent = message;
+        userListMessageArea.style.display = "block";
+        userListElement.innerHTML = ""; // Clear list content
+        userListInitialSpinner.style.display = "none";
+        userListLoadingIndicator.style.display = "none";
+      }
+
+      function hideUserListMessage() {
+        userListMessageArea.style.display = "none";
+      }
+
+      async function fetchUsers() {
+        if (isLoadingUsers) return;
+        isLoadingUsers = true;
+        userListInitialSpinner.style.display = "block"; // Show initial spinner
+        userListElement.innerHTML = ""; // Clear previous content
+        hideUserListMessage(); // Hide any previous messages
+
+        try {
+          const res = await secureFetch(`${BASE}/api/users`);
+          if (!res.ok) {
+            let errorMsg = `HTTP error! status: ${res.status}`;
+            try {
+              const errData = await res.json();
+              errorMsg += ` - ${
+                errData.message || errData.error || JSON.stringify(errData)
+              }`;
+            } catch (e) {
+              /* ignore */
+            }
+            throw new Error(errorMsg);
+          }
+          const users = await res.json();
+          if (!Array.isArray(users)) {
+            throw new Error("Invalid user data received from server.");
+          }
+          allUsersMasterList = users.sort((a, b) =>
+            a.email > b.email ? 1 : -1
+          ); // Sort alphabetically
+          applyUserSearchFilter(); // This will filter and call renderPaginatedUsers
+        } catch (error) {
+          console.error("Failed to fetch users:", error);
+          window.showNotification(
+            `Error loading users: ${error.message}`,
+            "error"
+          );
+          showUserListMessage("Failed to load users. Please try again later.");
+        } finally {
+          isLoadingUsers = false;
+          userListInitialSpinner.style.display = "none"; // Hide initial spinner after fetch/error
+        }
+      }
+
+      function applyUserSearchFilter() {
+        const searchTerm = userSearchInput.value.toLowerCase().trim();
+        currentUsersToDisplay =
+          searchTerm === ""
+            ? [...allUsersMasterList]
+            : allUsersMasterList.filter((user) =>
+                user.email.toLowerCase().includes(searchTerm)
+              );
+        userListElement.innerHTML = "";
+        displayedUserCount = 0;
+        hideUserListMessage(); // Hide message area when filtering/showing results
+        if (
+          currentUsersToDisplay.length === 0 &&
+          allUsersMasterList.length > 0
+        ) {
+          showUserListMessage(`No users found matching "${searchTerm}".`);
+        } else if (
+          currentUsersToDisplay.length === 0 &&
+          allUsersMasterList.length === 0
+        ) {
+          // Message handled by fetchUsers error or initial state
+        } else {
+          renderPaginatedUsers(); // Render the first page of results
+        }
+      }
+
+      userSearchInput.addEventListener("input", applyUserSearchFilter);
+
+      async function renderPaginatedUsers(loadMore = false) {
+        // This condition prevents multiple scroll-triggered loads if a main fetch is active
+        // OR if another scroll-load is already in progress.
+        if (isLoadingUsers && loadMore) {
+          console.log(
+            "RenderPaginatedUsers: A user list operation is already in progress."
+          );
+          return;
+        }
+
+        const isCurrentlyPaginatingOperation = loadMore; // True if this specific call is for pagination
+
+        if (isCurrentlyPaginatingOperation) {
+          isLoadingUsers = true; // Use global lock to signify this pagination operation is active
+          userListLoadingIndicator.style.display = "block";
+        }
+        // For !loadMore (initial/filter), isLoadingUsers is managed by fetchUsers or is false for search.
+
+        const usersToRender = currentUsersToDisplay.slice(
+          displayedUserCount,
+          displayedUserCount + usersPerPage
+        );
+
+        if (usersToRender.length === 0) {
+          // Message for empty search results is handled by applyUserSearchFilter
+          // Message for failed initial load is handled by fetchUsers
+          if (isCurrentlyPaginatingOperation) {
+            isLoadingUsers = false; // Release lock if it was set for pagination
+            userListLoadingIndicator.style.display = "none";
+          }
+          return;
+        }
+
+        hideUserListMessage(); // Ensure message area is hidden when showing users
+
+        const userListPromises = usersToRender.map(async (u) => {
+          let nodeAccessSummary = "No specific node roles.";
+          if (u.roles && u.roles.length > 0) {
+            const roleCount = u.roles.length;
+            nodeAccessSummary = `Node Access: ${roleCount} specific role${
+              roleCount > 1 ? "s" : ""
+            }`;
+          }
+          // *** THIS IS THE UPDATED TEMPLATE STRING ***
+          return `
+                  <li class="user-list-item p-4 rounded-lg flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+                      <div class="flex-grow min-w-0"> 
+                          <span class="font-semibold user-email-text block text-md truncate" title="${escapeJSString(
+                            u.email
+                          )}">${escapeJSString(u.email)}</span> 
+                          <span class="text-sm user-role-text block mt-0.5">${
+                            u.role ? `Global: ${u.role}` : "No Global Role"
+                          }</span>
+                          <span class="user-node-role-summary block mt-1">${nodeAccessSummary}</span>
+                      </div>
+                      <div class="user-actions space-x-2 flex-shrink-0 flex items-center"> 
+                          <button class="user-action-button manage-access" title="Manage User Access" onclick="openAccessModal('${escapeJSString(
+                            u.email
+                          )}')">
+                              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                              Manage Access
+                          </button>
+                          <button class="user-action-button delete-user" title="Delete User & All Access" onclick="deleteUser('${escapeJSString(
+                            u.email
+                          )}')">
+                              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                              Delete User
+                          </button>
+                      </div>
+                  </li>`;
+        });
+
+        try {
+          const userListHtmlChunk = await Promise.all(userListPromises);
+          userListElement.insertAdjacentHTML(
+            "beforeend",
+            userListHtmlChunk.join("")
+          );
+          displayedUserCount += usersToRender.length;
+        } catch (renderError) {
+          console.error("Error rendering user list items:", renderError);
+          // Potentially show an error message in the list area
+          showUserListMessage("Error displaying some user data.");
+        }
+
+        if (isCurrentlyPaginatingOperation) {
+          isLoadingUsers = false; // Release lock if it was set for pagination
+          userListLoadingIndicator.style.display = "none";
+        }
+      }
+
+      userListContainer.addEventListener("scroll", () => {
+        // Prevent triggering pagination if already loading (either initial or another pagination)
+        if (isLoadingUsers) return;
+
+        const { scrollTop, scrollHeight, clientHeight } = userListContainer;
+        // Trigger slightly before reaching the absolute bottom
+        if (scrollTop + clientHeight >= scrollHeight - 50) {
+          if (displayedUserCount < currentUsersToDisplay.length) {
+            console.log("Reached bottom, loading more users...");
+            renderPaginatedUsers(true); // Pass true to indicate it's a loadMore event
+          } else {
+            // console.log("Reached bottom, but no more users to load.");
+          }
+        }
+      });
+
+      async function deleteUser(email) {
+        // Use the confirmation modal instead of a simple confirm
+        openDeleteConfirmationModal(email, "user", email);
+      }
+
+      function showInlineForm(parentId, buttonElement) {
+        const form = document.getElementById(`form-${parentId}`);
+        if (form) {
+          const isVisible = form.style.display === "block";
+          // Hide all other potentially open inline forms first
+          document.querySelectorAll(".form-inline").forEach((f) => {
+            if (f !== form) f.style.display = "none";
+          });
+          // Toggle the target form
+          form.style.display = isVisible ? "none" : "block";
+          if (!isVisible) {
+            form.querySelector('input[type="text"], select')?.focus();
+            toggleFileInput(parentId); // Ensure correct file input state
+          }
+        }
+      }
+
+      function toggleFileInput(parentId) {
+        const typeSelect = document.getElementById(`type-${parentId}`);
+        const fileMethodOptionsDiv = document.getElementById(
+          `file-method-options-${parentId}`
+        );
+        const descriptionTextarea = document.getElementById(
+          `description-${parentId}`
+        );
+        const fileInput = document.getElementById(`file-upload-${parentId}`);
+        const linkInput = document.getElementById(`link-${parentId}`);
+
+        if (typeSelect.value === "FILE") {
+          fileMethodOptionsDiv.style.display = "block";
+          descriptionTextarea.placeholder = "Description (Optional for File)";
+          document.getElementById(`file-source-${parentId}`).value = "link"; // Default to link
+          toggleLinkOrUpload(parentId); // Update visibility
+        } else {
+          fileMethodOptionsDiv.style.display = "none";
+          descriptionTextarea.placeholder = "Description (Optional for Folder)";
+          // Clear file/link inputs when switching away from FILE type
+          if (fileInput) fileInput.value = "";
+          if (linkInput) linkInput.value = "";
+        }
+      }
+
+      function toggleLinkOrUpload(parentId) {
+        const fileSource = document.getElementById(
+          `file-source-${parentId}`
+        ).value;
+        const linkInputContainer = document.getElementById(
+          `link-input-container-${parentId}`
+        );
+        const uploadInputContainer = document.getElementById(
+          `upload-input-container-${parentId}`
+        );
+        const fileInput = document.getElementById(`file-upload-${parentId}`);
+        const linkInput = document.getElementById(`link-${parentId}`);
+
+        linkInputContainer.style.display =
+          fileSource === "link" ? "block" : "none";
+        uploadInputContainer.style.display =
+          fileSource === "upload" ? "block" : "none";
+
+        // Clear the other input when switching
+        if (fileSource === "link" && fileInput) fileInput.value = "";
+        if (fileSource === "upload" && linkInput) linkInput.value = "";
+      }
+
+      async function submitInlineForm(parentId, buttonElement) {
+        const nameInput = document.getElementById(`name-${parentId}`);
+        const typeSelect = document.getElementById(`type-${parentId}`);
+        const descriptionInput = document.getElementById(
+          `description-${parentId}`
+        );
+        const name = nameInput.value.trim();
+        const type = typeSelect.value;
+        const description = descriptionInput.value.trim();
+
+        const originalButtonText =
+          buttonElement.querySelector(".button-text")?.textContent ||
+          buttonElement.textContent;
+        window.setButtonLoading(buttonElement, true, originalButtonText);
+
+        if (!name) {
+          window.showNotification("Name is required.", "error");
+          window.setButtonLoading(buttonElement, false, originalButtonText);
+          nameInput.focus();
+          return;
+        }
+
+        try {
+          let response;
+          let payload = {};
+          let url;
+          let options = { method: "POST" };
+
+          if (type === "FILE") {
+            url = `${BASE}/api/artifacts`; // Endpoint for creating file artifacts via link
+            const fileSource = document.getElementById(
+              `file-source-${parentId}`
+            ).value;
+
+            if (fileSource === "link") {
+              const linkInput = document.getElementById(`link-${parentId}`);
+              const link = linkInput.value.trim();
+              if (!link) {
+                window.showNotification(
+                  "Link is required for FILE type.",
+                  "error"
+                );
+                window.setButtonLoading(
+                  buttonElement,
+                  false,
+                  originalButtonText
+                );
+                linkInput.focus();
+                return;
+              }
+              payload = { title: name, description, link, nodeId: parentId };
+              options.body = JSON.stringify(payload);
+              options.headers = { "Content-Type": "application/json" }; // Needed for JSON body
+              response = await secureFetch(url, options);
+            } else {
+              // upload
+              url = `${BASE}/api/upload`; // Separate endpoint for uploads
+              const fileInput = document.getElementById(
+                `file-upload-${parentId}`
+              );
+              const file = fileInput.files[0];
+              if (!file) {
+                window.showNotification(
+                  "Please select a file to upload.",
+                  "error"
+                );
+                window.setButtonLoading(
+                  buttonElement,
+                  false,
+                  originalButtonText
+                );
+                fileInput.focus();
+                return;
+              }
+              const formData = new FormData();
+              formData.append("file", file);
+              formData.append("title", name);
+              formData.append("description", description);
+              formData.append("nodeId", parentId);
+              options.body = formData; // Let fetch set Content-Type for FormData
+              // Don't set Content-Type header manually for FormData
+              response = await secureFetch(url, options);
+            }
+          } else {
+            // FOLDER or SUBFOLDER
+            url = `${BASE}/api/nodes`;
+            payload = { name, type, parentId, description };
+            options.body = JSON.stringify(payload);
+            options.headers = { "Content-Type": "application/json" }; // Needed for JSON body
+            response = await secureFetch(url, options);
+          }
+
+          if (!response.ok) {
+            const errorData = await response.json().catch(() => ({
+              message: `Request failed with status ${response.status}`,
+            }));
+            throw new Error(
+              `Failed to add item: ${errorData.message || response.statusText}`
+            );
+          }
+
+          window.showNotification("Item added successfully! ✅", "success");
+          fetchTree(); // Refresh the tree view
+          // Reset and hide the form
+          const form = document.getElementById(`form-${parentId}`);
+          if (form) {
+            form.reset(); // Reset form fields
+            toggleFileInput(parentId); // Reset file input visibility
+            form.style.display = "none"; // Hide form
+          }
+        } catch (error) {
+          console.error("Error submitting inline form:", error);
+          window.showNotification(
+            `Error adding item: ${error.message}`,
+            "error"
+          );
+        } finally {
+          window.setButtonLoading(buttonElement, false, originalButtonText);
+        }
+      }
+
+      // --- Delete Confirmation Modal Logic ---
+      const deleteConfirmationModal = document.getElementById(
+        "delete-confirmation-modal"
+      );
+      const deleteModalTitle = document.getElementById("delete-modal-title");
+      const deleteModalMessage = document.getElementById(
+        "delete-modal-message"
+      );
+      const deleteConfirmInput = document.getElementById(
+        "delete-confirm-input"
+      );
+      const confirmDeleteButton = document.getElementById(
+        "confirm-delete-button"
+      );
+      let itemToDelete = { id: null, type: null, name: "" }; // type can be 'node', 'artifact', or 'user'
+
+      function openDeleteConfirmationModal(itemId, itemType, itemName) {
+        itemToDelete = { id: itemId, type: itemType, name: itemName };
+        deleteModalTitle.textContent = `Confirm Deletion: ${escapeJSString(
+          itemName
+        )}`;
+
+        let message = `Are you sure you want to delete the ${itemType} "${escapeJSString(
+          itemName
+        )}"?`;
+        if (itemType === "node")
+          message +=
+            " All its contents (subfolders and files) will also be deleted.";
+        if (itemType === "user")
+          message += " All associated access roles will be removed.";
+        message += " This action cannot be undone.";
+        deleteModalMessage.textContent = message;
+
+        deleteConfirmInput.value = "";
+        confirmDeleteButton.disabled = true;
+        deleteConfirmationModal.classList.add("active");
+        deleteConfirmInput.focus();
+      }
+
+      function closeDeleteConfirmationModal() {
+        if (deleteConfirmationModal)
+          deleteConfirmationModal.classList.remove("active");
+        // Reset itemToDelete ? maybe not needed if button is disabled
+        // itemToDelete = { id: null, type: null, name: "" };
+      }
+
+      deleteConfirmInput.addEventListener("input", () => {
+        confirmDeleteButton.disabled =
+          deleteConfirmInput.value.trim().toLowerCase() !== "delete";
+      });
+
+      confirmDeleteButton.addEventListener("click", async () => {
+        if (
+          deleteConfirmInput.value.trim().toLowerCase() !== "delete" ||
+          !itemToDelete.id
+        ) {
+          window.showNotification("Deletion not confirmed correctly.", "error");
+          return;
+        }
+        const originalButtonText =
+          confirmDeleteButton.querySelector(".button-text")?.textContent ||
+          confirmDeleteButton.textContent;
+        window.setButtonLoading(confirmDeleteButton, true, originalButtonText);
+        try {
+          let endpoint;
+          if (itemToDelete.type === "node") {
+            endpoint = `${BASE}/api/nodes/${itemToDelete.id}`;
+          } else if (itemToDelete.type === "artifact") {
+            endpoint = `${BASE}/api/artifacts/${itemToDelete.id}`;
+          } else if (itemToDelete.type === "user") {
+            endpoint = `${BASE}/api/users/${itemToDelete.id}`; // User ID is the email
+          } else {
+            throw new Error("Invalid item type for deletion.");
+          }
+
+          const response = await secureFetch(endpoint, { method: "DELETE" });
+          if (!response.ok) {
+            // Try to parse error message from backend
+            const errorData = await response.json().catch(() => ({
+              message: `Request failed with status ${response.status}`,
+            }));
+            throw new Error(
+              `Failed to delete: ${errorData.message || response.statusText}`
+            );
+          }
+          // Handle success
+          const itemTypeDisplay =
+            itemToDelete.type.charAt(0).toUpperCase() +
+            itemToDelete.type.slice(1);
+          window.showNotification(
+            `${itemTypeDisplay} "${escapeJSString(
+              itemToDelete.name
+            )}" deleted. ✅`,
+            "success"
+          );
+
+          // Refresh relevant part of the UI
+          if (itemToDelete.type === "user") {
+            fetchUsers(); // Refresh user list
+          } else {
+            fetchTree(); // Refresh tree for nodes/artifacts
+          }
+          closeDeleteConfirmationModal();
+        } catch (error) {
+          console.error(`Error deleting ${itemToDelete.type}:`, error);
+          window.showNotification(`Error deleting: ${error.message}`, "error");
+        } finally {
+          window.setButtonLoading(
+            confirmDeleteButton,
+            false,
+            originalButtonText
+          );
+        }
+      });
+
+      async function promptNewRoot() {
+        const name = prompt(
+          "Enter new root folder name (e.g., Vertical name):"
+        );
+        if (!name?.trim()) return;
+        try {
+          const response = await secureFetch(`${BASE}/api/nodes`, {
+            method: "POST",
+            body: JSON.stringify({
+              name: name.trim(),
+              type: "VERTICAL",
+              parentId: null,
+              description: "Root Vertical Folder",
+            }),
+            headers: { "Content-Type": "application/json" },
+          });
+          if (!response.ok) {
+            const err = await response
+              .json()
+              .catch(() => ({ message: response.statusText }));
+            throw new Error(`Failed: ${err.message || response.statusText}`);
+          }
+          window.showNotification("New root folder created! ✅", "success");
+          fetchTree();
+        } catch (error) {
+          console.error("Error creating new root:", error);
+          window.showNotification(`Error: ${error.message}`, "error");
+        }
+      }
+
+      // --- Add User Form Submit Handler (MODIFIED) ---
+      document
+        .getElementById("addUserForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const submitButton = e.target.querySelector('button[type="submit"]');
+          const originalButtonText =
+            submitButton.querySelector(".button-text")?.textContent ||
+            submitButton.textContent;
+          window.setButtonLoading(submitButton, true, originalButtonText);
+
+          const emailInput = document.getElementById("newUserEmail");
+          const globalRoleSelect = document.getElementById("newUserRole");
+          const nodeAccessSelect = document.getElementById("newUserNodeAccess");
+          const nodeRoleSelect = document.getElementById("newUserNodeRole");
+          const applyGlobalCheckbox = document.getElementById(
+            "applyGlobalRoleToAllNodesCheckbox"
+          );
+
+          const email = emailInput.value.trim();
+          const globalRole = globalRoleSelect.value;
+          const selectedNodeIdForAccess = nodeAccessSelect.value; // This can be empty string ""
+          const selectedNodeRoleForAccess = nodeRoleSelect.value;
+          const applyGlobalToAllNodes = applyGlobalCheckbox.checked;
+
+          if (!email || !globalRole) {
+            window.showNotification(
+              "Email and Global Role are required.",
+              "error"
+            );
+            window.setButtonLoading(submitButton, false, originalButtonText);
+            if (!email) emailInput.focus();
+            else globalRoleSelect.focus();
+            return;
+          }
+          if (selectedNodeIdForAccess && applyGlobalToAllNodes) {
+            window.showNotification(
+              "Cannot select both a specific node and 'Apply global role to all nodes'. Please choose one.",
+              "error",
+              6000
+            );
+            window.setButtonLoading(submitButton, false, originalButtonText);
+            nodeAccessSelect.focus();
+            return;
+          }
+
+          let overallSuccessMessage = "";
+          let operationFailed = false; // Track if any part fails
+
+          try {
+            // 1. Create the user with the global role
+            console.log(
+              `Attempting to add user: ${email} with global role: ${globalRole}`
+            );
+            let userCreationResponse = await secureFetch(`${BASE}/api/users`, {
+              method: "POST",
+              body: JSON.stringify({ email, role: globalRole }),
+              headers: { "Content-Type": "application/json" }, // Explicitly set for JSON
+            });
+
+            if (!userCreationResponse.ok) {
+              const errorData = await userCreationResponse
+                .json()
+                .catch(() => ({ message: userCreationResponse.statusText }));
+              // Handle specific case where user might already exist but update role
+              if (userCreationResponse.status === 409) {
+                // Conflict - User Exists
+                if (
+                  confirm(
+                    `User ${email} already exists. Do you want to update their global role to ${globalRole}?`
+                  )
+                ) {
+                  userCreationResponse = await secureFetch(
+                    `${BASE}/api/users/${email}`,
+                    {
+                      // Assuming PUT updates the user
+                      method: "PUT",
+                      body: JSON.stringify({ role: globalRole }), // Only send role to update
+                      headers: { "Content-Type": "application/json" },
+                    }
+                  );
+                  if (!userCreationResponse.ok) {
+                    const updateErrorData = await userCreationResponse
+                      .json()
+                      .catch(() => ({
+                        message: userCreationResponse.statusText,
+                      }));
+                    throw new Error(
+                      `Failed to update existing user's role: ${
+                        updateErrorData.message ||
+                        userCreationResponse.statusText
+                      }`
+                    );
+                  }
+                  overallSuccessMessage = `Existing user's global role updated to ${globalRole}. `; // Start message differently
+                } else {
+                  throw new Error(
+                    "User addition cancelled because user already exists."
+                  ); // User chose not to update
+                }
+              } else {
+                // Other user creation error
+                throw new Error(
+                  `Failed to add user: ${
+                    errorData.message || userCreationResponse.statusText
+                  }`
+                );
+              }
+            } else {
+              overallSuccessMessage = "User added successfully! ✅ ";
+            }
+
+            // 2. Handle node-specific access (only if user creation/update was successful)
+            if (selectedNodeIdForAccess) {
+              console.log(
+                `Granting initial access for node ${selectedNodeIdForAccess} with role ${selectedNodeRoleForAccess}`
+              );
+              // Grant access to a single selected node
+              const accessResponse = await secureFetch(`${BASE}/api/access`, {
+                method: "PUT",
+                body: JSON.stringify({
+                  email,
+                  nodeId: parseInt(selectedNodeIdForAccess),
+                  role: selectedNodeRoleForAccess,
+                }),
+                headers: { "Content-Type": "application/json" },
+              });
+              if (!accessResponse.ok) {
+                const errorData = await accessResponse
+                  .json()
+                  .catch(() => ({ message: accessResponse.statusText }));
+                overallSuccessMessage += `\n⚠️ Could not grant initial node access: ${
+                  errorData.message || accessResponse.statusText
+                }`;
+                operationFailed = true; // Mark failure
+              } else {
+                overallSuccessMessage += ` Initial node access granted.`;
+              }
+            } else if (applyGlobalToAllNodes) {
+              // Grant selected global role to all nodes
+              window.showNotification(
+                `User created/updated. Now applying '${globalRole}' role to all nodes/files. This may take a moment...`,
+                "info",
+                8000
+              );
+              console.log(
+                `Applying global role ${globalRole} to all nodes/files`
+              );
+
+              if (!flatNodeList || flatNodeList.length === 0) {
+                console.warn(
+                  "flatNodeList is empty or not yet populated. Cannot apply global role to all nodes."
+                );
+                overallSuccessMessage +=
+                  "\n⚠️ No nodes/files found to apply global role to (tree data might be loading or empty).";
+                operationFailed = true; // Mark failure
+              } else {
+                let nodesProcessedCount = 0;
+                let nodesFailedCount = 0;
+                let failedItems = [];
+
+                // Run sequentially to avoid overwhelming the server
+                for (const item of flatNodeList) {
+                  // Use item.id which should be the unique ID for both nodes and artifacts in flatNodeList
+                  const currentItemId = parseInt(item.id);
+                  try {
+                    const nodeAccessResponse = await secureFetch(
+                      `${BASE}/api/access`,
+                      {
+                        method: "PUT",
+                        body: JSON.stringify({
+                          email,
+                          nodeId: currentItemId, // Use the unique ID from flatNodeList
+                          role: globalRole, // Use the selected global role
+                        }),
+                        headers: { "Content-Type": "application/json" },
+                      }
+                    );
+                    if (nodeAccessResponse.ok) {
+                      nodesProcessedCount++;
+                    } else {
+                      nodesFailedCount++;
+                      const errorData = await nodeAccessResponse
+                        .json()
+                        .catch(() => ({
+                          message: nodeAccessResponse.statusText,
+                        }));
+                      const failureReason =
+                        errorData.message || nodeAccessResponse.statusText;
+                      console.warn(
+                        `Failed to apply role to item ${item.id} ('${item.name}'): ${failureReason}`
+                      );
+                      failedItems.push(
+                        `${item.name} (ID: ${item.id}): ${failureReason}`
+                      );
+                    }
+                  } catch (loopError) {
+                    nodesFailedCount++;
+                    console.error(
+                      `Error applying role to item ${item.id} ('${item.name}'):`,
+                      loopError
+                    );
+                    failedItems.push(
+                      `${item.name} (ID: ${item.id}): ${loopError.message}`
+                    );
+                  }
+                  // Optional: Add a small delay to prevent rate limiting, e.g., await new Promise(resolve => setTimeout(resolve, 50));
+                }
+
+                if (nodesFailedCount > 0) {
+                  overallSuccessMessage += `\n⚠️ Applied '${globalRole}' to ${nodesProcessedCount} items, but failed for ${nodesFailedCount}. Check console for details.`;
+                  operationFailed = true; // Mark failure
+                  console.error("Failed items:", failedItems); // Log detailed failures
+                } else {
+                  overallSuccessMessage += `\nSuccessfully applied '${globalRole}' role to all ${nodesProcessedCount} nodes/files.`;
+                }
+              }
+            }
+            // Final Notification based on success/failure
+            window.showNotification(
+              overallSuccessMessage,
+              operationFailed ? "error" : "success",
+              operationFailed ? 8000 : 5000
+            );
+
+            fetchUsers(); // Refresh user list regardless of partial success
+            document.getElementById("addUserForm").reset();
+            // Uncheck the checkbox manually if it's not part of form.reset()
+            if (applyGlobalCheckbox) applyGlobalCheckbox.checked = false;
+          } catch (error) {
+            console.error("Error in add user process:", error);
+            window.showNotification(`Error: ${error.message}`, "error", 6000);
+            operationFailed = true; // Ensure failure state if caught here
+          } finally {
+            window.setButtonLoading(submitButton, false, originalButtonText);
+          }
+        });
+
+      // --- Access Management Modal Logic ---
+      const accessModal = document.getElementById("access-management-modal");
+      const modalUserEmailSpan = document.getElementById("modal-user-email");
+      const modalCurrentAccessDiv = document.getElementById(
+        "access-management-modal-current-access"
+      );
+      const modalEditingUserEmailHidden = document.getElementById(
+        "modal-editing-user-email-hidden"
+      );
+
+      async function openAccessModal(email) {
+        modalUserEmailSpan.textContent = email;
+        modalEditingUserEmailHidden.value = email;
+        // Reset dropdown before opening
+        const modalNodeSelect = document.getElementById("modalNodeSelect");
+        if (modalNodeSelect) modalNodeSelect.value = "";
+
+        accessModal.classList.add("active");
+        await loadUserAccessRolesForModal(email); // Load roles after making modal visible
+      }
+
+      function closeAccessModal() {
+        if (accessModal) accessModal.classList.remove("active");
+        modalCurrentAccessDiv.innerHTML = `<p class="text-[var(--text-tertiary)] p-3">Loading access...</p>`; // Reset content on close
+      }
+
+      async function loadUserAccessRolesForModal(email) {
+        modalCurrentAccessDiv.innerHTML = `<div class="flex justify-center items-center p-4"><div class="spinner" style="border-color: var(--text-primary); border-top-color: transparent;"></div><span class="ml-2 text-[var(--text-secondary)]">Loading roles...</span></div>`;
+        try {
+          // Fetch the specific user's details including roles
+          // Assuming the user list might not be fully up-to-date or detailed enough
+          const res = await secureFetch(`${BASE}/api/users/${email}`); // Fetch specific user
+          if (!res.ok) {
+            const errData = await res.json().catch(() => ({
+              message: `User ${email} not found or error loading roles.`,
+            }));
+            throw new Error(errData.message || `HTTP error ${res.status}`);
+          }
+          const user = await res.json();
+
+          if (!user || !user.roles || user.roles.length === 0) {
+            modalCurrentAccessDiv.innerHTML = `<p class="text-[var(--text-tertiary)] p-3">No specific node/file access granted.</p>`;
+            return;
+          }
+          // Fetch node names and render roles
+          const items = await Promise.all(
+            user.roles.map(async (role) => {
+              const nodeName = await fetchNodeName(role.nodeId); // Fetch readable name
+              const safeEmail = escapeJSString(email);
+              // Role dropdown for editing
+              const roleSelectHTML = `
+                      <select class="input-field text-xs py-1 px-2 w-auto bg-[var(--bg-input)] border-[var(--border-input)]"
+                              data-node-id="${role.nodeId}"
+                              data-original-role="${role.role}"
+                              onchange="updateNodeAccessInModal(this, '${safeEmail}', ${
+                role.nodeId
+              })">
+                          <option value="ADMIN" ${
+                            role.role === "ADMIN" ? "selected" : ""
+                          }>ADMIN</option>
+                          <option value="EDITOR" ${
+                            role.role === "EDITOR" ? "selected" : ""
+                          }>EDITOR</option>
+                          <option value="VIEWER" ${
+                            role.role === "VIEWER" ? "selected" : ""
+                          }>VIEWER</option>
+                      </select>`;
+              // Revoke button
+              const revokeButtonHTML = `
+                      <button class="action-icon-btn delete text-sm" title="Revoke Access" onclick="revokeNodeAccessInModal('${safeEmail}', ${role.nodeId})">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                      </button>`;
+
+              return `<div class="access-item flex justify-between items-center p-2.5 border-b border-[var(--border-primary)] last:border-b-0">
+                              <div><span class="font-medium text-[var(--text-primary)] text-sm">${escapeJSString(
+                                nodeName
+                              )}</span></div>
+                              <div class="flex items-center gap-2">
+                                 ${roleSelectHTML}
+                                 ${revokeButtonHTML}
+                              </div>
+                          </div>`;
+            })
+          );
+          modalCurrentAccessDiv.innerHTML = items.join("");
+        } catch (error) {
+          console.error("Error loading user access for modal:", error);
+          modalCurrentAccessDiv.innerHTML = `<p class="text-[var(--text-red-accent)] p-3">Error loading roles: ${error.message}</p>`;
+        }
+      }
+
+      async function updateNodeAccessInModal(selectElement, email, nodeId) {
+        const newRole = selectElement.value;
+        const originalRole = selectElement.dataset.originalRole;
+        if (newRole === originalRole) return; // No change
+
+        // Add visual feedback
+        selectElement.disabled = true;
+        selectElement.style.opacity = "0.7";
+
+        try {
+          const response = await secureFetch(`${BASE}/api/access`, {
+            method: "PUT",
+            body: JSON.stringify({ email, nodeId, role: newRole }),
+            headers: { "Content-Type": "application/json" },
+          });
+          if (!response.ok) {
+            const err = await response
+              .json()
+              .catch(() => ({ message: response.statusText }));
+            throw new Error(`Failed: ${err.message || response.statusText}`);
+          }
+
+          window.showNotification("Access updated! ✅", "success");
+          selectElement.dataset.originalRole = newRole; // Update the original role marker
+          fetchUsers(); // Refresh the main user list summary (optional, maybe just update modal?)
+        } catch (error) {
+          console.error("Error updating access:", error);
+          window.showNotification(
+            `Error updating access: ${error.message}`,
+            "error"
+          );
+          selectElement.value = originalRole; // Revert dropdown on error
+        } finally {
+          // Remove visual feedback
+          selectElement.disabled = false;
+          selectElement.style.opacity = "1";
+        }
+      }
+
+      async function revokeNodeAccessInModal(email, nodeId) {
+        const nodeName = await fetchNodeName(nodeId); // Get name for confirm message
+        if (
+          !confirm(
+            `Revoke access for ${email} from "${escapeJSString(nodeName)}"?`
+          )
+        )
+          return;
+
+        // Find the button and disable it
+        const revokeButton = event.target.closest("button");
+        if (revokeButton) revokeButton.disabled = true;
+
+        try {
+          const response = await secureFetch(`${BASE}/api/access`, {
+            method: "DELETE",
+            body: JSON.stringify({ email, nodeId }),
+            headers: { "Content-Type": "application/json" },
+          });
+          if (!response.ok) {
+            const err = await response
+              .json()
+              .catch(() => ({ message: response.statusText }));
+            throw new Error(`Failed: ${err.message || response.statusText}`);
+          }
+
+          window.showNotification("Access revoked! ✅", "success");
+          // Instead of full reload, just remove the item from the modal DOM
+          const accessItemDiv = revokeButton.closest(".access-item");
+          if (accessItemDiv) {
+            accessItemDiv.style.transition = "opacity 0.3s ease";
+            accessItemDiv.style.opacity = "0";
+            setTimeout(() => {
+              accessItemDiv.remove();
+              // Check if list is now empty
+              if (modalCurrentAccessDiv.children.length === 0) {
+                modalCurrentAccessDiv.innerHTML = `<p class="text-[var(--text-tertiary)] p-3">No specific node/file access granted.</p>`;
+              }
+            }, 300);
+          } else {
+            loadUserAccessRolesForModal(email); // Fallback to reload if removal fails
+          }
+          fetchUsers(); // Refresh the main user list summary
+        } catch (error) {
+          console.error("Error revoking access:", error);
+          window.showNotification(
+            `Error revoking access: ${error.message}`,
+            "error"
+          );
+          if (revokeButton) revokeButton.disabled = false; // Re-enable button on error
+        }
+      }
+
+      document
+        .getElementById("grantNewAccessForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const btn = e.target.querySelector('button[type="submit"]');
+          const originalText =
+            btn.querySelector(".button-text")?.textContent || btn.textContent;
+          window.setButtonLoading(btn, true, originalText);
+
+          const email = modalEditingUserEmailHidden.value;
+          const nodeIdSelect = document.getElementById("modalNodeSelect");
+          const roleSelect = document.getElementById("modalNodeRoleSelect");
+          const nodeId = nodeIdSelect.value;
+          const role = roleSelect.value;
+
+          if (!email || !nodeId || !role) {
+            window.showNotification(
+              "Please select a folder/file and assign a role.",
+              "error"
+            );
+            window.setButtonLoading(btn, false, originalText);
+            if (!nodeId) nodeIdSelect.focus();
+            else roleSelect.focus();
+            return;
+          }
+
+          try {
+            const response = await secureFetch(`${BASE}/api/access`, {
+              method: "PUT",
+              body: JSON.stringify({ email, nodeId: parseInt(nodeId), role }),
+              headers: { "Content-Type": "application/json" },
+            });
+            if (!response.ok) {
+              const err = await response
+                .json()
+                .catch(() => ({ message: response.statusText }));
+              throw new Error(`Failed: ${err.message || response.statusText}`);
+            }
+
+            window.showNotification(
+              "Access granted successfully! ✅",
+              "success"
+            );
+            await loadUserAccessRolesForModal(email); // Refresh the list in the modal
+            fetchUsers(); // Refresh the main user list summary
+            e.target.reset(); // Reset the grant form
+            nodeIdSelect.value = ""; // Explicitly reset select
+          } catch (error) {
+            console.error("Error granting new access:", error);
+            window.showNotification(
+              `Error granting access: ${error.message}`,
+              "error"
+            );
+          } finally {
+            window.setButtonLoading(btn, false, originalText);
+          }
+        });
+
+      // --- Artifact Details Modal Logic ---
+      const artifactDetailsModalEl = document.getElementById(
+        "artifact-details-modal"
+      );
+      function showArtifactDetailsModal(title, description, link) {
+        const titleEl = document.getElementById("artifact-modal-title");
+        const descEl = document.getElementById(
+          "artifact-details-modal-description"
+        );
+        const linkEl = document.getElementById("artifact-modal-link");
+        if (!artifactDetailsModalEl || !titleEl || !descEl || !linkEl) {
+          console.error("Artifact modal elements not found.");
+          return;
+        }
+
+        titleEl.textContent = title || "Artifact Details";
+        // Sanitize description before inserting as HTML to prevent XSS
+        // A simple approach is to treat it as text, replacing newlines with <br>
+        const safeDescription = description
+          ? escapeJSString(description).replace(/\n/g, "<br>")
+          : "No description provided.";
+        descEl.innerHTML = safeDescription;
+
+        let pLink = link || "#";
+        // Basic validation: check if it looks like a URL or is just "#"
+        if (
+          pLink &&
+          pLink !== "#" &&
+          !pLink.match(/^(https?:\/\/|mailto:|tel:)/i)
+        ) {
+          // Assume http if no protocol is present and it doesn't look like mailto/tel
+          if (!pLink.includes(".") || pLink.startsWith("/")) {
+            console.warn("Potentially invalid link format:", pLink);
+            // Optionally handle this case, maybe disable the link or show a warning
+            // pLink = "#"; // Fallback to '#' if unsure
+          } else {
+            pLink = `https://${pLink}`; // Prepend https as a default for domain-like strings
+          }
+        }
+        linkEl.href = pLink;
+
+        if (!link || link === "#") {
+          linkEl.classList.add("opacity-50", "cursor-not-allowed");
+          linkEl.removeAttribute("target");
+          linkEl.onclick = (ev) => ev.preventDefault(); // Prevent navigation
+          linkEl.title = "No link provided";
+        } else {
+          linkEl.classList.remove("opacity-50", "cursor-not-allowed");
+          linkEl.setAttribute("target", "_blank"); // Open in new tab
+          linkEl.onclick = null; // Remove previous prevention handler
+          linkEl.title = `Go to: ${pLink}`;
+        }
+        artifactDetailsModalEl.classList.add("active");
+      }
+      function closeArtifactDetailsModal() {
+        if (artifactDetailsModalEl)
+          artifactDetailsModalEl.classList.remove("active");
+      }
+
+      // --- User Menu Dropdown Logic ---
+      if (userMenuButton && userDropdownMenu) {
+        userMenuButton.addEventListener("click", (event) => {
+          event.stopPropagation(); // Prevent click from immediately closing menu via document listener
+          const isExpanded =
+            userMenuButton.getAttribute("aria-expanded") === "true" || false;
+          userMenuButton.setAttribute("aria-expanded", !isExpanded);
+          userDropdownMenu.classList.toggle("hidden");
+        });
+        document.addEventListener("click", (event) => {
+          // Close if clicked outside the button AND outside the menu
+          if (
+            !userMenuButton.contains(event.target) &&
+            !userDropdownMenu.contains(event.target)
+          ) {
+            userDropdownMenu.classList.add("hidden");
+            userMenuButton.setAttribute("aria-expanded", "false");
+          }
+        });
+      }
+      if (logoutButtonDropdown && firebaseAuth) {
+        logoutButtonDropdown.addEventListener("click", async () => {
+          console.log("Logout button clicked.");
+          try {
+            await firebaseAuth.signOut();
+            sessionStorage.removeItem("token");
+            window.showNotification("Logged out successfully.", "success");
+            // onAuthStateChanged will handle the redirect/UI update
+            // Force close dropdown after logout action
+            userDropdownMenu.classList.add("hidden");
+            userMenuButton.setAttribute("aria-expanded", "false");
+          } catch (error) {
+            console.error("Error signing out:", error);
+            window.showNotification(
+              "Logout failed. Please try again.",
+              "error"
+            );
+          }
+        });
+      }
+
+      // --- Initialization ---
+      function initializeAdminPanel() {
+        console.log("Initializing Admin Panel data...");
+        if (firebaseAuth && firebaseAuth.currentUser) {
+          fetchTree(); // Populates fullTreeData and flatNodeList
+          fetchUsers(); // Fetches users and renders the first page
+        } else {
+          console.log("User not logged in, skipping data fetch.");
+          // Display appropriate messages if elements exist
+          const treeDiv = document.getElementById("tree");
+          if (treeDiv)
+            treeDiv.innerHTML = `<p class="text-[var(--text-tertiary)] p-3 text-center">Please log in to view structure.</p>`;
+          if (userListContainer)
+            showUserListMessage("Please log in to view users.");
+        }
+      }
+
+      // --- Global Event Listeners ---
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+          // Close modals on Escape key press
+          if (accessModal?.classList.contains("active")) closeAccessModal();
+          if (artifactDetailsModalEl?.classList.contains("active"))
+            closeArtifactDetailsModal();
+          if (deleteConfirmationModal?.classList.contains("active"))
+            closeDeleteConfirmationModal();
+
+          // Close any open inline forms
+          document.querySelectorAll(".form-inline").forEach((form) => {
+            if (form.style.display === "block") {
+              form.style.display = "none";
+            }
+          });
+          // Close user dropdown menu
+          if (
+            userDropdownMenu &&
+            !userDropdownMenu.classList.contains("hidden")
+          ) {
+            userDropdownMenu.classList.add("hidden");
+            userMenuButton.setAttribute("aria-expanded", "false");
+          }
+        }
+      });
     </script>
   </body>
 </html>

@@ -3,225 +3,50 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sign Up - DocNest Admin</title>
+    <title>Sign Up - DocNest</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <style>
-      :root {
-        /* Dark Theme (Default) */
-        --bg-primary-signup: #0a0a0a;
-        --bg-card-signup: #1a1a1a;
-        --text-primary-signup: #e0e0e0;
-        --text-secondary-signup: #bbb;
-        --text-tertiary-signup: #999;
-        --border-card-signup: #333;
-        --shadow-card-signup: 0 8px 20px rgba(0, 0, 0, 0.3);
-        --button-google-bg: #ffffff;
-        --button-google-text: #1f2937;
-        --button-google-border: #d1d5db;
-        --button-google-bg-hover: #f3f4f6;
-        --error-text-signup: #f87171;
-        --error-bg-signup: rgba(248, 113, 113, 0.1);
-        --error-border-signup: #f87171;
-        --theme-toggle-bg: var(--bg-card-signup);
-        --theme-toggle-text: var(--text-secondary-signup);
-        --theme-toggle-border: var(--border-card-signup);
-        --theme-toggle-bg-hover: var(--bg-card-hover);
-        --theme-toggle-text-hover: var(--text-primary-signup);
-        --theme-toggle-ring: #007acc;
-      }
-
-      .light-theme {
-        --bg-primary-signup: #f4f4f5;
-        --bg-card-signup: #ffffff;
-        --text-primary-signup: #18181b;
-        --text-secondary-signup: #52525b;
-        --text-tertiary-signup: #71717a;
-        --border-card-signup: #d1d5db;
-        --shadow-card-signup: 0 4px 15px rgba(0, 0, 0, 0.07);
-        --button-google-bg: #27272a;
-        --button-google-text: #ffffff;
-        --button-google-border: #27272a;
-        --button-google-bg-hover: #18181b;
-        --error-text-signup: #dc2626;
-        --error-bg-signup: rgba(220, 38, 38, 0.1);
-        --error-border-signup: #dc2626;
-        --theme-toggle-bg: var(--bg-card-signup);
-        --theme-toggle-text: var(--text-secondary-signup);
-        --theme-toggle-border: var(--border-card-signup);
-        --theme-toggle-bg-hover: #f9fafb;
-        --theme-toggle-text-hover: var(--text-primary-signup);
-        --theme-toggle-ring: #2563eb;
-      }
-
-      body {
-        font-family: "Inter", sans-serif;
-        background-color: var(--bg-primary-signup);
-        color: var(--text-primary-signup);
-        transition: background-color 0.3s ease, color 0.3s ease;
-      }
-      .signup-container {
-        /* Renamed from login-container for clarity */
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 1rem;
-        position: relative;
-      }
-      .signup-card {
-        /* Renamed from login-card */
-        background-color: var(--bg-card-signup);
-        border: 1px solid var(--border-card-signup);
-        box-shadow: var(--shadow-card-signup);
-        color: var(--text-primary-signup);
-      }
-      .google-btn {
-        background-color: var(--button-google-bg);
-        color: var(--button-google-text);
-        border: 1px solid var(--button-google-border);
-        transition: background-color 0.2s ease-in-out,
-          transform 0.1s ease-in-out;
-      }
-      .google-btn:hover {
-        background-color: var(--button-google-bg-hover);
-        transform: translateY(-1px);
-      }
-      .google-btn:disabled {
-        opacity: 0.7;
-        cursor: not-allowed;
-      }
-      .spinner {
-        animation: spin 1s linear infinite;
-        border: 2px solid currentColor;
-        border-top-color: transparent;
-        border-radius: 50%;
-        width: 1em;
-        height: 1em;
-        margin-right: 0.5em;
-      }
-      @keyframes spin {
-        0% {
-          transform: rotate(0deg);
-        }
-        100% {
-          transform: rotate(360deg);
-        }
-      }
-      #error-message-signup {
-        /* Renamed for clarity */
-        color: var(--error-text-signup);
-        background-color: var(--error-bg-signup);
-        border: 1px solid var(--error-border-signup);
-      }
-      #theme-toggle-button-signup {
-        /* Renamed for clarity */
-        position: absolute;
-        top: 1.5rem;
-        right: 1.5rem;
-        background-color: var(--theme-toggle-bg);
-        color: var(--theme-toggle-text);
-        border: 1px solid var(--theme-toggle-border);
-        padding: 0.5rem;
-        border-radius: 0.375rem;
-      }
-      #theme-toggle-button-signup:hover {
-        background-color: var(--theme-toggle-bg-hover);
-        color: var(--theme-toggle-text-hover);
-      }
-      #theme-toggle-button-signup:focus {
-        outline: none;
-        box-shadow: 0 0 0 2px var(--theme-toggle-ring);
-      }
-    </style>
   </head>
-  <body>
-    <div class="signup-container">
-      <button id="theme-toggle-button-signup" title="Toggle Theme"></button>
+  <body
+    class="bg-gray-900 text-white flex items-center justify-center min-h-screen"
+  >
+    <div class="bg-gray-800 p-8 rounded shadow-md w-full max-w-md text-center">
+      <h1 class="text-2xl font-bold mb-4">Create DocNest Account</h1>
+      <p class="mb-4 text-gray-400">Sign up using your Google account</p>
 
-      <div class="signup-card w-full max-w-md p-8 rounded-xl">
-        <div class="text-center mb-8">
-          <h1 class="text-4xl font-bold text-[var(--text-primary-signup)]">
-            🚀
-          </h1>
-          <h2
-            class="text-2xl font-semibold text-[var(--text-primary-signup)] mt-2"
-          >
-            Create DocNest Account
-          </h2>
-          <p class="text-sm text-[var(--text-secondary-signup)] mt-1">
-            Get started by signing up with Google
-          </p>
-        </div>
+      <div
+        id="error-message-signup"
+        class="hidden bg-red-200 text-red-800 text-sm p-2 mb-4 rounded"
+      ></div>
 
-        <div
-          id="error-message-signup"
-          class="hidden p-3 mb-6 rounded-md text-sm"
-        ></div>
-
-        <button
-          id="signup-button"
-          class="google-btn w-full py-3 px-4 rounded-lg font-semibold text-lg flex items-center justify-center"
-        >
-          <svg
-            class="w-6 h-6 mr-3"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M22.56,12.25C22.56,11.47 22.49,10.72 22.36,10H12V14.26H17.95C17.72,15.62 17.03,16.79 15.97,17.57V20.09H19.63C21.57,18.31 22.56,15.56 22.56,12.25Z"
-              fill="#4285F4"
-            />
-            <path
-              d="M12,23C14.97,23 17.45,22.04 19.63,20.09L15.97,17.57C14.97,18.23 13.62,18.62 12,18.62C9.05,18.62 6.56,16.62 5.56,13.91H1.79V16.52C3.78,20.34 7.59,23 12,23Z"
-              fill="#34A853"
-            />
-            <path
-              d="M5.56,13.91C5.34,13.28 5.22,12.65 5.22,12C5.22,11.35 5.34,10.72 5.56,10.09V7.48H1.79C0.95,9.14 0.44,10.95 0.44,12C0.44,13.05 0.95,14.86 1.79,16.52L5.56,13.91Z"
-              fill="#FBBC05"
-            />
-            <path
-              d="M12,5.38C13.71,5.38 15.14,5.99 16.3,7.09L19.71,3.68C17.45,1.63 14.97,0.56 12,0.56C7.59,0.56 3.78,3.66 1.79,7.48L5.56,10.09C6.56,7.38 9.05,5.38 12,5.38Z"
-              fill="#EA4335"
-            />
-          </svg>
-          <span class="button-text">Sign up with Google</span>
-        </button>
-
-        <p class="text-sm text-[var(--text-tertiary-signup)] mt-6 text-center">
-          Already have an account?
-          <a
-            href="login.html"
-            class="font-medium text-[var(--text-link-hover)] hover:underline"
-            >Sign In</a
-          >
-        </p>
-        <p class="text-xs text-[var(--text-tertiary-signup)] mt-8 text-center">
-          By signing up, you agree to our Terms of Service and Privacy Policy.
-        </p>
-      </div>
+      <button
+        id="signup-button"
+        class="bg-white text-black px-6 py-2 rounded hover:bg-gray-200 font-semibold"
+      >
+        Sign up with Google
+      </button>
     </div>
 
     <script type="module">
-      // Import Firebase v9 modular SDK
       import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
       import {
         getAuth,
         signInWithPopup,
         GoogleAuthProvider,
-        onAuthStateChanged,
         signOut,
-        getIdToken,
       } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+      import {
+        getDatabase,
+        ref,
+        get,
+        remove,
+      } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
 
-      // Firebase project configuration (same as login page)
+      // ✅ Your Firebase project configuration
       const firebaseConfig = {
         apiKey: "AIzaSyCbHWUEzqGjzeanOiMG0Z5Lb4wIjWWEMUQ",
         authDomain: "docnest-f85e2.firebaseapp.com",
+        databaseURL:
+          "https://docnest-f85e2-default-rtdb.asia-southeast1.firebasedatabase.app",
         projectId: "docnest-f85e2",
         storageBucket: "docnest-f85e2.appspot.com",
         messagingSenderId: "102395439437",
@@ -229,225 +54,78 @@
         measurementId: "G-YRMBR8BVSE",
       };
 
-      let app;
-      let auth;
-      let googleProvider;
+      // ✅ Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getDatabase(app);
+      const provider = new GoogleAuthProvider();
 
-      const signupButton = document.getElementById("signup-button"); // Changed ID
-      const errorMessageDivSignup = document.getElementById(
-        "error-message-signup"
-      ); // Changed ID
-      const themeToggleButtonSignup = document.getElementById(
-        "theme-toggle-button-signup"
-      ); // Changed ID
+      const signupBtn = document.getElementById("signup-button");
+      const errorDiv = document.getElementById("error-message-signup");
 
-      const sunIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>`;
-      const moonIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>`;
-
-      function applySignupTheme(theme) {
-        // Renamed for clarity
-        if (theme === "light") {
-          document.body.classList.add("light-theme");
-          if (themeToggleButtonSignup)
-            themeToggleButtonSignup.innerHTML = moonIcon;
-          localStorage.setItem("signupTheme", "light"); // Use different localStorage key if needed
-        } else {
-          document.body.classList.remove("light-theme");
-          if (themeToggleButtonSignup)
-            themeToggleButtonSignup.innerHTML = sunIcon;
-          localStorage.setItem("signupTheme", "dark");
-        }
+      function showSignupError(msg) {
+        errorDiv.textContent = msg;
+        errorDiv.classList.remove("hidden");
       }
 
-      if (themeToggleButtonSignup) {
-        themeToggleButtonSignup.addEventListener("click", () => {
-          applySignupTheme(
-            document.body.classList.contains("light-theme") ? "dark" : "light"
-          );
-        });
-      }
-
-      const savedSignupTheme =
-        localStorage.getItem("signupTheme") ||
-        localStorage.getItem("loginTheme"); // Fallback to login theme
-      const prefersDarkSignup = window.matchMedia(
-        "(prefers-color-scheme: dark)"
-      ).matches;
-      applySignupTheme(
-        savedSignupTheme || (prefersDarkSignup ? "dark" : "dark")
-      );
-
-      function setButtonLoadingState(isLoading) {
-        const buttonTextSpan = signupButton.querySelector(".button-text");
-        if (isLoading) {
-          signupButton.disabled = true;
-          if (buttonTextSpan) {
-            buttonTextSpan.dataset.originalText = buttonTextSpan.textContent;
-            buttonTextSpan.innerHTML = `<span class="spinner"></span>Signing up...`;
-          }
-        } else {
-          signupButton.disabled = false;
-          if (buttonTextSpan && buttonTextSpan.dataset.originalText) {
-            buttonTextSpan.innerHTML = buttonTextSpan.dataset.originalText;
-          } else if (buttonTextSpan) {
-            buttonTextSpan.innerHTML = "Sign up with Google";
-          }
-        }
-      }
-
-      function showSignupError(message) {
-        // Renamed for clarity
-        errorMessageDivSignup.textContent = message;
-        errorMessageDivSignup.classList.remove("hidden");
-      }
-
-      function clearSignupError() {
-        // Renamed for clarity
-        errorMessageDivSignup.textContent = "";
-        errorMessageDivSignup.classList.add("hidden");
-      }
-
-      if (
-        firebaseConfig.apiKey &&
-        firebaseConfig.apiKey !== "YOUR_FIREBASE_API_KEY"
-      ) {
+      signupBtn.addEventListener("click", async () => {
         try {
-          app = initializeApp(firebaseConfig);
-          auth = getAuth(app);
-          googleProvider = new GoogleAuthProvider();
-        } catch (e) {
-          console.error("Error initializing Firebase:", e);
-          showSignupError(
-            "Signup service initialization failed. Please contact support."
+          const result = await signInWithPopup(auth, provider);
+          const user = result.user;
+
+          const inviteToken = new URLSearchParams(window.location.search).get(
+            "token"
           );
-          if (signupButton) signupButton.disabled = true;
-        }
-      } else {
-        console.warn(
-          "Firebase config is not set with actual values. Please update firebaseConfig in the script."
-        );
-        showSignupError(
-          "Application not configured for signup. Please contact support."
-        );
-        if (signupButton) signupButton.disabled = true;
-      }
-
-      if (auth) {
-        onAuthStateChanged(auth, async (user) => {
-          if (user) {
-            console.log(
-              "onAuthStateChanged: User is signed in/up.",
-              user.displayName
-            );
-            if (sessionStorage.getItem("isAuthenticating")) return;
-
-            sessionStorage.setItem("isAuthenticating", "true");
-            setButtonLoadingState(true);
-            clearSignupError();
-
-            try {
-              const token = await getIdToken(user);
-
-              const backendResponse = await fetch(
-                "http://localhost:8000/api/auth",
-                {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                  },
-                }
-              );
-
-              const backendDataText = await backendResponse.text();
-              console.log("Backend auth response text:", backendDataText);
-
-              if (backendResponse.ok) {
-                try {
-                  const backendData = JSON.parse(backendDataText);
-                  console.log("Backend auth successful:", backendData);
-                } catch (jsonError) {
-                  console.warn(
-                    "Backend response was OK, but not valid JSON:",
-                    jsonError
-                  );
-                }
-                sessionStorage.setItem("token", token);
-                window.location.href = "admin.html";
-              } else {
-                let errorDetail = backendResponse.statusText;
-                try {
-                  const errorData = JSON.parse(backendDataText);
-                  errorDetail = errorData.detail || errorDetail;
-                } catch (e) {
-                  console.warn(
-                    "Could not parse error response from backend as JSON."
-                  );
-                }
-                showSignupError(`Access Denied by Application: ${errorDetail}`);
-                console.warn(
-                  "Backend authorization failed. Signing out from Firebase client."
-                );
-                await signOut(auth);
-                setButtonLoadingState(false);
-                sessionStorage.removeItem("isAuthenticating");
-              }
-            } catch (error) {
-              console.error(
-                "Error during onAuthStateChanged token processing or backend call:",
-                error
-              );
-              showSignupError(
-                "An error occurred during sign-up. Please try again."
-              );
-              setButtonLoadingState(false);
-              sessionStorage.removeItem("isAuthenticating");
-            }
-          } else {
-            console.log("onAuthStateChanged: No user signed in.");
-            sessionStorage.removeItem("token");
-            sessionStorage.removeItem("isAuthenticating");
-            setButtonLoadingState(false);
+          if (!inviteToken) {
+            showSignupError("Missing invite token.");
+            await signOut(auth);
+            return;
           }
-        });
-      }
 
-      async function triggerGoogleSignUp() {
-        // Renamed for clarity
-        if (!auth || !googleProvider) {
-          showSignupError(
-            "Signup service not available. Please check configuration."
-          );
-          return;
-        }
-        clearSignupError();
-        setButtonLoadingState(true);
-        try {
-          await signInWithPopup(auth, googleProvider);
+          const email = user.email;
+          const base64Email = btoa(email)
+            .replace(/\+/g, "-")
+            .replace(/\//g, "_")
+            .replace(/=+$/, "");
+          const inviteRef = ref(db, `invites/${base64Email}`);
+          const snapshot = await get(inviteRef);
+
+          if (!snapshot.exists()) {
+            showSignupError("No invite found for this email.");
+            await signOut(auth);
+            return;
+          }
+
+          const invite = snapshot.val();
+
+          if (invite.token !== inviteToken) {
+            showSignupError("Invite token mismatch.");
+            await signOut(auth);
+            return;
+          }
+
+          if (invite.used) {
+            showSignupError("This invite has already been used.");
+            await signOut(auth);
+            return;
+          }
+
+          if (invite.expires_at && new Date() > new Date(invite.expires_at)) {
+            showSignupError("This invite has expired.");
+            await signOut(auth);
+            return;
+          }
+
+          // ✅ Delete invite after success
+          await remove(inviteRef);
+
+          alert("✅ Signup successful! You may now close this tab.");
+          await signOut(auth);
         } catch (err) {
-          console.error("Google Sign-Up Popup Error:", err);
-          let friendlyMessage = "Sign-up failed. Please try again.";
-          if (err.code === "auth/popup-closed-by-user") {
-            friendlyMessage = "Sign-up popup closed before completion.";
-          } else if (err.code === "auth/network-request-failed") {
-            friendlyMessage = "Network error. Please check your connection.";
-          } else if (
-            err.code === "auth/cancelled-popup-request" ||
-            err.code === "auth/popup-blocked"
-          ) {
-            friendlyMessage =
-              "Sign-up popup was blocked or cancelled. Please try again and allow popups.";
-          }
-          showSignupError(friendlyMessage);
-          setButtonLoadingState(false);
+          console.error("Signup error:", err);
+          showSignupError("Something went wrong during signup.");
         }
-      }
-
-      if (signupButton) {
-        signupButton.addEventListener("click", triggerGoogleSignUp);
-      } else {
-        console.error("Signup button not found.");
-      }
+      });
     </script>
   </body>
 </html>
