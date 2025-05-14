@@ -2172,6 +2172,7 @@
 
           window.showNotification("Item added successfully! ✅", "success");
           fetchTree(); // Refresh the tree view
+          fetchActivity(); // Refresh activity log
           // Reset and hide the form
           const form = document.getElementById(`form-${parentId}`);
           if (form) {
@@ -2289,8 +2290,10 @@
           // Refresh relevant part of the UI
           if (itemToDelete.type === "user") {
             fetchUsers(); // Refresh user list
+            fetchActivity();
           } else {
             fetchTree(); // Refresh tree for nodes/artifacts
+            fetchActivity();
           }
           closeDeleteConfirmationModal();
         } catch (error) {
@@ -2329,6 +2332,7 @@
           }
           window.showNotification("New root folder created! ✅", "success");
           fetchTree();
+          fetchActivity();
         } catch (error) {
           console.error("Error creating new root:", error);
           window.showNotification(`Error: ${error.message}`, "error");
@@ -2561,6 +2565,7 @@
             );
 
             fetchUsers(); // Refresh user list regardless of partial success
+            fetchActivity();
             document.getElementById("addUserForm").reset();
             // Uncheck the checkbox manually if it's not part of form.reset()
             if (applyGlobalCheckbox) applyGlobalCheckbox.checked = false;
@@ -2689,6 +2694,7 @@
           window.showNotification("Access updated! ✅", "success");
           selectElement.dataset.originalRole = newRole; // Update the original role marker
           fetchUsers(); // Refresh the main user list summary (optional, maybe just update modal?)
+          fetchActivity(); // Refresh activity log
         } catch (error) {
           console.error("Error updating access:", error);
           window.showNotification(
@@ -2746,6 +2752,7 @@
             loadUserAccessRolesForModal(email); // Fallback to reload if removal fails
           }
           fetchUsers(); // Refresh the main user list summary
+          fetchActivity(); // Refresh activity log
         } catch (error) {
           console.error("Error revoking access:", error);
           window.showNotification(
@@ -2801,6 +2808,7 @@
             );
             await loadUserAccessRolesForModal(email); // Refresh the list in the modal
             fetchUsers(); // Refresh the main user list summary
+            fetchActivity(); // Refresh activity log
             e.target.reset(); // Reset the grant form
             nodeIdSelect.value = ""; // Explicitly reset select
           } catch (error) {
