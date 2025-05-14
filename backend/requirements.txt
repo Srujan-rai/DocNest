@@ -6,3 +6,4 @@ python-dotenv
 python-multipart
 email-validator
 requests
+prisma
