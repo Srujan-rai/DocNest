@@ -10,6 +10,29 @@ import smtplib
 from email.message import EmailMessage
 import traceback
 import  base64
+import asyncio
+
+def get_user_log_ref():
+    return firebase_db.reference("/userLogs")
+
+async def fetch_user_logs():
+    return get_user_log_ref().order_by_child("timestamp").get()
+
+def push_user_log(log_data):
+    get_user_log_ref().push(log_data)
+
+def delete_user_log(key):
+    get_user_log_ref().child(key).delete()
+
+def format_log_message(action: str, actor: str, target: str, when: datetime) -> str:
+    action_map = {
+        "CREATE": f"{actor} created account for {target}",
+        "UPDATE": f"{actor} updated user {target}",
+        "DELETE": f"{actor} deleted user {target}"
+    }
+    return f"{action_map[action]} at {when.strftime('%Y-%m-%d %H:%M UTC')}"
+
+
 
 router = APIRouter()
 
@@ -45,7 +68,6 @@ def send_invite_email(email: str, name: str, token: str):
         - The DocNest Team
 """)
 
-    # 🔒 Use App Password or SMTP relay for Gmail or your SMTP service
     with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
         smtp.login("srujan.int@niveussolutions.com", "tqlg oeif kebt ehzr")
         smtp.send_message(msg)
@@ -148,7 +170,25 @@ async def create_user(payload: UserCreate, user=Depends(get_current_user)):
         })
 
         send_invite_email(payload.email, payload.name, token)
-        await db.user.create(data={"email": payload.email, "name": payload.name})
+        
+        now = datetime.utcnow()
+        log_data = {
+            "action": "CREATE",
+            "email": payload.email,
+            "performedBy": user.email,
+            "timestamp": now.isoformat(),
+            "message": format_log_message("CREATE", user.email, payload.email, now)
+        }
+
+        user_create = asyncio.create_task(db.user.create(data={"email": payload.email, "name": payload.name}))
+        logs_fetch = asyncio.create_task(fetch_user_logs())
+        _, logs = await asyncio.gather(user_create, logs_fetch)
+
+        if logs and len(logs) >= 10:
+            oldest = sorted(logs.items(), key=lambda i: i[1]["timestamp"])[0][0]
+            delete_user_log(oldest)
+
+        push_user_log(log_data)
 
         return {"message": f"Invite sent to {payload.email} and user is created"}
 
@@ -156,8 +196,8 @@ async def create_user(payload: UserCreate, user=Depends(get_current_user)):
         print("🔥 Error during invite flow:", e)
         traceback.print_exc()
         raise HTTPException(500, f"Internal Server Error: {str(e)}")
-
-
+    
+    
 @router.put("/api/users/{user_id}")
 async def update_user(user_id: int, payload: UserUpdate, user=Depends(get_current_user)):
     target = await db.user.find_unique(where={"id": user_id})
