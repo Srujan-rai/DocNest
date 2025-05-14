@@ -267,6 +267,46 @@
         opacity: 1;
       }
 
+      /* Styles for artifact description in cards */
+      .item-card-description,
+      .search-result-description {
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+        margin-top: 0.75rem; /* Space above description */
+        margin-bottom: 0.5rem; /* Space below description, before actions (if any) */
+        max-height: 70px; /* Adjust as needed, approx 3-4 lines */
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+        word-break: break-word; /* Prevents overflow from long words */
+        line-height: 1.4; /* Improved readability */
+        padding-right: 5px; /* Space for scrollbar if it appears */
+      }
+
+      .item-card-description::-webkit-scrollbar,
+      .search-result-description::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .item-card-description::-webkit-scrollbar-track,
+      .search-result-description::-webkit-scrollbar-track {
+        background: var(--scrollbar-track);
+        border-radius: 3px;
+      }
+
+      .item-card-description::-webkit-scrollbar-thumb,
+      .search-result-description::-webkit-scrollbar-thumb {
+        background-color: var(--scrollbar-thumb);
+        border-radius: 3px;
+      }
+
+      /* Ensure item-card content pushes actions to the bottom */
+      .item-card > div:first-child {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1; /* Allows this div to take available space */
+      }
+
       #breadcrumb-container {
         background-color: transparent; /* Cleaner look */
         padding: 0.5rem 0; /* Adjusted padding */
@@ -951,7 +991,7 @@
       let firebaseAuth;
       if (
         firebaseConfig.apiKey &&
-        firebaseConfig.apiKey !== "YOUR_FIREBASE_API_KEY"
+        firebaseConfig.apiKey !== "YOUR_FIREBASE_API_KEY" // Ensure this is not the placeholder
       ) {
         try {
           firebaseApp = firebase.initializeApp(firebaseConfig);
@@ -971,6 +1011,11 @@
           "error",
           10000
         );
+        // Fallback for critical failure or redirect to a config error page
+        if (document.body) {
+          document.body.innerHTML =
+            '<div style="padding: 20px; text-align: center; font-size: 1.2em; color: red;">Application cannot start: Firebase configuration is missing or invalid.</div>';
+        }
       }
 
       // --- DOM Elements ---
@@ -1026,11 +1071,19 @@
           }
         });
       } else {
-        if (!window.location.pathname.endsWith("user_login.html")) {
-          console.error("Firebase Auth not initialized, redirecting to login.");
+        // If firebaseAuth is still not initialized here, it means config was bad
+        if (
+          !window.location.pathname.endsWith("user_login.html") &&
+          document.getElementById("loading-placeholder")
+        ) {
+          document.getElementById("loading-placeholder").innerHTML =
+            '<p class="p-4 text-lg text-[var(--text-red-accent)]">Authentication service failed to initialize. Please check configuration or contact support. You may need to <a href="user_login.html" class="text-[var(--text-link)]">login again</a>.</p>';
+          document.getElementById("loading-placeholder").style.display = "flex";
+        } else if (!window.location.pathname.endsWith("user_login.html")) {
+          // Fallback if loading placeholder not available or already redirected
           setTimeout(() => {
             window.location.href = "user_login.html";
-          }, 200);
+          }, 500);
         }
       }
 
@@ -1089,11 +1142,9 @@
           method: "POST",
         });
         if (!response.ok) {
-          const errorData = await response
-            .json()
-            .catch(() => ({
-              detail: `Roles fetch failed (Status: ${response.status})`,
-            }));
+          const errorData = await response.json().catch(() => ({
+            detail: `Roles fetch failed (Status: ${response.status})`,
+          }));
           throw new Error(errorData.detail);
         }
         const userData = await response.json();
@@ -1358,6 +1409,15 @@
                 ? `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 0 1 4.5 9.75h15A2.25 2.25 0 0 1 21.75 12v.75m-8.69-6.44-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z" /></svg>`
                 : `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>`;
 
+            let descriptionHTML = "";
+            if (item.itemType === "artifact" && item.description) {
+              descriptionHTML = `<p class="item-card-description">${escapeJSString(
+                item.description
+              )}</p>`;
+            } else if (item.itemType === "artifact" && !item.description) {
+              descriptionHTML = `<p class="item-card-description"><em>No description provided.</em></p>`;
+            }
+
             let actionsDivContent = "";
             const parentIdForPerms =
               item.parentIdActual !== undefined
@@ -1371,40 +1431,51 @@
               parentIdForPerms !== null
             ) {
               actionsDivContent += `<button title="Delete folder" class="action-icon-btn delete" onclick="event.stopPropagation(); deleteNode(${item.id})">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                                  </button>`;
+                                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                    </button>`;
             } else if (
               item.itemType === "artifact" &&
               canEditArtifactsInNode(parentIdForPerms)
             ) {
               actionsDivContent += `<button title="Delete file" class="action-icon-btn delete" onclick="event.stopPropagation(); deleteArtifact(${item.id}, ${parentIdForPerms})">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                                  </button>`;
+                                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                    </button>`;
             }
             card.innerHTML = `
-                    <div>
-                        <div class="item-card-icon-wrapper"><span class="item-card-icon ${iconClass}">${iconSVG}</span></div>
-                        <h3 class="item-card-name">${itemName}</h3>
-                        <p class="item-card-type">${
-                          item.itemType === "folder" ? "Folder" : "File"
-                        }</p>
-                    </div>
-                    ${
-                      actionsDivContent
-                        ? `<div class="item-card-actions">${actionsDivContent}</div>`
-                        : ""
-                    }
-                `;
+                      <div> 
+                          <div class="item-card-icon-wrapper"><span class="item-card-icon ${iconClass}">${iconSVG}</span></div>
+                          <h3 class="item-card-name">${itemName}</h3>
+                          <p class="item-card-type">${
+                            item.itemType === "folder" ? "Folder" : "File"
+                          }</p>
+                          ${descriptionHTML} 
+                      </div>
+                      ${
+                        actionsDivContent
+                          ? `<div class="item-card-actions">${actionsDivContent}</div>`
+                          : ""
+                      }
+                  `;
 
             if (item.itemType === "folder") {
               card.onclick = () => navigateToFolder(item.id);
             } else {
-              card.onclick = () =>
+              // Artifact
+              card.onclick = (e) => {
+                // Prevent click if it's on a button inside the card or the scrollbar of the description
+                if (
+                  e.target.closest("button") ||
+                  (e.target.classList.contains("item-card-description") &&
+                    e.offsetX > e.target.clientWidth)
+                ) {
+                  return;
+                }
                 showArtifactDetailsModal(
                   item.title,
                   item.description,
                   item.link
                 );
+              };
             }
             folderContentContainer.appendChild(card);
           });
@@ -1435,28 +1506,28 @@
           : "Selected Folder";
 
         addItemFormContainer.innerHTML = `
-            <h3 class="text-xl font-semibold mb-4 text-[var(--text-primary)]">Add to '${escapeJSString(
-              currentFolderName
-            )}'</h3>
-            <form onsubmit="event.preventDefault(); submitAddItemForm(this.querySelector('button[type=submit]'))">
-                <input type="hidden" id="addItemParentId" value="${parentId}">
-                <div class="mb-4"><label for="addItemName" class="label-text">Name (Folder/File)</label><input type="text" id="addItemName" class="input-field text-sm" required></div>
-                <div class="mb-4"><label for="addItemType" class="label-text">Type</label><select id="addItemType" class="input-field text-sm" onchange="toggleAddItemFileOptions()"><option value="SUBFOLDER">Subfolder</option><option value="FILE">File</option></select></div>
-                <div class="mb-4"><label for="addItemDescription" class="label-text">Description (Optional)</label><textarea id="addItemDescription" class="input-field text-sm" rows="2"></textarea></div>
-                <div id="addItemFileMethodOptions" style="display:none;" class="mt-2 mb-4">
-                    <div><label for="addItemFileSource" class="label-text text-xs">File Source:</label><select id="addItemFileSource" class="input-field text-xs py-1" onchange="toggleAddItemLinkOrUpload()"><option value="link">Enter Link</option><option value="upload">Upload File</option></select></div>
-                    <div id="addItemLinkInputContainer" class="mt-2"><input type="url" placeholder="Link (e.g., https://...)" id="addItemLink" class="input-field text-sm"></div>
-                    <div id="addItemUploadInputContainer" style="display:none;" class="mt-2"><input type="file" id="addItemFileUpload" class="input-field text-sm p-2"></div>
-                </div>
-                <div class="mt-6 flex items-center gap-3">
-                    <button type="submit" class="submit-button primary">
-                        <span class="button-text">Add Item</span>
-                    </button>
-                    <button type="button" class="submit-button secondary" onclick="toggleAddItemForm(false)">
-                        <span class="button-text">Cancel</span>
-                    </button>
-                </div>
-            </form>`;
+              <h3 class="text-xl font-semibold mb-4 text-[var(--text-primary)]">Add to '${escapeJSString(
+                currentFolderName
+              )}'</h3>
+              <form onsubmit="event.preventDefault(); submitAddItemForm(this.querySelector('button[type=submit]'))">
+                  <input type="hidden" id="addItemParentId" value="${parentId}">
+                  <div class="mb-4"><label for="addItemName" class="label-text">Name (Folder/File)</label><input type="text" id="addItemName" class="input-field text-sm" required></div>
+                  <div class="mb-4"><label for="addItemType" class="label-text">Type</label><select id="addItemType" class="input-field text-sm" onchange="toggleAddItemFileOptions()"><option value="SUBFOLDER">Subfolder</option><option value="FILE">File</option></select></div>
+                  <div class="mb-4"><label for="addItemDescription" class="label-text">Description (Optional)</label><textarea id="addItemDescription" class="input-field text-sm" rows="2"></textarea></div>
+                  <div id="addItemFileMethodOptions" style="display:none;" class="mt-2 mb-4">
+                      <div><label for="addItemFileSource" class="label-text text-xs">File Source:</label><select id="addItemFileSource" class="input-field text-xs py-1" onchange="toggleAddItemLinkOrUpload()"><option value="link">Enter Link</option><option value="upload">Upload File</option></select></div>
+                      <div id="addItemLinkInputContainer" class="mt-2"><input type="url" placeholder="Link (e.g., https://...)" id="addItemLink" class="input-field text-sm"></div>
+                      <div id="addItemUploadInputContainer" style="display:none;" class="mt-2"><input type="file" id="addItemFileUpload" class="input-field text-sm p-2"></div>
+                  </div>
+                  <div class="mt-6 flex items-center gap-3">
+                      <button type="submit" class="submit-button primary">
+                          <span class="button-text">Add Item</span>
+                      </button>
+                      <button type="button" class="submit-button secondary" onclick="toggleAddItemForm(false)">
+                          <span class="button-text">Cancel</span>
+                      </button>
+                  </div>
+              </form>`;
         toggleAddItemFileOptions();
       }
       function toggleAddItemFileOptions() {
@@ -1720,7 +1791,7 @@
         localStorage.getItem("theme") ||
           (window.matchMedia("(prefers-color-scheme: dark)").matches
             ? "dark"
-            : "dark")
+            : "dark") // Default to dark if no preference or local storage
       );
 
       // User Menu Dropdown
@@ -1812,7 +1883,7 @@
 
             if (node.artifacts && Array.isArray(node.artifacts)) {
               for (const artifact of node.artifacts) {
-                let artifactMatched = false;
+                let artifactMatchedThisSource = false;
                 if (
                   artifact.title &&
                   artifact.title.toLowerCase().includes(searchTerm)
@@ -1823,12 +1894,28 @@
                     itemType: "artifact",
                     matchSource: "title",
                   });
-                  artifactMatched = true;
+                  artifactMatchedThisSource = true;
                 }
-                // Optional: Also search artifact descriptions
-                // if (!artifactMatched && artifact.description && artifact.description.toLowerCase().includes(searchTerm)) {
-                //     searchResults.push({ item: artifact, path: currentItemPath, itemType: 'artifact', matchSource: 'description' });
-                // }
+                // Also search artifact descriptions
+                if (
+                  !artifactMatchedThisSource &&
+                  artifact.description &&
+                  artifact.description.toLowerCase().includes(searchTerm)
+                ) {
+                  // Check if already added from title match
+                  const alreadyAdded = searchResults.some(
+                    (sr) =>
+                      sr.item.id === artifact.id && sr.itemType === "artifact"
+                  );
+                  if (!alreadyAdded) {
+                    searchResults.push({
+                      item: artifact,
+                      path: currentItemPath,
+                      itemType: "artifact",
+                      matchSource: "description",
+                    });
+                  }
+                }
               }
             }
             if (node.children && Array.isArray(node.children)) {
@@ -1857,19 +1944,14 @@
 
         results.forEach((result) => {
           const card = document.createElement("div");
-          card.classList.add("search-result-card");
+          card.classList.add("search-result-card"); // Keep search specific class
+          // card.classList.add("item-card"); // if you want completely identical styling (hover etc)
 
           const itemName = result.item.name || result.item.title;
           const itemTypeDisplay =
             result.itemType.charAt(0).toUpperCase() + result.itemType.slice(1);
 
           let displayPathString = result.path.map((p) => p.name).join(" > ");
-          if (result.itemType === "folder") {
-            // The path is already to the folder itself
-          } else if (result.itemType === "artifact") {
-            // The path is to the parent folder, so append artifact title for clarity
-            // displayPathString += ` > ${itemName}`; // This can make the path very long, consider if needed
-          }
 
           const iconClass =
             result.itemType === "folder"
@@ -1880,19 +1962,33 @@
               ? `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 0 1 4.5 9.75h15A2.25 2.25 0 0 1 21.75 12v.75m-8.69-6.44-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z" /></svg>`
               : `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>`;
 
+          let descriptionHTML = "";
+          if (result.itemType === "artifact" && result.item.description) {
+            descriptionHTML = `<p class="search-result-description">${highlightText(
+              result.item.description,
+              searchTerm
+            )}</p>`;
+          } else if (
+            result.itemType === "artifact" &&
+            !result.item.description
+          ) {
+            descriptionHTML = `<p class="search-result-description"><em>No description provided.</em></p>`;
+          }
+
           card.innerHTML = `
-                <div>
-                    <div class="item-card-icon-wrapper"><span class="search-result-icon ${iconClass}">${iconSVG}</span></div>
-                    <h3 class="search-result-name">${highlightText(
-                      itemName,
-                      searchTerm
-                    )}</h3>
-                    <p class="search-result-type">${itemTypeDisplay}</p>
-                    <p class="search-result-path">In: ${escapeJSString(
-                      displayPathString
-                    )}</p>
-                </div>
-            `;
+                  <div> 
+                      <div class="item-card-icon-wrapper"><span class="search-result-icon ${iconClass}">${iconSVG}</span></div>
+                      <h3 class="search-result-name">${highlightText(
+                        itemName,
+                        searchTerm
+                      )}</h3>
+                      <p class="search-result-type">${itemTypeDisplay}</p>
+                      ${descriptionHTML} 
+                      <p class="search-result-path">In: ${escapeJSString(
+                        displayPathString
+                      )}</p>
+                  </div>
+              `;
           card.onclick = () => {
             isSearchViewActive = false;
             if (searchInputElement) searchInputElement.value = "";
@@ -1908,7 +2004,7 @@
                   result.item.description,
                   result.item.link
                 );
-              }, 150); // Slightly increased delay for smoother transition
+              }, 150);
             }
           };
           folderContentContainer.appendChild(card);
