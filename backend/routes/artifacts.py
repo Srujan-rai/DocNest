@@ -21,7 +21,6 @@ async def get_artifacts(node_id: int, user=Depends(get_current_user)):
     artifacts = await db.artifact.find_many(where={"nodeId": node_id})
     return artifacts
 
-# Only ADMIN or EDITOR can create
 @router.post("/api/artifacts")
 async def create_artifact(payload: ArtifactCreate, user=Depends(get_current_user)):
     access = await db.access.find_first(

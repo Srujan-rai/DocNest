@@ -23,7 +23,7 @@ async def get_full_tree():  # ✅ Protected
     flat_nodes = await db.node.find_many(include={"artifacts": True})
     return build_tree(flat_nodes)
 
-# --- GET SUBTREE BY NODE ID ---
+
 @router.get("/api/tree/{node_id}")
 async def get_subtree(node_id: int, user=Depends(get_current_user)):  # ✅ Protected
     root = await db.node.find_unique(where={"id": node_id}, include={"artifacts": True})
