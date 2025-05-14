@@ -1,0 +1,9 @@
+fastapi
+uvicorn[standard]
+pydantic
+firebase-admin
+python-dotenv
+python-multipart
+email-validator
+requests
+smtplib3  # Optional: if you're not using the built-in smtplib
