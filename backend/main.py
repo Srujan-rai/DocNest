@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routes import nodes, artifacts, tree, access, users, uploads,auth_routes
+from routes import nodes, artifacts, tree, access, users, uploads,auth_routes,activity
 from db import db  
 from contextlib import asynccontextmanager
 from firebase_setup import credentials
@@ -37,3 +37,4 @@ app.include_router(access.router)
 app.include_router(users.router)
 app.include_router(uploads.router)
 app.include_router(auth_routes.router)
+app.include_router(activity.router)

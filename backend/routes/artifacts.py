@@ -2,8 +2,32 @@ from fastapi import APIRouter, Depends, HTTPException
 from db import db
 from models import ArtifactCreate
 from auth import get_current_user
+from firebase_setup import db as firebase_db
+from datetime import datetime
+import asyncio
 
 router = APIRouter()
+
+def get_activity_log_ref():
+    return firebase_db.reference("/activityLogs")
+
+async def fetch_activity_logs():
+    return get_activity_log_ref().order_by_child("timestamp").get()
+
+def push_activity_log(log_data):
+    get_activity_log_ref().push(log_data)
+
+def delete_activity_log(key):
+    get_activity_log_ref().child(key).delete()
+
+def format_artifact_message(action: str, actor: str, title: str, node_id: int, when: datetime) -> str:
+    if action == "CREATE":
+        return f"{actor} created artifact '{title}' under node {node_id} at {when.strftime('%Y-%m-%d %H:%M UTC')}"
+    elif action == "DELETE":
+        return f"{actor} deleted artifact '{title}' from node {node_id} at {when.strftime('%Y-%m-%d %H:%M UTC')}"
+
+
+
 
 # Viewer/Editor/Admin can read artifacts — but only where they have node access
 @router.get("/api/nodes/{node_id}/artifacts")
@@ -33,7 +57,7 @@ async def create_artifact(payload: ArtifactCreate, user=Depends(get_current_user
     if not access:
         raise HTTPException(status_code=403, detail="You don't have permission to add artifacts here.")
 
-    artifact = await db.artifact.create(
+    artifact_task = asyncio.create_task(db.artifact.create(
         data={
             "title": payload.title,
             "description": payload.description,
@@ -41,7 +65,9 @@ async def create_artifact(payload: ArtifactCreate, user=Depends(get_current_user
             "nodeId": payload.nodeId,
             "createdBy": user.id
         }
-    )
+    ))
+    logs_task = asyncio.create_task(fetch_activity_logs())
+    artifact, logs = await asyncio.gather(artifact_task, logs_task)
 
     await db.access.create(
         data={
@@ -51,7 +77,25 @@ async def create_artifact(payload: ArtifactCreate, user=Depends(get_current_user
         }
     )
 
+    now = datetime.utcnow()
+    log_data = {
+        "action": "CREATE",
+        "type": "ARTIFACT",
+        "email": user.email,
+        "performedBy": user.email,
+        "timestamp": now.isoformat(),
+        "message": format_artifact_message("CREATE", user.email, payload.title, payload.nodeId, now)
+    }
+
+    if logs and len(logs) >= 10:
+        oldest = sorted(logs.items(), key=lambda x: x[1]["timestamp"])[0][0]
+        delete_activity_log(oldest)
+
+    push_activity_log(log_data)
+
     return artifact
+
+
 
 # Only ADMIN can delete — either node-level or artifact-level
 @router.delete("/api/artifacts/{artifact_id}")
@@ -74,5 +118,25 @@ async def delete_artifact(artifact_id: int, user=Depends(get_current_user)):
     if not access:
         raise HTTPException(status_code=403, detail="You are not allowed to delete this artifact.")
 
-    await db.artifact.delete(where={"id": artifact_id})
+    delete_task = asyncio.create_task(db.artifact.delete(where={"id": artifact_id}))
+    logs_task = asyncio.create_task(fetch_activity_logs())
+    await delete_task
+    logs = await logs_task
+
+    now = datetime.utcnow()
+    log_data = {
+        "action": "DELETE",
+        "type": "ARTIFACT",
+        "email": user.email,
+        "performedBy": user.email,
+        "timestamp": now.isoformat(),
+        "message": format_artifact_message("DELETE", user.email, artifact.title, artifact.nodeId, now)
+    }
+
+    if logs and len(logs) >= 10:
+        oldest = sorted(logs.items(), key=lambda x: x[1]["timestamp"])[0][0]
+        delete_activity_log(oldest)
+
+    push_activity_log(log_data)
+
     return {"message": f"Artifact {artifact_id} deleted."}

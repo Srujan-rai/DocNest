@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from db import db
 from auth import get_current_user
 from models import NodeCreate
+from firebase_setup import db as firebase_db
 
 router = APIRouter()
 

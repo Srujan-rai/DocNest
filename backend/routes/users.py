@@ -13,7 +13,7 @@ import  base64
 import asyncio
 
 def get_user_log_ref():
-    return firebase_db.reference("/userLogs")
+    return firebase_db.reference("/activityLogs")
 
 async def fetch_user_logs():
     return get_user_log_ref().order_by_child("timestamp").get()
@@ -203,24 +203,67 @@ async def update_user(user_id: int, payload: UserUpdate, user=Depends(get_curren
     target = await db.user.find_unique(where={"id": user_id})
     if not target:
         raise HTTPException(404, "User not found.")
-    return await db.user.update(
+
+    now = datetime.utcnow()
+    updated_email = payload.email or target.email
+
+    log_data = {
+        "action": "UPDATE",
+        "email": updated_email,
+        "performedBy": user.email,
+        "timestamp": now.isoformat(),
+        "message": format_log_message("UPDATE", user.email, updated_email, now)
+    }
+
+    update_task = asyncio.create_task(db.user.update(
         where={"id": user_id},
         data={"email": payload.email, "name": payload.name}
-    )
+    ))
+    logs_task = asyncio.create_task(fetch_user_logs())
+
+    result, logs = await asyncio.gather(update_task, logs_task)
+
+    if logs and len(logs) >= 10:
+        oldest = sorted(logs.items(), key=lambda i: i[1]["timestamp"])[0][0]
+        delete_user_log(oldest)
+
+    push_user_log(log_data)
+
+    return result 
+
 
 @router.delete("/api/users/{id}")
 async def delete_user(id: str, user=Depends(get_current_user)):
     target = await db.user.find_unique(where={"email": id})
     if not target:
         raise HTTPException(404, "User not found.")
+
     admin_access = await db.access.find_first(
-        where={
-            "userId": user.id,
-            "role": "ADMIN"
-        }
+        where={"userId": user.id, "role": "ADMIN"}
     )
     if not admin_access:
         raise HTTPException(403, "Only admins can delete users.")
-    await db.access.delete_many(where={"userId": target.id})
-    await db.user.delete(where={"email": id})
-    return {"message": f"User {id} deleted successfully"}
+
+    now = datetime.utcnow()
+    log_data = {
+        "action": "DELETE",
+        "email": id,
+        "performedBy": user.email,
+        "timestamp": now.isoformat(),
+        "message": format_log_message("DELETE", user.email, id, now)
+    }
+
+    delete_access = asyncio.create_task(db.access.delete_many(where={"userId": target.id}))
+    delete_user = asyncio.create_task(db.user.delete(where={"email": id}))
+    logs_task = asyncio.create_task(fetch_user_logs())
+
+    await asyncio.gather(delete_access, delete_user)
+    logs = await logs_task
+
+    if logs and len(logs) >= 10:
+        oldest = sorted(logs.items(), key=lambda i: i[1]["timestamp"])[0][0]
+        delete_user_log(oldest)
+
+    push_user_log(log_data)
+
+    return {"message": f"User {id} deleted successfully"}  # ✅ No frontend change

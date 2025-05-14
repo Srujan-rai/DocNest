@@ -5,7 +5,26 @@ from uuid import uuid4
 import os
 from supabase import create_client
 from dotenv import load_dotenv
+from firebase_setup import db as firebase_db
+from datetime import datetime
+import asyncio
+
 router = APIRouter()
+
+def get_activity_log_ref():
+    return firebase_db.reference("/activityLogs")
+
+async def fetch_activity_logs():
+    return get_activity_log_ref().order_by_child("timestamp").get()
+
+def push_activity_log(log_data):
+    get_activity_log_ref().push(log_data)
+
+def delete_activity_log(key):
+    get_activity_log_ref().child(key).delete()
+
+def format_artifact_upload_message(actor: str, artifact_title: str, node_id: int, when: datetime) -> str:
+    return f"{actor} uploaded and created artifact '{artifact_title}' under node {node_id} at {when.strftime('%Y-%m-%d %H:%M UTC')}"
 
 load_dotenv()
 
@@ -45,7 +64,8 @@ async def upload_file(
 
         file_url = f"{SUPABASE_URL}/storage/v1/object/public/{SUPABASE_BUCKET}/{filename}"
 
-        artifact = await db.artifact.create(
+        # Create artifact and fetch logs in parallel
+        artifact_task = asyncio.create_task(db.artifact.create(
             data={
                 "title": title,
                 "description": description,
@@ -53,7 +73,10 @@ async def upload_file(
                 "nodeId": nodeId,
                 "createdBy": user.id
             }
-        )
+        ))
+        logs_task = asyncio.create_task(fetch_activity_logs())
+
+        artifact, logs = await asyncio.gather(artifact_task, logs_task)
 
         await db.access.create(
             data={
@@ -62,6 +85,22 @@ async def upload_file(
                 "role": "ADMIN"
             }
         )
+
+        now = datetime.utcnow()
+        log_data = {
+            "action": "UPLOAD",
+            "type": "ARTIFACT",
+            "email": user.email,
+            "performedBy": user.email,
+            "timestamp": now.isoformat(),
+            "message": format_artifact_upload_message(user.email, title, nodeId, now)
+        }
+
+        if logs and len(logs) >= 10:
+            oldest = sorted(logs.items(), key=lambda i: i[1]["timestamp"])[0][0]
+            delete_activity_log(oldest)
+
+        push_activity_log(log_data)
 
         return {"message": "File uploaded and artifact created ✅", "artifact": artifact}
 

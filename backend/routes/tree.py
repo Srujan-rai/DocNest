@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException, Depends
 from typing import Optional
 from db import db
 from auth import get_current_user  # ✅ Firebase auth import
+from firebase_setup import db as firebase_db
 
 router = APIRouter()
 
