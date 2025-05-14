@@ -814,6 +814,32 @@
           </div>
         </div>
 
+        <div class="card p-6 shadow-2xl">
+          <div class="flex justify-between items-center mb-5">
+            <h2 class="text-2xl card-header">📊 Activity Log</h2>
+            <button
+              onclick="fetchActivity(true)" class="action-icon-btn text-xl" title="Refresh Activity Log"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m-15.357-2a8.001 8.001 0 0015.357 2m0 0H15" />
+              </svg>
+            </button>
+          </div>
+          <div id="activity-container" class="space-y-2" style="max-height: 400px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);">
+            <div id="activity-list-initial-spinner" class="text-center py-6">
+              <div class="inline-block w-8 h-8 border-4 border-[var(--border-primary)] border-t-[var(--text-link-hover)] rounded-full animate-spin"></div>
+              <p class="text-[var(--text-secondary)] mt-2">Loading Activity...</p>
+            </div>
+            <ul id="activityList" class="space-y-1"></ul>
+            <div id="activity-list-message-area" class="text-center text-[var(--text-tertiary)] py-4 hidden"></div>
+          </div>
+        </div>
+        </div>
+
+
+
+
+
         <div class="lg:col-span-2 space-y-8">
           <div class="card p-6 shadow-2xl">
             <h2 class="text-2xl card-header mb-6">👤 Add New User</h2>
@@ -2894,6 +2920,7 @@
         if (firebaseAuth && firebaseAuth.currentUser) {
           fetchTree(); // Populates fullTreeData and flatNodeList
           fetchUsers(); // Fetches users and renders the first page
+          fetchActivity(); // Fetches activity log
         } else {
           console.log("User not logged in, skipping data fetch.");
           // Display appropriate messages if elements exist
@@ -2931,6 +2958,93 @@
           }
         }
       });
+
+      // --- Activity Log ---
+const activityListElement = document.getElementById("activityList");
+const activityListInitialSpinner = document.getElementById("activity-list-initial-spinner");
+const activityListMessageArea = document.getElementById("activity-list-message-area");
+let isLoadingActivity = false;
+
+function showActivityListMessage(message) {
+  if (activityListMessageArea && activityListElement && activityListInitialSpinner) {
+    activityListMessageArea.textContent = message;
+    activityListMessageArea.style.display = "block";
+    activityListElement.innerHTML = ""; // Clear list content
+    activityListInitialSpinner.style.display = "none";
+  }
+}
+
+function hideActivityListMessage() {
+  if (activityListMessageArea && activityListInitialSpinner) {
+    activityListMessageArea.style.display = "none";
+    activityListInitialSpinner.style.display = "none"; // Ensure spinner is also hidden
+  }
+}
+
+async function fetchActivity(manualRefresh = false) {
+  if (isLoadingActivity && !manualRefresh) return; // Prevent multiple loads unless manual
+  isLoadingActivity = true;
+
+  if (activityListInitialSpinner) activityListInitialSpinner.style.display = "block";
+  if (activityListElement) activityListElement.innerHTML = ""; // Clear previous content for full refresh
+  hideActivityListMessage();
+
+  try {
+    const res = await secureFetch(`${BASE}/api/activity`);
+    if (!res.ok) {
+      let errorMsg = `HTTP error! status: ${res.status}`;
+      try {
+        const errData = await res.json();
+        errorMsg += ` - ${errData.message || errData.error || JSON.stringify(errData)}`;
+      } catch (e) { /* ignore */ }
+      throw new Error(errorMsg);
+    }
+    const activities = await res.json();
+    if (!Array.isArray(activities)) {
+      throw new Error("Invalid activity data received from server.");
+    }
+    renderActivity(activities);
+    if (activities.length === 0) {
+        showActivityListMessage("No recent activity found.");
+    }
+  } catch (error) {
+    console.error("Failed to fetch activity:", error);
+    window.showNotification(`Error loading activity: ${error.message}`, "error");
+    showActivityListMessage("Failed to load activity. Please try again later.");
+  } finally {
+    isLoadingActivity = false;
+    if (activityListInitialSpinner) activityListInitialSpinner.style.display = "none";
+  }
+}
+
+function renderActivity(activities) {
+  if (!activityListElement) return;
+  activityListElement.innerHTML = ""; // Clear before rendering new activities
+
+  if (activities.length === 0) {
+    // Message handled by showActivityListMessage in fetchActivity
+    return;
+  }
+
+  const activityItemsHTML = activities.map(activity => {
+    // Directly use the message if it exists, otherwise provide a fallback.
+    const messageContent = escapeJSString(activity.message || 'No message content available.');
+
+    // Simplified list item, focusing on the message.
+    // You can adjust styling as needed.
+    return `
+      <li class="p-2 border-b border-[var(--border-primary)] last:border-b-0 text-sm text-[var(--text-primary)] hover:bg-[var(--bg-card-hover)] rounded-sm transition-colors duration-150">
+        ${messageContent}
+      </li>
+    `;
+  }).join("");
+
+  activityListElement.innerHTML = activityItemsHTML;
+}
+// --- End Activity Log ---
+
+
+
     </script>
   </body>
 </html>

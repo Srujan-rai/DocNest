@@ -7,4 +7,4 @@ python-multipart
 email-validator
 requests
 prisma
-supabase   
+supabase
