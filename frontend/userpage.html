@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>DocNest - My Knowledge Base</title>
+    <title>DocNest - Knowledge Base</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
@@ -183,12 +183,12 @@
         padding: 1.25rem;
         display: flex;
         flex-direction: column;
-        /* justify-content: space-between; -- Let content flow naturally */
+        justify-content: space-between; 
         transition: all 0.2s ease-in-out; /* Smoother all transitions */
         box-shadow: var(--shadow-card-item);
         cursor: pointer;
         position: relative; /* For absolute positioned actions if needed */
-        min-height: 160px; /* Ensure cards have some min height */
+        min-height: 120px; /* Ensure cards have some min height */
       }
       .item-card:hover,
       .search-result-card:hover {
@@ -221,7 +221,7 @@
       .item-card-name,
       .search-result-name {
         font-weight: 600; /* Semibold */
-        font-size: 1.05rem; /* Slightly larger */
+        font-size: 1rem; /* Slightly larger */
         color: var(--text-primary);
         margin-bottom: 0.375rem;
         word-break: break-word;
@@ -245,7 +245,6 @@
       .search-result-type {
         font-size: 0.8rem;
         color: var(--text-tertiary);
-        margin-bottom: 0.75rem;
       }
       .search-result-path {
         font-size: 0.75rem;
@@ -269,19 +268,21 @@
 
       /* Styles for artifact description in cards */
       .item-card-description,
-      .search-result-description {
-        font-size: 0.8rem;
+.search-result-description {
+    font-size: 0.8rem;
         color: var(--text-secondary);
-        margin-top: 0.75rem; /* Space above description */
-        margin-bottom: 0.5rem; /* Space below description, before actions (if any) */
-        max-height: 70px; /* Adjust as needed, approx 3-4 lines */
-        overflow-y: auto;
-        scrollbar-width: thin;
-        scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
-        word-break: break-word; /* Prevents overflow from long words */
-        line-height: 1.4; /* Improved readability */
-        padding-right: 5px; /* Space for scrollbar if it appears */
-      }
+    margin-top: 0.5rem; /* Was 0.75rem */
+    max-height: 63px; /* Approx 3 lines with 1.5 line height and padding */
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+    word-break: break-word;
+    line-height: 1.5; /* Increased for better readability */
+    padding: 0.5rem 0.75rem; /* Added padding for internal spacing */
+    border-radius: 0.375rem; /* Tailwind: rounded-md */
+    border: 1px solid transparent; /* Prepare for potential border on hover/focus */
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
 
       .item-card-description::-webkit-scrollbar,
       .search-result-description::-webkit-scrollbar {
@@ -487,6 +488,8 @@
       }
       .action-icon-btn.delete {
         color: var(--text-red-accent);
+        position: relative;
+        bottom: 0px;
       }
 
       #theme-toggle-button {
@@ -570,11 +573,11 @@
         max-width: 400px;
         padding: 0.6rem 1rem;
         font-size: 0.9rem;
-        padding-left: 2.5rem; /* Space for icon */
+        padding-left: 2.8rem; /* Space for icon */
       }
       #search-input-icon {
         position: absolute;
-        left: 0.75rem;
+        left: 0rem;
         top: 50%;
         transform: translateY(-50%);
         color: var(--text-placeholder);
@@ -669,6 +672,11 @@
           transform: rotate(360deg);
         }
       }
+
+      #back-button{
+        transition: 0.2s;
+      }
+
     </style>
   </head>
   <body>
@@ -788,12 +796,34 @@
           id="current-folder-header"
           class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
         >
-          <h2
+         <div class="flex items-center gap-2 md:gap-3"> <button
+        id="back-button"
+        title="Go Back"
+        class="p-2 rounded-md text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-action-icon-hover)] flex-shrink-0"
+        style="display: none;"
+        >
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-5 w-5 md:h-6 md:w-6" 
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+            >
+                <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                />
+            </svg>
+        </button>
+        <h2
             id="current-folder-name"
-            class="text-2xl md:text-3xl font-bold text-[var(--text-card-header)]"
-          >
+            class="text-xl md:text-2xl font-bold text-[var(--text-card-header)]"
+        >
             Knowledge Base
-          </h2>
+        </h2>
+      </div>
           <button
             id="add-item-to-current-folder-button"
             class="submit-button primary text-sm py-2 px-4 self-start sm:self-center"
@@ -1301,60 +1331,77 @@
         });
       }
 
+      const backButton = document.getElementById("back-button");
+
+      // --- Navigation and Rendering ---
       function navigateToFolder(nodeId) {
-        currentViewNodeId =
-          nodeId === undefined || nodeId === null ? null : nodeId;
+          currentViewNodeId =
+            nodeId === undefined || nodeId === null ? null : nodeId;
 
-        // If not in search view, clear search input
-        if (!isSearchViewActive && searchInputElement)
-          searchInputElement.value = "";
+          if (!isSearchViewActive && searchInputElement)
+            searchInputElement.value = "";
 
-        let newPath;
-        if (currentViewNodeId === null) {
-          newPath = [{ id: null, name: "Knowledge Base" }];
-        } else {
-          const pathSegments = buildPathSegmentsRecursive(
-            currentViewNodeId,
-            fullTreeData,
-            []
-          );
-          if (pathSegments) {
-            newPath = [{ id: null, name: "Knowledge Base" }, ...pathSegments];
-          } else {
-            console.warn(
-              `Node ID ${currentViewNodeId} not found for path. Navigating to root.`
-            );
+          let newPath;
+          if (currentViewNodeId === null) {
             newPath = [{ id: null, name: "Knowledge Base" }];
-            currentViewNodeId = null;
-          }
-        }
-        currentPath = newPath;
-
-        renderBreadcrumbs();
-        if (!isSearchViewActive) {
-          // Only render folder contents if not in search view
-          renderFolderContents();
-        }
-
-        const currentFolderObject = currentPath[currentPath.length - 1];
-        currentFolderNameEl.textContent = currentFolderObject
-          ? currentFolderObject.name
-          : "Knowledge Base";
-
-        if (addItemToFolderBtn) {
-          if (
-            currentViewNodeId !== null &&
-            canAddContentToNode(currentViewNodeId) &&
-            !isSearchViewActive
-          ) {
-            addItemToFolderBtn.style.display = "inline-flex";
-            addItemToFolderBtn.onclick = () => toggleAddItemForm(true);
           } else {
-            addItemToFolderBtn.style.display = "none";
-            toggleAddItemForm(false);
+            const pathSegments = buildPathSegmentsRecursive(
+              currentViewNodeId,
+              fullTreeData,
+              []
+            );
+            if (pathSegments) {
+              newPath = [{ id: null, name: "Knowledge Base" }, ...pathSegments];
+            } else {
+              console.warn(
+                `Node ID ${currentViewNodeId} not found for path. Navigating to root.`
+              );
+              newPath = [{ id: null, name: "Knowledge Base" }];
+              currentViewNodeId = null;
+            }
           }
-        }
+          currentPath = newPath;
+
+          renderBreadcrumbs();
+          if (!isSearchViewActive) {
+            renderFolderContents();
+          }
+
+          const currentFolderObject = currentPath[currentPath.length - 1];
+          currentFolderNameEl.textContent = currentFolderObject
+            ? currentFolderObject.name
+            : "Knowledge Base";
+
+          // Back button logic
+          if (backButton) { // Ensure backButton element exists
+              if (currentPath.length > 1 && !isSearchViewActive) { // Show if not at root and not in search view
+                  backButton.style.display = "inline-flex"; // or "block" or "flex" depending on styling needs
+                  backButton.onclick = () => {
+                      if (currentPath.length > 1) { // Double check path length before navigating
+                          const parentSegment = currentPath[currentPath.length - 2];
+                          navigateToFolder(parentSegment.id);
+                      }
+                  };
+              } else {
+                  backButton.style.display = "none";
+              }
+          }
+
+          if (addItemToFolderBtn) {
+            if (
+              currentViewNodeId !== null &&
+              canAddContentToNode(currentViewNodeId) &&
+              !isSearchViewActive
+            ) {
+              addItemToFolderBtn.style.display = "inline-flex";
+              addItemToFolderBtn.onclick = () => toggleAddItemForm(true);
+            } else {
+              addItemToFolderBtn.style.display = "none";
+              toggleAddItemForm(false);
+            }
+          }
       }
+
 
       function renderFolderContents() {
         folderContentContainer.innerHTML = "";
@@ -1856,6 +1903,7 @@
       });
 
       function performGlobalSearch(term) {
+        
         searchResults = [];
         const searchTerm = term.trim().toLowerCase();
         if (!searchTerm) {
@@ -1927,9 +1975,12 @@
         renderSearchResults(searchResults, searchTerm);
       }
 
-      function renderSearchResults(results, searchTerm = "") {
+      function renderSearchResults(results, searchTerm = "") {  
         folderContentContainer.innerHTML = "";
         toggleAddItemForm(false);
+        if (backButton) { // Ensure backButton element exists
+        backButton.style.display = 'none'; // Hide back button in search results
+    }
         if (addItemToFolderBtn) addItemToFolderBtn.style.display = "none";
         currentFolderNameEl.textContent =
           results.length > 0
