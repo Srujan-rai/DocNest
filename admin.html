@@ -690,444 +690,370 @@
           transform: rotate(360deg);
         }
       }
+
+      /* Enhanced UI Styles */
+      .card {
+        background-color: var(--bg-card);
+        border-radius: 1rem;
+        box-shadow: var(--shadow-card);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        border: 1px solid var(--border-primary);
+      }
+
+      .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+      }
+
+      .input-field {
+        background-color: var(--bg-input);
+        border: 1px solid var(--border-input);
+        border-radius: 0.5rem;
+        padding: 0.75rem 1rem;
+        transition: all 0.2s ease;
+        width: 100%;
+        color: var(--text-primary);
+      }
+
+      .input-field:focus {
+        border-color: var(--border-input-focus);
+        box-shadow: var(--shadow-input-focus);
+        outline: none;
+      }
+
+      .button {
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+      }
+
+      .button-primary {
+        background-color: var(--bg-button-primary);
+        color: var(--text-button-primary);
+        border: 1px solid var(--border-button-primary);
+      }
+
+      .button-primary:hover {
+        background-color: var(--bg-button-primary-hover);
+        transform: translateY(-1px);
+      }
+
+      .button-secondary {
+        background-color: var(--bg-button-secondary);
+        color: var(--text-button-secondary);
+        border: 1px solid var(--border-button-secondary);
+      }
+
+      .button-secondary:hover {
+        background-color: var(--bg-button-secondary-hover);
+        transform: translateY(-1px);
+      }
+
+      .modal {
+        background-color: var(--bg-modal-content);
+        border-radius: 1rem;
+        box-shadow: var(--shadow-modal);
+        border: 1px solid var(--border-primary);
+      }
+
+      .modal-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid var(--border-primary);
+      }
+
+      .modal-body {
+        padding: 1.5rem;
+      }
+
+      .modal-footer {
+        padding: 1.5rem;
+        border-top: 1px solid var(--border-primary);
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+      }
+
+      .tree-node {
+        padding: 0.75rem 1rem;
+        border-radius: 0.5rem;
+        margin: 0.25rem 0;
+        transition: all 0.2s ease;
+      }
+
+      .tree-node:hover {
+        background-color: var(--bg-card-hover);
+      }
+
+      .tree-node.selected {
+        background-color: var(--bg-selected-node);
+        border-left: 3px solid var(--border-selected-node);
+      }
+
+      .toast {
+        padding: 1rem 1.5rem;
+        border-radius: 0.75rem;
+        box-shadow: var(--shadow-toast);
+        animation: slideIn 0.3s ease-out;
+      }
+
+      @keyframes slideIn {
+        from {
+          transform: translateY(-100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      .dropdown-menu {
+        background-color: var(--bg-dropdown-menu);
+        border: 1px solid var(--border-dropdown-menu);
+        border-radius: 0.75rem;
+        box-shadow: var(--shadow-dropdown);
+        padding: 0.5rem;
+        min-width: 200px;
+      }
+
+      .dropdown-item {
+        padding: 0.75rem 1rem;
+        border-radius: 0.5rem;
+        transition: all 0.2s ease;
+      }
+
+      .dropdown-item:hover {
+        background-color: var(--bg-card-hover);
+        color: var(--text-dropdown-item-hover);
+      }
+
+      /* Layout improvements */
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2rem;
+      }
+
+      .grid {
+        display: grid;
+        gap: 2rem;
+      }
+
+      .grid-cols-2 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .grid-cols-3 {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .flex {
+        display: flex;
+      }
+
+      .items-center {
+        align-items: center;
+      }
+
+      .justify-between {
+        justify-content: space-between;
+      }
+
+      .gap-4 {
+        gap: 1rem;
+      }
+
+      .gap-8 {
+        gap: 2rem;
+      }
+
+      /* Typography improvements */
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        font-weight: 600;
+        line-height: 1.2;
+        margin-bottom: 1rem;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
+
+      h2 {
+        font-size: 1.75rem;
+      }
+
+      h3 {
+        font-size: 1.5rem;
+      }
+
+      p {
+        line-height: 1.6;
+        margin-bottom: 1rem;
+      }
+
+      /* Form improvements */
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+
+      .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: var(--text-secondary);
+      }
+
+      .form-hint {
+        font-size: 0.875rem;
+        color: var(--text-tertiary);
+        margin-top: 0.25rem;
+      }
+
+      /* Status indicators */
+      .status-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.875rem;
+        font-weight: 500;
+      }
+
+      .status-success {
+        background-color: var(--text-green-accent);
+        color: var(--bg-primary);
+      }
+
+      .status-error {
+        background-color: var(--text-red-accent);
+        color: var(--bg-primary);
+      }
+
+      .status-warning {
+        background-color: var(--text-yellow-accent);
+        color: var(--bg-primary);
+      }
     </style>
   </head>
   <body>
-    <div id="toast-container"></div>
-    <div class="container mx-auto p-4 md:p-8">
-      <header
-        class="mb-6 flex flex-col sm:flex-row justify-between items-center gap-4"
-      >
-        <div class="flex items-center">
-          <img
-            src="https://niveussolutions.com/wp-content/uploads/2025/02/Niveus-ntt-data.png"
-            alt="DocNest Logo"
-            class="h-10 w-auto mr-3"
-          />
-          <h1
-            class="text-4xl sm:text-5xl font-bold tracking-tight text-[var(--text-card-header)]"
-          >
-            DocNest Admin
-          </h1>
+    <div class="container">
+      <header class="flex items-center justify-between gap-8 mb-8">
+        <div>
+          <h1 class="text-3xl font-bold">DocNest Admin</h1>
+          <p class="text-secondary">
+            Manage your document hierarchy and access controls
+          </p>
         </div>
-        <div class="header-controls flex items-center gap-4 ml-auto">
-          <input
-            type="search"
-            id="search-tree-input"
-            class="input-field flex-grow max-w-xs sm:max-w-sm md:max-w-md"
-            placeholder="Search folders/files..."
-          />
-          <button
-            id="theme-toggle-button"
-            class="p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--border-input-focus)] flex-shrink-0"
-            title="Toggle Theme"
-          ></button>
-
-          <div class="user-menu-container">
-            <button
-              id="user-menu-button"
-              type="button"
-              aria-expanded="false"
-              aria-haspopup="true"
-            >
-              <span id="user-display-name" class="text-sm font-medium"
-                >User</span
-              >
-              <svg
-                class="h-5 w-5 text-[var(--text-tertiary)]"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-                aria-hidden="true"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.25 4.25a.75.75 0 01-1.06 0L5.23 8.29a.75.75 0 01.02-1.06z"
-                  clip-rule="evenodd"
-                />
-              </svg>
-            </button>
-            <div
-              id="user-dropdown-menu"
-              class="absolute right-0 mt-2 w-64 origin-top-right rounded-md bg-[var(--bg-dropdown-menu)] shadow-lg ring-1 ring-[var(--border-dropdown-menu)] ring-opacity-5 focus:outline-none hidden"
-              role="menu"
-              aria-orientation="vertical"
-              aria-labelledby="user-menu-button"
-            >
-              <div class="py-1" role="none">
-                <div class="px-4 py-3 border-b border-[var(--border-primary)]">
-                  <p
-                    class="text-sm font-semibold text-[var(--text-primary)]"
-                    id="dropdown-user-name"
-                  >
-                    User Name
-                  </p>
-                  <p
-                    class="text-xs text-[var(--text-secondary)] truncate"
-                    id="dropdown-user-email"
-                  >
-                    user@example.com
-                  </p>
-                </div>
-                <button
-                  id="logout-button-dropdown"
-                  class="block w-full px-4 py-2 text-left text-sm text-[var(--text-red-accent)] hover:bg-[var(--bg-card-hover)]"
-                  role="menuitem"
-                >
-                  Logout
-                </button>
-              </div>
-            </div>
-          </div>
+        <div class="flex items-center gap-4">
+          <button id="themeToggle" class="button button-secondary">
+            <span class="theme-icon">🌙</span>
+            <span class="theme-text">Toggle Theme</span>
+          </button>
+          <button id="logoutButton" class="button button-primary">
+            <span>Logout</span>
+          </button>
         </div>
       </header>
 
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
-        <div class="lg:col-span-1 space-y-8">
-          <div class="card p-6 shadow-2xl">
-            <div class="flex justify-between items-center mb-5">
-              <h2 class="text-2xl card-header">📁 Folder Structure</h2>
-              <button
-                onclick="promptNewRoot()"
-                class="action-icon-btn add text-2xl"
-                title="Add New Root Folder"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M12 4v16m8-8H4"
-                  />
-                </svg>
-              </button>
-            </div>
-            <div id="tree-container">
-              <div id="tree" class="tree-root space-y-0.5"></div>
-            </div>
+      <div class="grid grid-cols-2 gap-8">
+        <!-- Tree Structure Section -->
+        <div class="card">
+          <div class="modal-header">
+            <h2>Document Tree</h2>
+          </div>
+          <div class="modal-body">
+            <div id="tree-container" class="tree-container"></div>
           </div>
         </div>
 
-        <div class="card p-6 shadow-2xl">
-          <div class="flex justify-between items-center mb-5">
-            <h2 class="text-2xl card-header">📊 Activity Log</h2>
-            <button
-              onclick="fetchActivity(true)" class="action-icon-btn text-xl" title="Refresh Activity Log"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m-15.357-2a8.001 8.001 0 0015.357 2m0 0H15" />
-              </svg>
-            </button>
+        <!-- Access Management Section -->
+        <div class="card">
+          <div class="modal-header">
+            <h2>Access Management</h2>
           </div>
-          <div id="activity-container" class="space-y-2" style="max-height: 400px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);">
-            <div id="activity-list-initial-spinner" class="text-center py-6">
-              <div class="inline-block w-8 h-8 border-4 border-[var(--border-primary)] border-t-[var(--text-link-hover)] rounded-full animate-spin"></div>
-              <p class="text-[var(--text-secondary)] mt-2">Loading Activity...</p>
-            </div>
-            <ul id="activityList" class="space-y-1"></ul>
-            <div id="activity-list-message-area" class="text-center text-[var(--text-tertiary)] py-4 hidden"></div>
-          </div>
-        </div>
-        </div>
-
-
-
-
-
-        <div class="lg:col-span-2 space-y-8">
-          <div class="card p-6 shadow-2xl">
-            <h2 class="text-2xl card-header mb-6">👤 Add New User</h2>
-            <form id="addUserForm" class="space-y-5">
-              <div>
-                <label for="newUserEmail" class="label-text"
-                  >Email Address</label
-                >
+          <div class="modal-body">
+            <div id="access-management-container">
+              <div class="form-group">
+                <label class="form-label">User Email</label>
                 <input
                   type="email"
-                  id="newUserEmail"
-                  required
+                  id="userEmail"
                   class="input-field"
-                  placeholder="user@example.com"
+                  placeholder="Enter user email"
                 />
               </div>
-              <div>
-                <label for="newUserRole" class="label-text"
-                  >Assign Global Role</label
-                >
-                <select id="newUserRole" class="input-field">
-                  <option value="ADMIN">ADMIN</option>
-                  <option value="EDITOR">EDITOR</option>
-                  <option value="VIEWER">VIEWER</option>
+              <div class="form-group">
+                <label class="form-label">Access Level</label>
+                <select id="accessLevel" class="input-field">
+                  <option value="read">Read</option>
+                  <option value="write">Write</option>
+                  <option value="admin">Admin</option>
                 </select>
               </div>
-              <div>
-                <label for="newUserNodeAccess" class="label-text"
-                  >Grant Initial Node Access (Optional)</label
-                >
-                <select id="newUserNodeAccess" class="input-field">
-                  <option value="">None - Global Role Only</option>
-                </select>
-              </div>
-
-              <div class="flex items-center mt-1 mb-3">
-                <input
-                  type="checkbox"
-                  id="applyGlobalRoleToAllNodesCheckbox"
-                  class="h-4 w-4 text-[var(--text-link-hover)] border-[var(--border-input)] rounded focus:ring-[var(--text-link-hover)] mr-2"
-                />
-                <label
-                  for="applyGlobalRoleToAllNodesCheckbox"
-                  class="label-text !mb-0 !font-normal text-sm"
-                >
-                  Apply global role to all nodes (if 'None' selected above)
-                </label>
-              </div>
-              <div>
-                <label for="newUserNodeRole" class="label-text"
-                  >Role for Selected Node</label
-                >
-                <select id="newUserNodeRole" class="input-field">
-                  <option value="ADMIN">ADMIN</option>
-                  <option value="EDITOR">EDITOR</option>
-                  <option value="VIEWER">VIEWER</option>
-                </select>
-              </div>
-              <button type="submit" class="submit-button w-full sm:w-auto">
-                <span class="button-text">Add User</span>
+              <button id="grantAccessButton" class="button button-primary">
+                Grant Access
               </button>
-            </form>
-          </div>
-
-          <div class="card p-6 shadow-2xl">
-            <div
-              class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 border-b border-[var(--border-primary)] pb-4"
-            >
-              <h2
-                class="text-2xl sm:text-3xl card-header flex items-center gap-2 mb-3 sm:mb-0"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-7 w-7"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  stroke-width="1.5"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
-                  />
-                </svg>
-                All Users
-              </h2>
-            </div>
-
-            <div class="mb-4">
-              <input type="search" id="search-users-input" class="input-field
-              w-full" /* Changed: Applied .input-field class */
-              placeholder="Search users by email..." />
-            </div>
-
-            <div id="userListContainer">
-              <div
-                id="user-list-initial-spinner"
-                class="text-center py-6 hidden"
-              >
-                <div
-                  class="inline-block w-10 h-10 border-4 border-[var(--border-primary)] border-t-[var(--text-link-hover)] rounded-full animate-spin"
-                ></div>
-                <p class="text-[var(--text-secondary)] mt-3">
-                  Loading Users...
-                </p>
-              </div>
-
-              <ul id="userList" class="space-y-3"></ul>
-              <div
-                id="user-list-loading-indicator"
-                class="text-center py-4 hidden"
-              >
-                <div
-                  class="inline-block w-8 h-8 border-2 border-[var(--border-primary)] border-t-[var(--text-link-hover)] rounded-full animate-spin"
-                ></div>
-              </div>
-
-              <div
-                id="user-list-message-area"
-                class="text-center text-[var(--text-tertiary)] py-6 hidden"
-              ></div>
             </div>
           </div>
         </div>
       </div>
+
+      <!-- User List Section -->
+      <div class="card mt-8">
+        <div class="modal-header">
+          <h2>User Management</h2>
+        </div>
+        <div class="modal-body">
+          <div id="userListContainer" class="user-list"></div>
+        </div>
+      </div>
     </div>
 
-    <div id="access-management-modal" class="modal-overlay">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h3 class="modal-title">
-            Manage Access for
-            <span id="modal-user-email" class="font-mono"></span>
-          </h3>
-          <button class="modal-close-btn" onclick="closeAccessModal()">
-            &times;
-          </button>
-        </div>
-        <input type="hidden" id="modal-editing-user-email-hidden" />
-
-        <h4 class="text-lg font-semibold mb-2 text-[var(--text-secondary)]">
-          Current Node Access:
-        </h4>
-        <div
-          id="access-management-modal-current-access"
-          class="mb-6 space-y-0 border border-[var(--border-primary)] rounded-md"
+    <!-- Modals -->
+    <div id="accessManagementModal" class="modal" style="display: none">
+      <div class="modal-header">
+        <h2>Access Management</h2>
+      </div>
+      <div class="modal-body">
+        <div id="access-management-modal-current-access"></div>
+      </div>
+      <div class="modal-footer">
+        <button
+          class="button button-secondary"
+          onclick="closeModal('accessManagementModal')"
         >
-          <p class="text-[var(--text-tertiary)] p-3">Loading access...</p>
-        </div>
+          Close
+        </button>
+      </div>
+    </div>
 
-        <h4 class="text-lg font-semibold mb-3 text-[var(--text-secondary)]">
-          Grant New Node Access:
-        </h4>
-        <form
-          id="grantNewAccessForm"
-          class="space-y-4 p-4 border border-[var(--border-primary)] rounded-md bg-[var(--bg-inline-form)]"
+    <div id="artifactDetailsModal" class="modal" style="display: none">
+      <div class="modal-header">
+        <h2>Artifact Details</h2>
+      </div>
+      <div class="modal-body">
+        <div id="artifact-details-modal-description"></div>
+      </div>
+      <div class="modal-footer">
+        <button
+          class="button button-secondary"
+          onclick="closeModal('artifactDetailsModal')"
         >
-          <div>
-            <label for="modalNodeSelect" class="label-text"
-              >Select Folder/File</label
-            >
-            <select id="modalNodeSelect" class="input-field">
-              <option value="">-- Select Node --</option>
-            </select>
-          </div>
-          <div>
-            <label for="modalNodeRoleSelect" class="label-text"
-              >Assign Role</label
-            >
-            <select id="modalNodeRoleSelect" class="input-field">
-              <option value="ADMIN">ADMIN</option>
-              <option value="EDITOR">EDITOR</option>
-              <option value="VIEWER">VIEWER</option>
-            </select>
-          </div>
-          <button
-            type="submit"
-            class="submit-button secondary w-full sm:w-auto"
-          >
-            <span class="button-text">Grant Access</span>
-          </button>
-        </form>
-        <div class="mt-6 text-right">
-          <button class="submit-button secondary" onclick="closeAccessModal()">
-            <span class="button-text">Close</span>
-          </button>
-        </div>
+          Close
+        </button>
       </div>
     </div>
 
-    <div id="artifact-details-modal" class="modal-overlay">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h3 id="artifact-modal-title" class="modal-title">
-            Artifact Details
-          </h3>
-          <button class="modal-close-btn" onclick="closeArtifactDetailsModal()">
-            &times;
-          </button>
-        </div>
-
-        <div class="mb-4">
-          <label class="label-text">Description:</label>
-          <div
-            id="artifact-details-modal-description"
-            class="p-3 border border-[var(--border-input)] rounded-md bg-[var(--bg-input)] text-sm min-h-[60px]"
-          >
-            No description provided.
-          </div>
-        </div>
-
-        <div class="mt-6 text-right space-x-3">
-          <a
-            id="artifact-modal-link"
-            href="#"
-            target="_blank"
-            class="submit-button inline-block"
-          >
-            Go to Resource
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-4 w-4 inline-block ml-1"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-              />
-            </svg>
-          </a>
-          <button
-            class="submit-button secondary"
-            onclick="closeArtifactDetailsModal()"
-          >
-            <span class="button-text">Close</span>
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <div id="delete-confirmation-modal" class="modal-overlay">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h3 id="delete-modal-title" class="modal-title">Confirm Deletion</h3>
-          <button
-            class="modal-close-btn"
-            onclick="closeDeleteConfirmationModal()"
-          >
-            &times;
-          </button>
-        </div>
-        <p id="delete-modal-message" class="mb-4 text-[var(--text-secondary)]">
-          Are you sure you want to delete this item? This action cannot be
-          undone.
-        </p>
-        <div class="mb-4">
-          <label for="delete-confirm-input" class="label-text"
-            >To confirm, type "DELETE" in the box below:</label
-          >
-          <input
-            type="text"
-            id="delete-confirm-input"
-            class="input-field"
-            placeholder="DELETE"
-          />
-        </div>
-        <div class="mt-6 text-right space-x-3">
-          <button
-            class="submit-button secondary"
-            onclick="closeDeleteConfirmationModal()"
-          >
-            <span class="button-text">Cancel</span>
-          </button>
-          <button
-            id="confirm-delete-button"
-            class="submit-button destructive"
-            disabled
-          >
-            <span class="button-text">Delete</span>
-          </button>
-        </div>
-      </div>
-    </div>
+    <!-- Toast Container -->
+    <div id="toastContainer" class="fixed top-4 right-4 z-50"></div>
 
     <script>
       // --- Firebase Configuration ---
@@ -2172,7 +2098,6 @@
 
           window.showNotification("Item added successfully! ✅", "success");
           fetchTree(); // Refresh the tree view
-          fetchActivity(); // Refresh activity log
           // Reset and hide the form
           const form = document.getElementById(`form-${parentId}`);
           if (form) {
@@ -2290,10 +2215,8 @@
           // Refresh relevant part of the UI
           if (itemToDelete.type === "user") {
             fetchUsers(); // Refresh user list
-            fetchActivity();
           } else {
             fetchTree(); // Refresh tree for nodes/artifacts
-            fetchActivity();
           }
           closeDeleteConfirmationModal();
         } catch (error) {
@@ -2332,7 +2255,6 @@
           }
           window.showNotification("New root folder created! ✅", "success");
           fetchTree();
-          fetchActivity();
         } catch (error) {
           console.error("Error creating new root:", error);
           window.showNotification(`Error: ${error.message}`, "error");
@@ -2565,7 +2487,6 @@
             );
 
             fetchUsers(); // Refresh user list regardless of partial success
-            fetchActivity();
             document.getElementById("addUserForm").reset();
             // Uncheck the checkbox manually if it's not part of form.reset()
             if (applyGlobalCheckbox) applyGlobalCheckbox.checked = false;
@@ -2694,7 +2615,6 @@
           window.showNotification("Access updated! ✅", "success");
           selectElement.dataset.originalRole = newRole; // Update the original role marker
           fetchUsers(); // Refresh the main user list summary (optional, maybe just update modal?)
-          fetchActivity(); // Refresh activity log
         } catch (error) {
           console.error("Error updating access:", error);
           window.showNotification(
@@ -2752,7 +2672,6 @@
             loadUserAccessRolesForModal(email); // Fallback to reload if removal fails
           }
           fetchUsers(); // Refresh the main user list summary
-          fetchActivity(); // Refresh activity log
         } catch (error) {
           console.error("Error revoking access:", error);
           window.showNotification(
@@ -2808,7 +2727,6 @@
             );
             await loadUserAccessRolesForModal(email); // Refresh the list in the modal
             fetchUsers(); // Refresh the main user list summary
-            fetchActivity(); // Refresh activity log
             e.target.reset(); // Reset the grant form
             nodeIdSelect.value = ""; // Explicitly reset select
           } catch (error) {
@@ -2968,91 +2886,111 @@
       });
 
       // --- Activity Log ---
-const activityListElement = document.getElementById("activityList");
-const activityListInitialSpinner = document.getElementById("activity-list-initial-spinner");
-const activityListMessageArea = document.getElementById("activity-list-message-area");
-let isLoadingActivity = false;
+      const activityListElement = document.getElementById("activityList");
+      const activityListInitialSpinner = document.getElementById(
+        "activity-list-initial-spinner"
+      );
+      const activityListMessageArea = document.getElementById(
+        "activity-list-message-area"
+      );
+      let isLoadingActivity = false;
 
-function showActivityListMessage(message) {
-  if (activityListMessageArea && activityListElement && activityListInitialSpinner) {
-    activityListMessageArea.textContent = message;
-    activityListMessageArea.style.display = "block";
-    activityListElement.innerHTML = ""; // Clear list content
-    activityListInitialSpinner.style.display = "none";
-  }
-}
+      function showActivityListMessage(message) {
+        if (
+          activityListMessageArea &&
+          activityListElement &&
+          activityListInitialSpinner
+        ) {
+          activityListMessageArea.textContent = message;
+          activityListMessageArea.style.display = "block";
+          activityListElement.innerHTML = ""; // Clear list content
+          activityListInitialSpinner.style.display = "none";
+        }
+      }
 
-function hideActivityListMessage() {
-  if (activityListMessageArea && activityListInitialSpinner) {
-    activityListMessageArea.style.display = "none";
-    activityListInitialSpinner.style.display = "none"; // Ensure spinner is also hidden
-  }
-}
+      function hideActivityListMessage() {
+        if (activityListMessageArea && activityListInitialSpinner) {
+          activityListMessageArea.style.display = "none";
+          activityListInitialSpinner.style.display = "none"; // Ensure spinner is also hidden
+        }
+      }
 
-async function fetchActivity(manualRefresh = false) {
-  if (isLoadingActivity && !manualRefresh) return; // Prevent multiple loads unless manual
-  isLoadingActivity = true;
+      async function fetchActivity(manualRefresh = false) {
+        if (isLoadingActivity && !manualRefresh) return; // Prevent multiple loads unless manual
+        isLoadingActivity = true;
 
-  if (activityListInitialSpinner) activityListInitialSpinner.style.display = "block";
-  if (activityListElement) activityListElement.innerHTML = ""; // Clear previous content for full refresh
-  hideActivityListMessage();
+        if (activityListInitialSpinner)
+          activityListInitialSpinner.style.display = "block";
+        if (activityListElement) activityListElement.innerHTML = ""; // Clear previous content for full refresh
+        hideActivityListMessage();
 
-  try {
-    const res = await secureFetch(`${BASE}/api/activity`);
-    if (!res.ok) {
-      let errorMsg = `HTTP error! status: ${res.status}`;
-      try {
-        const errData = await res.json();
-        errorMsg += ` - ${errData.message || errData.error || JSON.stringify(errData)}`;
-      } catch (e) { /* ignore */ }
-      throw new Error(errorMsg);
-    }
-    const activities = await res.json();
-    if (!Array.isArray(activities)) {
-      throw new Error("Invalid activity data received from server.");
-    }
-    renderActivity(activities);
-    if (activities.length === 0) {
-        showActivityListMessage("No recent activity found.");
-    }
-  } catch (error) {
-    console.error("Failed to fetch activity:", error);
-    window.showNotification(`Error loading activity: ${error.message}`, "error");
-    showActivityListMessage("Failed to load activity. Please try again later.");
-  } finally {
-    isLoadingActivity = false;
-    if (activityListInitialSpinner) activityListInitialSpinner.style.display = "none";
-  }
-}
+        try {
+          const res = await secureFetch(`${BASE}/api/activity`);
+          if (!res.ok) {
+            let errorMsg = `HTTP error! status: ${res.status}`;
+            try {
+              const errData = await res.json();
+              errorMsg += ` - ${
+                errData.message || errData.error || JSON.stringify(errData)
+              }`;
+            } catch (e) {
+              /* ignore */
+            }
+            throw new Error(errorMsg);
+          }
+          const activities = await res.json();
+          if (!Array.isArray(activities)) {
+            throw new Error("Invalid activity data received from server.");
+          }
+          renderActivity(activities);
+          if (activities.length === 0) {
+            showActivityListMessage("No recent activity found.");
+          }
+        } catch (error) {
+          console.error("Failed to fetch activity:", error);
+          window.showNotification(
+            `Error loading activity: ${error.message}`,
+            "error"
+          );
+          showActivityListMessage(
+            "Failed to load activity. Please try again later."
+          );
+        } finally {
+          isLoadingActivity = false;
+          if (activityListInitialSpinner)
+            activityListInitialSpinner.style.display = "none";
+        }
+      }
 
-function renderActivity(activities) {
-  if (!activityListElement) return;
-  activityListElement.innerHTML = ""; // Clear before rendering new activities
+      function renderActivity(activities) {
+        if (!activityListElement) return;
+        activityListElement.innerHTML = ""; // Clear before rendering new activities
 
-  if (activities.length === 0) {
-    // Message handled by showActivityListMessage in fetchActivity
-    return;
-  }
+        if (activities.length === 0) {
+          // Message handled by showActivityListMessage in fetchActivity
+          return;
+        }
 
-  const activityItemsHTML = activities.map(activity => {
-    // Directly use the message if it exists, otherwise provide a fallback.
-    const messageContent = escapeJSString(activity.message || 'No message content available.');
+        const activityItemsHTML = activities
+          .map((activity) => {
+            // Directly use the message if it exists, otherwise provide a fallback.
+            const messageContent = escapeJSString(
+              activity.message || "No message content available."
+            );
 
-    // Simplified list item, focusing on the message.
-    // You can adjust styling as needed.
-    return `
+            // Simplified list item, focusing on the message.
+            // You can adjust styling as needed.
+            return `
       <li class="p-2 border-b border-[var(--border-primary)] last:border-b-0 text-sm text-[var(--text-primary)] hover:bg-[var(--bg-card-hover)] rounded-sm transition-colors duration-150">
         ${messageContent}
       </li>
     `;
-  }).join("");
+          })
+          .join("");
 
-  activityListElement.innerHTML = activityItemsHTML;
-}
-// --- End Activity Log ---
-
-
-
+        activityListElement.innerHTML = activityItemsHTML;
+      }
+      // --- End Activity Log ---
     </script>
   </body>
 </html>
