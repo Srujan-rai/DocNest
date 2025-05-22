@@ -5,6 +5,10 @@ from auth import get_current_user
 from firebase_setup import db as firebase_db
 from datetime import datetime
 import asyncio
+from pydantic import BaseModel
+
+class ArtifactUpdate(BaseModel):
+    title: str
 
 router = APIRouter()
 
@@ -25,7 +29,8 @@ def format_artifact_message(action: str, actor: str, title: str, node_id: int, w
         return f"{actor} created artifact '{title}' under node {node_id} at {when.strftime('%Y-%m-%d %H:%M UTC')}"
     elif action == "DELETE":
         return f"{actor} deleted artifact '{title}' from node {node_id} at {when.strftime('%Y-%m-%d %H:%M UTC')}"
-
+    elif action == "UPDATE":
+        return f"{actor} updated artifact '{title}' under node {node_id} at {when.strftime('%Y-%m-%d %H:%M UTC')}"
 
 
 
@@ -97,14 +102,12 @@ async def create_artifact(payload: ArtifactCreate, user=Depends(get_current_user
 
 
 
-# Only ADMIN can delete — either node-level or artifact-level
 @router.delete("/api/artifacts/{artifact_id}")
 async def delete_artifact(artifact_id: int, user=Depends(get_current_user)):
     artifact = await db.artifact.find_unique(where={"id": artifact_id})
     if not artifact:
         raise HTTPException(status_code=404, detail="Artifact not found")
 
-    # Check if user is admin either on artifact or its node
     access = await db.access.find_first(
         where={
             "userId": user.id,
@@ -140,3 +143,49 @@ async def delete_artifact(artifact_id: int, user=Depends(get_current_user)):
     push_activity_log(log_data)
 
     return {"message": f"Artifact {artifact_id} deleted."}
+
+@router.put("/api/artifacts/{artifact_id}")
+async def update_artifact(artifact_id: int, payload: ArtifactUpdate, user=Depends(get_current_user)):
+    artifact = await db.artifact.find_unique(where={"id": artifact_id})
+    if not artifact:
+        raise HTTPException(status_code=404, detail="Artifact not found")
+
+    # Check if user is ADMIN on artifact or its parent node
+    access = await db.access.find_first(
+        where={
+            "userId": user.id,
+            "OR": [
+                {"artifactId": artifact.id},
+                {"nodeId": artifact.nodeId}
+            ],
+            "role": "ADMIN"
+        }
+    )
+    if not access:
+        raise HTTPException(status_code=403, detail="You don't have permission to rename this file.")
+
+    
+    update_task = asyncio.create_task(db.artifact.update(
+        where={"id": artifact_id},
+        data={"title": payload.title}))
+    logs_task = asyncio.create_task(fetch_activity_logs())
+    
+    updated_artifact, logs = await asyncio.gather(update_task, logs_task)
+    
+    now = datetime.utcnow()
+    log_data = {
+        "action": "UPDATE",
+        "type": "ARTIFACT",
+        "email": user.email,
+        "performedBy": user.email,
+        "timestamp": now.isoformat(),
+        "message": format_artifact_message("CREATE", user.email, payload.title, payload.nodeId, now)
+    }
+
+    if logs and len(logs) >= 10:
+        oldest = sorted(logs.items(), key=lambda x: x[1]["timestamp"])[0][0]
+        delete_activity_log(oldest)
+
+    push_activity_log(log_data)
+    
+    return updated_artifact

@@ -3,9 +3,12 @@ from db import db
 from auth import get_current_user
 from models import NodeCreate
 from firebase_setup import db as firebase_db
+from pydantic import BaseModel
 
 router = APIRouter()
-
+class NodeUpdate(BaseModel):
+    name: str
+    
 @router.post("/api/nodes")
 async def create_node(payload: NodeCreate, user=Depends(get_current_user)):
     # If this is a child node, check permission to write to its parent
@@ -57,3 +60,23 @@ async def get_node(node_id: int, user=Depends(get_current_user)):
     if not node:
         raise HTTPException(404, "Node not found")
     return node
+
+@router.put("/api/nodes/{node_id}")
+async def update_node(node_id: int, payload: NodeUpdate, user=Depends(get_current_user)):
+    access = await db.access.find_first(
+        where={
+            "userId": user.id,
+            "nodeId": node_id,
+            "role": "ADMIN"
+        }
+    )
+    if not access:
+        raise HTTPException(status_code=403, detail="You don't have permission to rename this folder.")
+
+    updated_node = await db.node.update(
+        where={"id": node_id},
+        data={"name": payload.name}
+    )
+    return updated_node
+
+
