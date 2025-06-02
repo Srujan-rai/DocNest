@@ -1,3118 +1,339 @@
-
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin UI - DocNest Admin (Themed)</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-    rel="stylesheet"
-  />
-
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
-
-  <style>
-    :root {
-      /* Dark Theme (Default) */
-      --bg-primary: #0a0a0a;
-      --bg-card: #1a1a1a;
-      --bg-card-hover: #222222;
-      --bg-input: #2d2d2d;
-      --bg-input-readonly: #383838;
-      --bg-button-primary: #f0f0f0;
-      --bg-button-primary-hover: #ffffff;
-      --bg-button-destructive: #c53030;
-      --bg-button-destructive-hover: #b02a2a;
-      --bg-button-secondary: #4a5568; /* gray-600 like */
-      --bg-button-secondary-hover: #2d3748; /* gray-700 like */
-      --bg-action-icon-hover: #333;
-      --bg-user-list-item: #2c2c2c;
-      --bg-user-list-item-hover: #333333;
-      --bg-inline-form: rgba(42, 42, 42, 0.85);
-      --bg-selected-node: #2a2a2a;
-      --bg-modal-overlay: rgba(0, 0, 0, 0.7);
-      --bg-modal-content: #1f2937; /* gray-800 like */
-      --bg-access-item-even: rgba(255, 255, 255, 0.03);
-      --bg-toast-success: #2f5c3b; /* Darker green */
-      --bg-toast-error: #5c2f2f; /* Darker red */
-      --bg-dropdown-menu: var(--bg-card);
-
-      --text-primary: #e0e0e0;
-      --text-secondary: #bbb;
-      --text-tertiary: #999;
-      --text-placeholder: #888;
-      --text-button-primary: #111;
-      --text-button-destructive: #ffffff;
-      --text-button-secondary: #e2e8f0;
-      --text-card-header: #f0f0f0;
-      --text-link-hover: #0095ff;
-      --text-action-icon: #999;
-      --text-action-icon-hover: #ffffff;
-      --text-green-accent: #4ade80;
-      --text-red-accent: #f87171;
-      --text-yellow-accent: #facc15;
-      --text-toast: #ffffff;
-      --text-dropdown-item-hover: var(--text-link-hover);
-
-      --border-primary: #333;
-      --border-input: #555;
-      --border-input-focus: #007acc;
-      --border-button-primary: #ccc;
-      --border-button-primary-hover: #bbb;
-      --border-button-destructive: #a02828;
-      --border-button-secondary: #4a5568;
-      --border-selected-node: #007acc;
-      --border-tree-children: rgba(107, 114, 128, 0.3);
-      --border-tree-line: #444;
-      --border-preview: #555;
-      --border-toast-success: #38a169; /* green-600 */
-      --border-toast-error: #e53e3e; /* red-600 */
-      --border-dropdown-menu: var(--border-primary);
-
-      --shadow-card: 0 8px 20px rgba(0, 0, 0, 0.3);
-      --shadow-input-focus: 0 0 0 3px rgba(0, 122, 204, 0.3);
-      --shadow-selected-node: inset 2px 0 0 var(--border-selected-node);
-      --shadow-modal: 0 10px 25px rgba(0, 0, 0, 0.5);
-      --shadow-toast: 0 4px 12px rgba(0, 0, 0, 0.4);
-      --shadow-dropdown: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-        0 2px 4px -1px rgba(0, 0, 0, 0.06);
-
-      --scrollbar-thumb: #4a4a4a;
-      --scrollbar-track: #1e1e1e;
-
-      /* Add these new CSS variables to your existing :root */
-      --text-blue-accent: #60a5fa;
-      --text-purple-accent: #a78bfa;
-      --shadow-3xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-    }
-
-    .light-theme {
-      --bg-primary: #f4f4f5;
-      --bg-card: #ffffff;
-      --bg-card-hover: #f9fafb;
-      --bg-input: #ffffff;
-      --bg-input-readonly: #e5e7eb;
-      --bg-button-primary: #27272a;
-      --bg-button-primary-hover: #18181b;
-      --bg-button-destructive: #ef4444;
-      --bg-button-destructive-hover: #dc2626;
-      --bg-button-secondary: #e5e7eb;
-      --bg-button-secondary-hover: #d1d5db;
-      --bg-action-icon-hover: #e5e7eb;
-      --bg-user-list-item: #f9fafb;
-      --bg-user-list-item-hover: #f3f4f6;
-      --bg-inline-form: rgba(243, 244, 246, 0.9);
-      --bg-selected-node: #dbeafe;
-      --bg-modal-overlay: rgba(0, 0, 0, 0.3);
-      --bg-modal-content: #ffffff;
-      --bg-access-item-even: #f3f4f6;
-      --bg-toast-success: #c6f6d5; /* Lighter green */
-      --bg-toast-error: #fed7d7; /* Lighter red */
-      --bg-dropdown-menu: var(--bg-card);
-
-      --text-primary: #18181b;
-      --text-secondary: #52525b;
-      --text-tertiary: #71717a;
-      --text-placeholder: #a1a1aa;
-      --text-button-primary: #ffffff;
-      --text-button-destructive: #ffffff;
-      --text-button-secondary: #1f2937;
-      --text-card-header: #1f2937;
-      --text-link-hover: #2563eb;
-      --text-action-icon: #71717a;
-      --text-action-icon-hover: #18181b;
-      --text-green-accent: #16a34a;
-      --text-red-accent: #dc2626;
-      --text-yellow-accent: #ca8a04;
-      --text-toast: #1a202c; /* Dark text for light toasts */
-      --text-dropdown-item-hover: var(--text-link-hover);
-
-      --border-primary: #d1d5db;
-      --border-input: #d1d5db;
-      --border-input-focus: #2563eb;
-      --border-button-primary: #27272a;
-      --border-button-primary-hover: #18181b;
-      --border-button-destructive: #ef4444;
-      --border-button-secondary: #d1d5db;
-      --border-selected-node: #2563eb;
-      --border-tree-children: rgba(209, 213, 219, 0.5);
-      --border-tree-line: #ccc;
-      --border-preview: #d1d5db;
-      --border-toast-success: #68d391; /* green-400 */
-      --border-toast-error: #fc8181; /* red-400 */
-      --border-dropdown-menu: var(--border-primary);
-
-      --shadow-card: 0 4px 15px rgba(0, 0, 0, 0.07);
-      --shadow-input-focus: 0 0 0 3px rgba(37, 99, 235, 0.2);
-      --shadow-selected-node: inset 2px 0 0 var(--border-selected-node);
-      --shadow-modal: 0 10px 25px rgba(0, 0, 0, 0.1);
-      --shadow-toast: 0 4px 12px rgba(0, 0, 0, 0.15);
-      --shadow-dropdown: 0 4px 6px -1px rgba(0, 0, 0, 0.07),
-        0 2px 4px -1px rgba(0, 0, 0, 0.04);
-
-      --scrollbar-thumb: #a1a1aa;
-      --scrollbar-track: #e5e7eb;
-
-      /* Enhanced card styles */
-      .card {
-        background-color: var(--bg-card);
-        border: 1px solid var(--border-primary);
-        border-radius: 1rem;
-        box-shadow: var(--shadow-card);
-        transition: all 0.3s ease;
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JS Code Migration Analyzer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      /* Custom styles for file input - Light & Black theme */
+      .file-input-container {
+        position: relative;
+        overflow: hidden;
+        display: inline-block;
+      }
+      .file-input-styled {
+        border: 2px dashed #d1d5db; /* gray-300 */
+        border-radius: 0.5rem; /* rounded-lg */
+        padding: 2.5rem 1.5rem;
+        text-align: center;
+        cursor: pointer;
+        background-color: #f9fafb; /* gray-50 */
+        transition: border-color 0.3s ease, background-color 0.3s ease;
+      }
+      .file-input-styled:hover {
+        border-color: #000000; /* black */
+        background-color: #f3f4f6; /* gray-100 */
+      }
+      .file-input-styled span {
+        display: block;
+        font-size: 0.875rem; /* text-sm */
+        color: #4b5563; /* gray-600 */
+      }
+      .file-input-styled strong {
+        color: #000000; /* black */
+      }
+      input[type="file"]#zipFile {
+        position: absolute;
+        left: 0;
+        top: 0;
+        opacity: 0;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
       }
 
-      .card:hover {
-        transform: translateY(-2px);
+      /* Enhanced Loading Bar - Black/Dark Gray theme */
+      #loadingIndicator {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
       }
-
-      /* Enhanced input field styles */
-      .input-field {
-        transition: all 0.2s ease;
+      .progress-bar-container {
+        width: 80%;
+        height: 8px;
+        background-color: #e5e7eb; /* gray-200 */
+        border-radius: 4px;
+        overflow: hidden;
+        margin-top: 0.75rem; /* mt-3 */
       }
-
-      .input-field:focus {
-        transform: translateY(-1px);
-      }
-
-      /* Enhanced button styles */
-      .action-icon-btn {
-        transition: all 0.2s ease;
-      }
-
-      .action-icon-btn:hover {
-        transform: scale(1.1);
-      }
-
-      /* Enhanced scrollbar styles */
-      #tree-container::-webkit-scrollbar,
-      #activity-container::-webkit-scrollbar,
-      #userListContainer::-webkit-scrollbar {
-        width: 8px;
-      }
-
-      #tree-container::-webkit-scrollbar-track,
-      #activity-container::-webkit-scrollbar-track,
-      #userListContainer::-webkit-scrollbar-track {
-        background: var(--scrollbar-track);
+      .progress-bar-indeterminate {
+        width: 100%;
+        height: 100%;
+        /* Using shades of dark gray/black for the gradient */
+        background: linear-gradient(
+          to right,
+          #374151 20%,
+          /* gray-700 */ #1f2937 50%,
+          /* gray-800 */ #374151 80% /* gray-700 */
+        );
+        background-size: 200% 100%;
+        animation: indeterminateAnimation 1.5s infinite linear;
         border-radius: 4px;
       }
 
-      #tree-container::-webkit-scrollbar-thumb,
-      #activity-container::-webkit-scrollbar-thumb,
-      #userListContainer::-webkit-scrollbar-thumb {
-        background: var(--scrollbar-thumb);
-        border-radius: 4px;
+      @keyframes indeterminateAnimation {
+        0% {
+          background-position: 200% 0;
+        }
+        100% {
+          background-position: -200% 0;
+        }
       }
 
-      #tree-container::-webkit-scrollbar-thumb:hover,
-      #activity-container::-webkit-scrollbar-thumb:hover,
-      #userListContainer::-webkit-scrollbar-thumb:hover {
-        background: var(--text-tertiary);
+      .status-text {
+        font-size: 0.875rem; /* text-sm */
+        color: #374151; /* gray-700 */
+        margin-top: 0.5rem; /* mt-2 */
       }
-    }
-
-    body {
-      font-family: "Inter", sans-serif;
-      background-color: var(--bg-primary);
-      color: var(--text-primary);
-      transition: background-color 0.3s ease, color 0.3s ease;
-    }
-    .selected-node-highlight {
-      background-color: var(--bg-selected-node);
-      border-color: var(--border-selected-node);
-      border-left-width: 3px;
-      box-shadow: var(--shadow-selected-node);
-    }
-    .form-inline input,
-    .form-inline select,
-    .form-inline textarea {
-      margin-bottom: 0.75rem;
-    }
-    .node-item:hover .actions,
-    .artifact-item:hover .actions {
-      opacity: 1;
-    }
-    .actions {
-      transition: opacity 0.2s ease-in-out;
-    }
-    #tree-container,
-    #access-management-modal-current-access,
-    #artifact-details-modal-description,
-    #userListContainer /* Added for user list scroll */ {
-      max-height: 70vh; /* Default max height, can be adjusted */
-      overflow-y: auto;
-      scrollbar-width: thin;
-      scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
-    }
-    #tree-container::-webkit-scrollbar,
-    #access-management-modal-current-access::-webkit-scrollbar,
-    #artifact-details-modal-description::-webkit-scrollbar,
-    #userListContainer::-webkit-scrollbar /* Added for user list scroll */ {
-      width: 6px;
-    }
-
-    #tree-container::-webkit-scrollbar-track,
-    #access-management-modal-current-access::-webkit-scrollbar-track,
-    #artifact-details-modal-description::-webkit-scrollbar-track,
-    #userListContainer::-webkit-scrollbar-track /* Added for user list scroll */ {
-      background: var(--scrollbar-track);
-    }
-
-    #tree-container::-webkit-scrollbar-thumb,
-    #access-management-modal-current-access::-webkit-scrollbar-thumb,
-    #artifact-details-modal-description::-webkit-scrollbar-thumb,
-    #userListContainer::-webkit-scrollbar-thumb /* Added for user list scroll */ {
-      background-color: var(--scrollbar-thumb);
-      border-radius: 3px;
-    }
-    #access-management-modal-current-access {
-      max-height: 250px;
-    }
-    #artifact-details-modal-description {
-      max-height: 200px;
-    }
-    #userListContainer {
-      /* Specific height for user list */
-      max-height: 400px; /* Adjust as needed */
-      min-height: 200px; /* Ensure it has some height even when empty */
-      border: 1px solid var(--border-primary); /* Use theme border */
-      border-radius: 0.5rem;
-      padding: 0.5rem;
-    }
-
-    .submit-button {
-      background-color: var(--bg-button-primary);
-      color: var(--text-button-primary);
-      font-weight: 600;
-      padding: 0.75rem 1.5rem;
-      border-radius: 0.375rem;
-      border: 1px solid var(--border-button-primary);
-      transition: background-color 0.2s ease-in-out,
-        transform 0.1s ease-in-out, border-color 0.2s ease-in-out;
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .submit-button:hover {
-      background-color: var(--bg-button-primary-hover);
-      border-color: var(--border-button-primary-hover);
-      transform: translateY(-1px);
-    }
-    .submit-button:active {
-      transform: translateY(0px);
-    }
-    .submit-button.destructive {
-      background-color: var(--bg-button-destructive);
-      color: var(--text-button-destructive);
-      border-color: var(--border-button-destructive);
-    }
-    .submit-button.destructive:hover {
-      background-color: var(--bg-button-destructive-hover);
-    }
-    .submit-button.secondary {
-      background-color: var(--bg-button-secondary);
-      color: var(--text-button-secondary);
-      border-color: var(--border-button-secondary);
-    }
-    .submit-button.secondary:hover {
-      background-color: var(--bg-button-secondary-hover);
-    }
-    .submit-button:disabled {
-      opacity: 0.7;
-      cursor: not-allowed;
-    }
-    .spinner {
-      animation: spin 1s linear infinite;
-      border: 2px solid var(--text-button-primary);
-      border-top-color: transparent;
-      border-radius: 50%;
-      width: 1em;
-      height: 1em;
-      margin-right: 0.5em;
-    }
-    .light-theme .submit-button .spinner {
-      border: 2px solid var(--text-button-primary);
-      border-top-color: transparent;
-    }
-    .submit-button.secondary .spinner,
-    .submit-button.destructive .spinner {
-      border: 2px solid var(--text-button-secondary);
-      border-top-color: transparent;
-    }
-    .light-theme .submit-button.secondary .spinner {
-      border: 2px solid var(--text-button-secondary);
-      border-top-color: transparent;
-    }
-
-    .input-field,
-    textarea.input-field {
-      margin-top: 0.25rem;
-      display: block;
-      width: 100%;
-      border-radius: 0.375rem;
-      border: 1px solid var(--border-input);
-      background-color: var(--bg-input);
-      color: var(--text-primary);
-      padding: 0.75rem 1rem;
-      font-size: 0.875rem;
-      transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out,
-        background-color 0.2s ease;
-    }
-    textarea.input-field {
-      min-height: 60px;
-    }
-    .input-field::placeholder,
-    textarea.input-field::placeholder {
-      color: var(--text-placeholder);
-    }
-    .input-field:focus,
-    textarea.input-field:focus {
-      border-color: var(--border-input-focus);
-      outline: none;
-      box-shadow: var(--shadow-input-focus);
-    }
-    .input-field.readonly {
-      background-color: var(--bg-input-readonly);
-      cursor: not-allowed;
-    }
-
-    .label-text {
-      display: block;
-      font-size: 0.875rem;
-      font-weight: 500;
-      color: var(--text-secondary);
-      margin-bottom: 0.25rem;
-    }
-    .card {
-      background-color: var(--bg-card);
-      border: 1px solid var(--border-primary);
-      border-radius: 0.75rem; /* Reduced from rounded-xl for consistency */
-      box-shadow: var(--shadow-card);
-      transition: background-color 0.3s ease, border-color 0.3s ease;
-    }
-    .card-header {
-      color: var(--text-card-header);
-      font-weight: 600;
-    }
-
-    /* Tree Styling with Connection Lines */
-    .tree-node,
-    .tree-artifact-wrapper {
-      position: relative;
-      padding-left: 20px;
-    }
-    .tree-node::before,
-    .tree-artifact-wrapper::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 8px;
-      width: 1px;
-      height: 100%;
-      background-color: var(--border-tree-line);
-    }
-    .tree-node > .node-content::before,
-    .tree-artifact-wrapper > .node-content::before {
-      content: "";
-      position: absolute;
-      top: 12px;
-      left: -11px;
-      width: 12px;
-      height: 1px;
-      background-color: var(--border-tree-line);
-    }
-    .tree-node:last-child::before {
-      height: 13px;
-    }
-    .tree-artifact-wrapper:last-child::before {
-      height: 13px;
-    }
-    .tree-root > .tree-node::before,
-    .tree-root > .tree-artifact-wrapper::before {
-      display: none;
-    }
-    .tree-root > .tree-node > .node-content::before,
-    .tree-root > .tree-artifact-wrapper > .node-content::before {
-      display: none;
-    }
-
-    .node-content {
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 2px 0;
-    }
-    .tree-children-container {
-      margin-left: 20px;
-    }
-    .tree-children-container.collapsed {
-      display: none;
-    }
-    .tree-toggle-icon {
-      cursor: pointer;
-      width: 1.25rem;
-      height: 1.25rem;
-      margin-right: 0.25rem;
-      color: var(--text-tertiary);
-      transition: transform 0.2s ease-in-out;
-      display: inline-flex; /* For centering icon */
-      align-items: center;
-      justify-content: center;
-    }
-    .tree-toggle-icon.collapsed svg {
-      transform: rotate(-90deg);
-    }
-
-    .tree-node-text,
-    .tree-artifact-text {
-      transition: color 0.2s ease-in-out;
-      display: flex;
-      align-items: center;
-    }
-    .tree-node-text {
-      color: var(--text-primary);
-    }
-    .tree-artifact-text {
-      color: var(--text-tertiary);
-    }
-    .tree-artifact-text.clickable:hover {
-      color: var(--text-link-hover);
-      cursor: pointer;
-      text-decoration: underline;
-    }
-    .tree-node-icon {
-      color: var(--text-yellow-accent);
-    }
-    .tree-artifact-icon {
-      color: var(--text-tertiary);
-    }
-    .artifact-preview-container {
-      display: none;
-    }
-
-    .user-list-item {
-      background-color: var(--bg-user-list-item);
-      border: 1px solid var(--border-primary);
-      border-radius: 0.5rem;
-      transition: background-color 0.2s ease-in-out,
-        transform 0.2s ease-in-out, border-color 0.2s ease;
-    }
-    .user-list-item:hover {
-      background-color: var(--bg-user-list-item-hover);
-      transform: translateY(-2px);
-    }
-    .user-email-text {
-      color: var(--text-primary);
-    }
-    .user-role-text {
-      color: var(--text-secondary);
-    }
-    .user-node-role-summary {
-      color: var(--text-tertiary);
-      font-size: 0.8rem;
-    }
-
-    .action-icon-btn {
-      color: var(--text-action-icon);
-      padding: 0.3rem;
-      border-radius: 0.25rem;
-      transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
-    }
-    .action-icon-btn:hover {
-      color: var(--text-action-icon-hover);
-      background-color: var(--bg-action-icon-hover);
-    }
-    .action-icon-btn.add {
-      color: var(--text-green-accent);
-    }
-    .action-icon-btn.delete {
-      color: var(--text-red-accent);
-    }
-    .action-icon-btn.add:hover {
-      color: var(--text-green-accent); /* Maintain color */
-    }
-    .action-icon-btn.delete:hover {
-      color: var(--text-red-accent); /* Maintain color */
-    }
-
-    .user-action-button {
-      padding: 0.5rem 0.75rem;
-      border-radius: 0.375rem;
-      font-size: 0.8rem;
-      font-weight: 500;
-      transition: background-color 0.2s ease-in-out,
-        transform 0.1s ease-in-out, color 0.2s ease;
-      display: inline-flex;
-      align-items: center;
-    }
-    .user-action-button svg {
-      margin-right: 0.3rem;
-    }
-    .user-action-button.manage-access {
-      background-color: var(--bg-input);
-      color: var(--text-secondary);
-      border: 1px solid var(--border-input);
-    }
-    .user-action-button.manage-access:hover {
-      background-color: var(--bg-action-icon-hover);
-      color: var(--text-action-icon-hover);
-      transform: translateY(-1px);
-    }
-    .user-action-button.delete-user {
-      background-color: var(--bg-button-destructive);
-      color: var(--text-button-destructive);
-      border: 1px solid var(--border-button-destructive);
-    }
-    .user-action-button.delete-user:hover {
-      background-color: var(--bg-button-destructive-hover);
-      transform: translateY(-1px);
-    }
-
-    #theme-toggle-button {
-      background-color: var(--bg-card);
-      color: var(--text-secondary);
-      border: 1px solid var(--border-primary);
-    }
-    #theme-toggle-button:hover {
-      background-color: var(--bg-card-hover);
-      color: var(--text-primary);
-    }
-
-    /* Modal Styles */
-    .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: var(--bg-modal-overlay);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-        visibility 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      z-index: 1000;
-    }
-    .modal-overlay.active {
-      opacity: 1;
-      visibility: visible;
-    }
-    .modal-content {
-      background-color: var(--bg-modal-content);
-      padding: 2rem;
-      border-radius: 0.75rem;
-      box-shadow: var(--shadow-modal);
-      width: 90%;
-      max-width: 600px;
-      max-height: 90vh;
-      overflow-y: auto;
-      transform: scale(0.95) translateY(10px);
-      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-        opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      opacity: 0;
-    }
-    .modal-overlay.active .modal-content {
-      transform: scale(1) translateY(0);
-      opacity: 1;
-    }
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1.5rem;
-    }
-    .modal-title {
-      font-size: 1.5rem;
-      font-weight: 600;
-      color: var(--text-card-header);
-    }
-    .modal-close-btn {
-      background: none;
-      border: none;
-      font-size: 1.5rem;
-      cursor: pointer;
-      color: var(--text-tertiary);
-      transition: color 0.2s ease;
-    }
-    .modal-close-btn:hover {
-      color: var(--text-primary);
-    }
-    .access-item:nth-child(even) {
-      background-color: var(--bg-access-item-even);
-    }
-
-    /* Search Bar & User Menu */
-    #search-tree-input {
-      /* For folder/file search */
-      width: 100%;
-      max-width: 400px;
-      padding: 0.6rem 1rem;
-      font-size: 0.9rem;
-    }
-    #search-users-input {
-      /* Style inherited via .input-field */
-      margin-bottom: 1rem; /* Space below user search */
-    }
-    .header-controls {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-    .user-menu-container {
-      position: relative;
-    }
-    #user-menu-button {
-      background-color: var(--bg-card);
-      color: var(--text-secondary);
-      border: 1px solid var(--border-primary);
-      padding: 0.5rem 0.75rem;
-      border-radius: 0.375rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    #user-menu-button:hover {
-      background-color: var(--bg-card-hover);
-      color: var(--text-primary);
-    }
-    #user-dropdown-menu {
-      background-color: var(--bg-dropdown-menu);
-      border: 1px solid var(--border-dropdown-menu);
-      box-shadow: var(--shadow-dropdown);
-      z-index: 1010;
-    }
-    #user-dropdown-menu button:hover {
-      background-color: var(--bg-card-hover);
-      color: var(--text-dropdown-item-hover);
-    }
-
-    .hidden-node {
-      display: none !important;
-    }
-
-    /* Toast Notification Styles */
-    #toast-container {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      z-index: 2000;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-    .toast {
-      padding: 1rem 1.5rem;
-      border-radius: 0.5rem;
-      color: var(--text-toast);
-      box-shadow: var(--shadow-toast);
-      opacity: 0;
-      transform: translateY(20px);
-      transition: opacity 0.3s ease, transform 0.3s ease;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-    .toast.show {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    .toast.success {
-      background-color: var(--bg-toast-success);
-      border: 1px solid var(--border-toast-success);
-    }
-    .toast.error {
-      background-color: var(--bg-toast-error);
-      border: 1px solid var(--border-toast-error);
-    }
-    .toast.info {
-      /* Added styling for info toasts */
-      background-color: var(--bg-button-secondary); /* Example */
-      border: 1px solid var(--border-button-secondary);
-      color: var(--text-button-secondary);
-    }
-    .light-theme .toast.info {
-      background-color: #e2e8f0; /* Example light info */
-      border: 1px solid #cbd5e1;
-      color: #475569;
-    }
-    .toast-icon {
-      flex-shrink: 0;
-    }
-    @keyframes spin {
-      0% {
-        transform: rotate(0deg);
-      }
-      100% {
-        transform: rotate(360deg);
-      }
-    }
-  </style>
-</head>
-<body>
-  <div id="toast-container"></div>
-  <div class="container mx-auto p-4 md:p-8">
-    <header
-      class="mb-6 flex flex-col sm:flex-row justify-between items-center gap-4"
+    </style>
+  </head>
+  <body
+    class="bg-gray-100 text-gray-800 flex items-center justify-center min-h-screen p-4"
+  >
+    <div
+      class="bg-white shadow-xl rounded-lg p-6 md:p-10 w-full max-w-md transform transition-all duration-500"
     >
-      <div class="flex items-center">
+      <header class="text-center mb-8">
         <img
-          src="https://niveussolutions.com/wp-content/uploads/2025/02/Niveus-ntt-data.png"
-          alt="DocNest Logo"
-          class="h-10 w-auto mr-3"
+          src="Niveus-ntt-data.png"
+          alt="Niveus NTT DATA Logo"
+          class="mx-auto h-12 mb-6"
         />
-        <h1
-          class="text-4xl sm:text-5xl font-bold tracking-tight text-[var(--text-card-header)]"
-        >
-          DocNest Admin
+        <h1 class="text-2xl font-semibold text-gray-700">
+          JS Code Migration Analyzer
         </h1>
-      </div>
-      <div class="header-controls flex items-center gap-4 ml-auto">
-        <input
-          type="search"
-          id="search-tree-input"
-          class="input-field flex-grow max-w-xs sm:max-w-sm md:max-w-md"
-          placeholder="Search folders/files..."
-        />
-        <button
-          id="theme-toggle-button"
-          class="p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--border-input-focus)] flex-shrink-0"
-          title="Toggle Theme"
-        ></button>
+        <p class="text-gray-500 mt-2 text-sm">
+          Upload a ZIP file of your JavaScript project for analysis.
+        </p>
+      </header>
 
-        <div class="user-menu-container">
-          <button
-            id="user-menu-button"
-            type="button"
-            aria-expanded="false"
-            aria-haspopup="true"
-          >
-            <span id="user-display-name" class="text-sm font-medium"
-              >User</span
-            >
-            <svg
-              class="h-5 w-5 text-[var(--text-tertiary)]"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              aria-hidden="true"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.25 4.25a.75.75 0 01-1.06 0L5.23 8.29a.75.75 0 01.02-1.06z"
-                clip-rule="evenodd"
-              />
-            </svg>
-          </button>
-          <div
-            id="user-dropdown-menu"
-            class="absolute right-0 mt-2 w-64 origin-top-right rounded-md bg-[var(--bg-dropdown-menu)] shadow-lg ring-1 ring-[var(--border-dropdown-menu)] ring-opacity-5 focus:outline-none hidden"
-            role="menu"
-            aria-orientation="vertical"
-            aria-labelledby="user-menu-button"
-          >
-            <div class="py-1" role="none">
-              <div class="px-4 py-3 border-b border-[var(--border-primary)]">
-                <p
-                  class="text-sm font-semibold text-[var(--text-primary)]"
-                  id="dropdown-user-name"
-                >
-                  User Name
-                </p>
-                <p
-                  class="text-xs text-[var(--text-secondary)] truncate"
-                  id="dropdown-user-email"
-                >
-                  user@example.com
-                </p>
-              </div>
-              <button
-                id="logout-button-dropdown"
-                class="block w-full px-4 py-2 text-left text-sm text-[var(--text-red-accent)] hover:bg-[var(--bg-card-hover)]"
-                role="menuitem"
-              >
-                Logout
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </header>
-
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-[1800px] mx-auto">
-      <!-- Left Column -->
-      <div class="space-y-8">
-        <!-- Folder Structure Card -->
-        <div class="card p-6 shadow-2xl hover:shadow-3xl transition-shadow duration-300">
-          <div class="flex justify-between items-center mb-6">
-            <h2 class="text-2xl font-bold card-header flex items-center gap-3">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-[var(--text-yellow-accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
-              </svg>
-              Folder Structure
-            </h2>
-            <button
-              onclick="promptNewRoot()"
-              class="action-icon-btn add text-2xl hover:scale-110 transition-transform"
-              title="Add New Root Folder"
-            >
+      <main>
+        <div class="mb-6">
+          <label for="zipFile" class="file-input-container w-full block">
+            <div class="file-input-styled">
               <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
+                class="mx-auto h-10 w-10 text-gray-400"
                 stroke="currentColor"
-                stroke-width="2"
+                fill="none"
+                viewBox="0 0 48 48"
+                aria-hidden="true"
               >
                 <path
+                  d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+                  stroke-width="2"
                   stroke-linecap="round"
                   stroke-linejoin="round"
-                  d="M12 4v16m8-8H4"
                 />
               </svg>
-            </button>
-          </div>
-          <div id="tree-container" class="max-h-[calc(100vh-350px)] overflow-y-auto rounded-lg border border-[var(--border-primary)] bg-[var(--bg-card)]">
-            <div id="tree" class="tree-root space-y-0.5 p-2"></div>
-          </div>
-        </div>
-
-        <!-- Add User Card -->
-        <div class="card p-6 shadow-2xl hover:shadow-3xl transition-shadow duration-300">
-          <h2 class="text-2xl font-bold card-header mb-6 flex items-center gap-3">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-[var(--text-green-accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
-            </svg>
-            Add New User
-          </h2>
-          <form id="addUserForm" class="space-y-6">
-            <div>
-              <label for="newUserEmail" class="label-text"
-                >Email Address</label
+              <span class="mt-2"
+                ><strong>Click to upload</strong> or drag and drop</span
               >
-              <input
-                type="email"
-                id="newUserEmail"
-                required
-                class="input-field"
-                placeholder="user@example.com"
-              />
-            </div>
-            <div>
-              <label for="newUserRole" class="label-text"
-                >Assign Global Role</label
+              <span class="text-xs text-gray-500"
+                >ZIP files only, max 50MB</span
               >
-              <select id="newUserRole" class="input-field">
-                <option value="ADMIN">ADMIN</option>
-                <option value="EDITOR">EDITOR</option>
-                <option value="VIEWER">VIEWER</option>
-              </select>
+              <span
+                id="fileNameDisplay"
+                class="mt-1 text-sm font-medium text-gray-700"
+              ></span>
             </div>
-            <div>
-              <label for="newUserNodeAccess" class="label-text"
-                >Grant Initial Node Access (Optional)</label
-              >
-              <select id="newUserNodeAccess" class="input-field">
-                <option value="">None - Global Role Only</option>
-              </select>
-            </div>
-
-            <div class="flex items-center mt-1 mb-3">
-              <input
-                type="checkbox"
-                id="applyGlobalRoleToAllNodesCheckbox"
-                class="h-4 w-4 text-[var(--text-link-hover)] border-[var(--border-input)] rounded focus:ring-[var(--text-link-hover)] mr-2"
-              />
-              <label
-                for="applyGlobalRoleToAllNodesCheckbox"
-                class="label-text !mb-0 !font-normal text-sm"
-              >
-                Apply global role to all nodes (if 'None' selected above)
-              </label>
-            </div>
-            <div>
-              <label for="newUserNodeRole" class="label-text"
-                >Role for Selected Node</label
-              >
-              <select id="newUserNodeRole" class="input-field">
-                <option value="ADMIN">ADMIN</option>
-                <option value="EDITOR">EDITOR</option>
-                <option value="VIEWER">VIEWER</option>
-              </select>
-            </div>
-            <button type="submit" class="submit-button w-full sm:w-auto">
-              <span class="button-text">Add User</span>
-            </button>
-          </form>
-        </div>
-      </div>
-
-      <!-- Right Column -->
-      <div class="space-y-8">
-        <!-- Activity Log Card -->
-        <div class="card p-6 shadow-2xl hover:shadow-3xl transition-shadow duration-300">
-          <div class="flex justify-between items-center mb-6">
-            <h2 class="text-2xl font-bold card-header flex items-center gap-3">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-[var(--text-blue-accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-              </svg>
-              Activity Log
-            </h2>
-            <button
-              onclick="fetchActivity(true)" 
-              class="action-icon-btn text-xl hover:scale-110 transition-transform" 
-              title="Refresh Activity Log"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m-15.357-2a8.001 8.001 0 0015.357 2m0 0H15" />
-              </svg>
-            </button>
-          </div>
-          <div id="activity-container" class="max-h-[calc(100vh-350px)] overflow-y-auto rounded-lg border border-[var(--border-primary)] bg-[var(--bg-card)]">
-            <div id="activity-list-initial-spinner" class="text-center py-6">
-              <div class="inline-block w-8 h-8 border-4 border-[var(--border-primary)] border-t-[var(--text-link-hover)] rounded-full animate-spin"></div>
-              <p class="text-[var(--text-secondary)] mt-2">Loading Activity...</p>
-            </div>
-            <ul id="activityList" class="space-y-1 p-2"></ul>
-            <div id="activity-list-message-area" class="text-center text-[var(--text-tertiary)] py-4 hidden"></div>
-          </div>
+            <input type="file" id="zipFile" accept=".zip" class="opacity-0" />
+          </label>
         </div>
 
-        <!-- All Users Card -->
-        <div class="card p-6 shadow-2xl hover:shadow-3xl transition-shadow duration-300">
-          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 border-b border-[var(--border-primary)] pb-4">
-            <h2 class="text-2xl font-bold card-header flex items-center gap-3">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-[var(--text-purple-accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-              </svg>
-              All Users
-            </h2>
-          </div>
-
-          <div class="mb-4">
-            <input 
-              type="search" 
-              id="search-users-input" 
-              class="input-field w-full rounded-lg shadow-sm focus:shadow-md transition-shadow" 
-              placeholder="Search users by email..." 
-            />
-          </div>
-
-          <div id="userListContainer" class="max-h-[calc(100vh-350px)] overflow-y-auto rounded-lg border border-[var(--border-primary)] bg-[var(--bg-card)]">
-            <div
-              id="user-list-initial-spinner"
-              class="text-center py-6 hidden"
-            >
-              <div
-                class="inline-block w-10 h-10 border-4 border-[var(--border-primary)] border-t-[var(--text-link-hover)] rounded-full animate-spin"
-              ></div>
-              <p class="text-[var(--text-secondary)] mt-3">
-                Loading Users...
-              </p>
-            </div>
-
-            <ul id="userList" class="space-y-3"></ul>
-            <div
-              id="user-list-loading-indicator"
-              class="text-center py-4 hidden"
-            >
-              <div
-                class="inline-block w-8 h-8 border-2 border-[var(--border-primary)] border-t-[var(--text-link-hover)] rounded-full animate-spin"
-              ></div>
-            </div>
-
-            <div
-              id="user-list-message-area"
-              class="text-center text-[var(--text-tertiary)] py-6 hidden"
-            ></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div id="access-management-modal" class="modal-overlay">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 class="modal-title">
-          Manage Access for
-          <span id="modal-user-email" class="font-mono"></span>
-        </h3>
-        <button class="modal-close-btn" onclick="closeAccessModal()">
-          &times;
-        </button>
-      </div>
-      <input type="hidden" id="modal-editing-user-email-hidden" />
-
-      <h4 class="text-lg font-semibold mb-2 text-[var(--text-secondary)]">
-        Current Node Access:
-      </h4>
-      <div
-        id="access-management-modal-current-access"
-        class="mb-6 space-y-0 border border-[var(--border-primary)] rounded-md"
-      >
-        <p class="text-[var(--text-tertiary)] p-3">Loading access...</p>
-      </div>
-
-      <h4 class="text-lg font-semibold mb-3 text-[var(--text-secondary)]">
-        Grant New Node Access:
-      </h4>
-      <form
-        id="grantNewAccessForm"
-        class="space-y-4 p-4 border border-[var(--border-primary)] rounded-md bg-[var(--bg-inline-form)]"
-      >
-        <div>
-          <label for="modalNodeSelect" class="label-text"
-            >Select Folder/File</label
-          >
-          <select id="modalNodeSelect" class="input-field">
-            <option value="">-- Select Node --</option>
-          </select>
-        </div>
-        <div>
-          <label for="modalNodeRoleSelect" class="label-text"
-            >Assign Role</label
-          >
-          <select id="modalNodeRoleSelect" class="input-field">
-            <option value="ADMIN">ADMIN</option>
-            <option value="EDITOR">EDITOR</option>
-            <option value="VIEWER">VIEWER</option>
-          </select>
-        </div>
         <button
-          type="submit"
-          class="submit-button secondary w-full sm:w-auto"
+          id="uploadButton"
+          class="w-full bg-black hover:bg-gray-800 text-white font-medium py-2.5 px-4 rounded-md shadow-sm transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <span class="button-text">Grant Access</span>
+          Analyze Project
         </button>
-      </form>
-      <div class="mt-6 text-right">
-        <button class="submit-button secondary" onclick="closeAccessModal()">
-          <span class="button-text">Close</span>
-        </button>
-      </div>
-    </div>
-  </div>
 
-  <div id="artifact-details-modal" class="modal-overlay">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 id="artifact-modal-title" class="modal-title">
-          Artifact Details
-        </h3>
-        <button class="modal-close-btn" onclick="closeArtifactDetailsModal()">
-          &times;
-        </button>
-      </div>
+        <div id="statusArea" class="mt-6 text-center hidden">
+          <div id="loadingIndicator">
+            <p id="statusMessage" class="status-text"></p>
+            <div class="progress-bar-container mt-2">
+              <div class="progress-bar-indeterminate"></div>
+            </div>
+          </div>
+        </div>
 
-      <div class="mb-4">
-        <label class="label-text">Description:</label>
         <div
-          id="artifact-details-modal-description"
-          class="p-3 border border-[var(--border-input)] rounded-md bg-[var(--bg-input)] text-sm min-h-[60px]"
+          id="errorArea"
+          class="mt-4 p-3 bg-red-100 text-red-700 border border-red-300 rounded-md hidden"
         >
-          No description provided.
+          <p id="errorMessage" class="text-sm"></p>
         </div>
-      </div>
+      </main>
 
-      <div class="mt-6 text-right space-x-3">
-        <a
-          id="artifact-modal-link"
-          href="#"
-          target="_blank"
-          class="submit-button inline-block"
-        >
-          Go to Resource
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-4 w-4 inline-block ml-1"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-            />
-          </svg>
-        </a>
-        <button
-          class="submit-button secondary"
-          onclick="closeArtifactDetailsModal()"
-        >
-          <span class="button-text">Close</span>
-        </button>
-      </div>
+      <footer class="text-center mt-10 text-xs text-gray-400">
+        <p>&copy; 2025 AI Code Analyzer. Niveus.</p>
+      </footer>
     </div>
-  </div>
 
-  <div id="delete-confirmation-modal" class="modal-overlay">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 id="delete-modal-title" class="modal-title">Confirm Deletion</h3>
-        <button
-          class="modal-close-btn"
-          onclick="closeDeleteConfirmationModal()"
-        >
-          &times;
-        </button>
-      </div>
-      <p id="delete-modal-message" class="mb-4 text-[var(--text-secondary)]">
-        Are you sure you want to delete this item? This action cannot be
-        undone.
-      </p>
-      <div class="mb-4">
-        <label for="delete-confirm-input" class="label-text"
-          >To confirm, type "DELETE" in the box below:</label
-        >
-        <input
-          type="text"
-          id="delete-confirm-input"
-          class="input-field"
-          placeholder="DELETE"
-        />
-      </div>
-      <div class="mt-6 text-right space-x-3">
-        <button
-          class="submit-button secondary"
-          onclick="closeDeleteConfirmationModal()"
-        >
-          <span class="button-text">Cancel</span>
-        </button>
-        <button
-          id="confirm-delete-button"
-          class="submit-button destructive"
-          disabled
-        >
-          <span class="button-text">Delete</span>
-        </button>
-      </div>
-    </div>
-  </div>
+    <script>
+      const zipFileInput = document.getElementById("zipFile");
+      const uploadButton = document.getElementById("uploadButton");
+      const statusArea = document.getElementById("statusArea");
+      const loadingIndicator = document.getElementById("loadingIndicator");
+      const statusMessage = document.getElementById("statusMessage");
+      const errorArea = document.getElementById("errorArea");
+      const errorMessage = document.getElementById("errorMessage");
+      const fileNameDisplay = document.getElementById("fileNameDisplay");
 
-  <script>
-    // --- Firebase Configuration ---
-    const firebaseConfig = {
-      apiKey: "AIzaSyCbHWUEzqGjzeanOiMG0Z5Lb4wIjWWEMUQ", 
-      authDomain: "docnest-f85e2.firebaseapp.com", 
-      projectId: "docnest-f85e2", 
-      storageBucket: "docnest-f85e2.appspot.com", 
-      messagingSenderId: "102395439437", 
-      appId: "1:102395439437:web:84e6676388b5d54395af04", 
-      measurementId: "G-YRMBR8BVSE", 
-    };
+      // Configure your backend API URL here
+      const API_URL = "http://127.0.0.1:8000/analyze-js-zip/";
 
-    // --- Global Helper Functions (defined early) ---
-    window.showNotification = function (
-      message,
-      type = "success",
-      duration = 3000
-    ) {
-      const toastContainer = document.getElementById("toast-container");
-      if (!toastContainer) return;
-
-      const toast = document.createElement("div");
-      toast.classList.add("toast", type);
-
-      let iconHtml = "";
-      if (type === "success") {
-        iconHtml = `<svg class="toast-icon h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
-      } else if (type === "error") {
-        iconHtml = `<svg class="toast-icon h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
-      } else if (type === "info") {
-        // Added info type for longer messages
-        iconHtml = `<svg class="toast-icon h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
-      }
-
-      toast.innerHTML = `${iconHtml}<span>${message}</span>`;
-      toastContainer.appendChild(toast);
-
-      toast.offsetHeight; // Trigger reflow
-
-      toast.classList.add("show");
-
-      setTimeout(() => {
-        toast.classList.remove("show");
-        setTimeout(() => {
-          toast.remove();
-        }, 300);
-      }, duration);
-    };
-
-    window.setButtonLoading = function (
-      button,
-      isLoading,
-      originalText = null
-    ) {
-      if (!(button instanceof HTMLElement)) {
-        console.error(
-          "setButtonLoading: button argument is not an HTMLElement",
-          button
-        );
-        return;
-      }
-      const buttonTextSpan = button.querySelector(".button-text");
-      if (isLoading) {
-        button.disabled = true;
-        if (buttonTextSpan) {
-          if (
-            originalText !== null &&
-            typeof buttonTextSpan.dataset.originalText === "undefined"
-          ) {
-            // Store original text only once
-            buttonTextSpan.dataset.originalText = buttonTextSpan.innerHTML;
-          }
-          buttonTextSpan.innerHTML = `<span class="spinner"></span>Processing...`;
+      zipFileInput.addEventListener("change", () => {
+        if (zipFileInput.files.length > 0) {
+          fileNameDisplay.textContent = `Selected: ${zipFileInput.files[0].name}`;
+          hideError();
         } else {
-          if (
-            originalText !== null &&
-            typeof button.dataset.originalText === "undefined"
-          ) {
-            button.dataset.originalText = button.innerHTML;
-          }
-          button.innerHTML = `<span class="spinner"></span>Processing...`;
-        }
-      } else {
-        button.disabled = false;
-        if (buttonTextSpan) {
-          buttonTextSpan.innerHTML =
-            buttonTextSpan.dataset.originalText || originalText || "Submit";
-          delete buttonTextSpan.dataset.originalText; // Clean up
-        } else {
-          button.innerHTML =
-            button.dataset.originalText || originalText || "Submit";
-          delete button.dataset.originalText; // Clean up
-        }
-      }
-    };
-    // --- End Global Helper Functions ---
-
-    // Initialize Firebase (compat version)
-    let firebaseApp;
-    let firebaseAuth;
-
-    try {
-      firebaseApp = firebase.initializeApp(firebaseConfig);
-      firebaseAuth = firebase.auth();
-      console.log("Firebase initialized successfully.");
-    } catch (e) {
-      console.error("Error initializing Firebase:", e);
-      window.showNotification(
-        "Critical Error: Could not initialize Firebase. Check console.",
-        "error",
-        10000
-      );
-    }
-
-    // --- Auth State Management ---
-    const userMenuButton = document.getElementById("user-menu-button");
-    const userDisplayNameSpan = document.getElementById("user-display-name");
-    const userDropdownMenu = document.getElementById("user-dropdown-menu");
-    const dropdownUserName = document.getElementById("dropdown-user-name");
-    const dropdownUserEmail = document.getElementById("dropdown-user-email");
-    const logoutButtonDropdown = document.getElementById(
-      "logout-button-dropdown"
-    );
-
-    if (firebaseAuth) {
-      firebaseAuth.onAuthStateChanged((user) => {
-        if (user) {
-          console.log("✅ Admin Panel: Logged in as", user.email);
-          if (userDisplayNameSpan)
-            userDisplayNameSpan.textContent =
-              user.displayName || user.email.split("@")[0];
-          if (dropdownUserName)
-            dropdownUserName.textContent = user.displayName || "N/A";
-          if (dropdownUserEmail) dropdownUserEmail.textContent = user.email;
-          initializeAdminPanel();
-        } else {
-          console.log("🚫 Admin Panel: No user logged in. Redirecting...");
-          sessionStorage.removeItem("token");
-          if (!window.location.pathname.endsWith("login_admin.html")) {
-            // Uncomment the line below to enable redirection
-            window.location.href = "login_admin.html";
-            console.warn("Redirect to login page is commented out."); // Added warning
-            window.showNotification(
-              "Not logged in. Please login via login_admin.html.",
-              "error",
-              10000
-            ); // Show error if not logged in
-          }
+          fileNameDisplay.textContent = "";
         }
       });
-    } else {
-      console.error(
-        "Firebase Auth is not available. Admin panel features requiring authentication will not work."
-      );
-      if (
-        document.body &&
-        !window.location.pathname.endsWith("login_admin.html")
-      ) {
-        // Ensure body exists for notification
-        window.showNotification(
-          "Authentication service unavailable. Please check console.",
-          "error",
-          10000
-        );
-      }
-    }
 
-    async function getAuthToken() {
-      if (!firebaseAuth || !firebaseAuth.currentUser) {
-        console.warn("No current user for getAuthToken.");
-        // Removed automatic redirect from here, handled by onAuthStateChanged
-        if (
-          firebaseAuth &&
-          !window.location.pathname.endsWith("login_admin.html")
-        ) {
-          window.showNotification(
-            "Session expired or not logged in. Please log in again via login_admin.html",
-            "error",
-            5000
-          );
-        }
-        return null;
-      }
-      try {
-        const token = await firebaseAuth.currentUser.getIdToken(true); // Force refresh
-        sessionStorage.setItem("token", token);
-        return token;
-      } catch (error) {
-        console.error("Error getting ID token:", error);
-        window.showNotification(
-          "Could not refresh auth token. Please log in again.",
-          "error"
-        );
-        if (
-          error.code === "auth/user-token-expired" ||
-          error.code === "auth/invalid-user-token"
-        ) {
-          // Redirect logic is handled by onAuthStateChanged
-          console.warn("Auth token expired or invalid.");
-        }
-        return null;
-      }
-    }
+      uploadButton.addEventListener("click", handleUpload);
 
-    async function secureFetch(url, options = {}) {
-      const token = await getAuthToken();
-      // Allow tree fetch without token (assuming it might be public/partially public)
-      // All other fetches strictly require a token
-      if (!token && !url.endsWith("/api/tree")) {
-        console.error("Auth token not available for secureFetch to " + url);
-        throw new Error("Authentication token not available. Please log in.");
-      }
-      const headers = { ...options.headers };
-      if (token) headers["Authorization"] = `Bearer ${token}`;
-      if (!(options.body instanceof FormData) && options.body) {
-        // Only set Content-Type if body exists and is not FormData
-        headers["Content-Type"] = "application/json";
+      function showStatus(message, showSpinner = false) {
+        statusArea.classList.remove("hidden");
+        statusMessage.textContent = message;
+        hideError();
       }
 
-      try {
-        const response = await fetch(url, { ...options, headers });
-        // Check for 401/403 specifically after fetch
-        if (response.status === 401 || response.status === 403) {
-          console.error(
-            `Authorization error (${response.status}) for ${url}.`
-          );
-          window.showNotification(
-            "Authorization error. You might need to log in again.",
-            "error"
-          );
-          // Consider triggering a logout or redirect here if desired
-          // Example: if (firebaseAuth) firebaseAuth.signOut();
-          throw new Error(`Authorization failed (${response.status})`);
-        }
-        return response;
-      } catch (networkError) {
-        console.error("Network error during secureFetch:", networkError);
-        window.showNotification(
-          `Network Error: ${networkError.message}. Check connection or console.`,
-          "error"
-        );
-        throw networkError; // Re-throw original network error
-      }
-    }
-
-    const BASE = "http://localhost:8000"; // Ensure this is your backend URL
-    let fullTreeData = [];
-    let flatNodeList = []; // Used for dropdowns and new feature
-
-    // --- Theme Toggle ---
-    const themeToggleButton = document.getElementById("theme-toggle-button");
-    const sunIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>`;
-    const moonIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>`;
-    function applyTheme(theme) {
-      if (theme === "light") {
-        document.body.classList.add("light-theme");
-        themeToggleButton.innerHTML = moonIcon;
-        localStorage.setItem("theme", "light");
-      } else {
-        document.body.classList.remove("light-theme");
-        themeToggleButton.innerHTML = sunIcon;
-        localStorage.setItem("theme", "dark");
-      }
-    }
-    themeToggleButton.addEventListener("click", () =>
-      applyTheme(
-        document.body.classList.contains("light-theme") ? "dark" : "light"
-      )
-    );
-    applyTheme(
-      localStorage.getItem("theme") ||
-        (window.matchMedia("(prefers-color-scheme: dark)").matches
-          ? "dark"
-          : "dark")
-    ); // Default to system or dark
-
-    function escapeJSString(str) {
-      if (typeof str !== "string") return "";
-      // Simplified escaping for HTML attributes and simple display
-      return str
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#39;") // Use HTML entity for single quote
-        .replace(/`/g, "&#96;"); // Use HTML entity for backtick
-    }
-
-    // --- Tree Search ---
-    const searchTreeInput = document.getElementById("search-tree-input");
-    searchTreeInput.addEventListener("input", (e) =>
-      filterTreeDOM(e.target.value.toLowerCase())
-    );
-    function filterTreeDOM(searchTerm) {
-      const treeElement = document.getElementById("tree");
-      if (!treeElement) return;
-
-      function checkVisibility(element, term) {
-        let directMatch = false;
-        const nodeName = (element.dataset.nodeName || "").toLowerCase();
-        const description = (element.dataset.description || "").toLowerCase();
-        if (nodeName.includes(term) || description.includes(term)) {
-          directMatch = true;
-        }
-        let childrenMatch = false;
-        if (element.classList.contains("tree-node")) {
-          const childrenContainer = element.querySelector(
-            ".tree-children-container"
-          );
-          if (childrenContainer) {
-            const childrenElements = childrenContainer.children;
-            for (const child of childrenElements) {
-              // Recurse only on direct children that are nodes or artifact wrappers
-              if (
-                child.classList.contains("tree-node") ||
-                child.classList.contains("tree-artifact-wrapper")
-              ) {
-                if (checkVisibility(child, term)) {
-                  childrenMatch = true;
-                  // Don't break here, need to evaluate all children for visibility setting
-                }
-              }
-            }
-          }
-        }
-
-        const shouldBeVisible = directMatch || childrenMatch;
-        element.classList.toggle(
-          "hidden-node",
-          !shouldBeVisible && term.length > 0
-        );
-
-        // Expand parent if a child matches and parent itself doesn't (or does)
-        if (
-          shouldBeVisible &&
-          childrenMatch &&
-          element.classList.contains("tree-node")
-        ) {
-          const childrenContainer = document.getElementById(
-            `children-${element.dataset.nodeId}`
-          );
-          if (
-            childrenContainer &&
-            childrenContainer.classList.contains("collapsed") &&
-            term.length > 0
-          ) {
-            toggleTreeNode(element.dataset.nodeId, false); // Expand, don't toggle
-          }
-        } else if (
-          !shouldBeVisible &&
-          element.classList.contains("tree-node") &&
-          term.length > 0
-        ) {
-          // Optional: Collapse parent if it doesn't match and has no visible children (might be complex)
-        }
-
-        return shouldBeVisible;
+      function hideStatus() {
+        statusArea.classList.add("hidden");
+        statusMessage.textContent = "";
       }
 
-      if (searchTerm.length === 0) {
-        treeElement
-          .querySelectorAll(".hidden-node")
-          .forEach((el) => el.classList.remove("hidden-node"));
-        // Optional: Restore collapsed state based on user interaction? Might be complex.
-        return;
+      function showError(message) {
+        errorArea.classList.remove("hidden");
+        errorMessage.textContent = message;
+        hideStatus();
       }
 
-      const topLevelNodes = Array.from(treeElement.children);
-      topLevelNodes.forEach((node) => {
-        if (
-          node.classList.contains("tree-node") ||
-          node.classList.contains("tree-artifact-wrapper")
-        ) {
-          checkVisibility(node, searchTerm);
-        }
-      });
-    }
-
-    // --- Tree and Node Dropdown Population ---
-    function generateFlatNodeList(nodes, prefix = "", level = 0) {
-      let list = [];
-      nodes.forEach((node) => {
-        const nodeType = node.type || "NODE"; // Assuming type exists in node data
-        const displayName = `${"—".repeat(level)} ${node.name}`;
-        if (nodeType !== "ARTIFACT") {
-          // Don't add artifacts directly here, they are handled below
-          list.push({
-            id: node.id,
-            name: `${displayName} (Folder)`,
-            type: "NODE",
-          });
-        }
-
-        // Add artifacts under this node
-        if (node.artifacts) {
-          node.artifacts.forEach((artifact) => {
-            // Add 1 level deeper for artifacts
-            list.push({
-              id: artifact.id,
-              name: `${"—".repeat(level + 1)} ${artifact.title} (File)`,
-              type: "ARTIFACT",
-              nodeId: artifact.id,
-            }); // Use artifact ID as nodeId for consistency
-          });
-        }
-        // Recurse for children nodes
-        if (node.children) {
-          list = list.concat(
-            generateFlatNodeList(node.children, prefix + "—", level + 1)
-          );
-        }
-      });
-      return list;
-    }
-
-    function populateNodeDropdowns() {
-      flatNodeList = generateFlatNodeList(fullTreeData);
-      const newUserNodeSelect = document.getElementById("newUserNodeAccess");
-      const modalNodeSelect = document.getElementById("modalNodeSelect");
-      if (!newUserNodeSelect || !modalNodeSelect) return;
-      newUserNodeSelect.length = 1; // Keep "None" option
-      modalNodeSelect.length = 1; // Keep "-- Select Node --" option
-      flatNodeList.forEach((item) => {
-        // Use item.nodeId if it's an artifact, otherwise item.id
-        const valueId = item.type === "ARTIFACT" ? item.nodeId : item.id;
-        const option = new Option(item.name, valueId);
-        option.dataset.type = item.type; // Store type if needed later
-
-        newUserNodeSelect.add(option.cloneNode(true));
-        modalNodeSelect.add(option);
-      });
-    }
-
-    async function fetchTree() {
-      console.log("Fetching tree data...");
-      const treeDiv = document.getElementById("tree");
-      treeDiv.innerHTML = `<p class="text-[var(--text-secondary)] p-2">Loading structure...</p>`; // Loading indicator
-      try {
-        // Use secureFetch even if token might not be strictly needed, for consistency
-        const res = await secureFetch(`${BASE}/api/tree`);
-        if (!res.ok) {
-          throw new Error(`HTTP error! status: ${res.status}`);
-        }
-        fullTreeData = await res.json();
-        if (!Array.isArray(fullTreeData)) {
-          console.error("Invalid tree data received:", fullTreeData);
-          throw new Error("Invalid tree data format received from server.");
-        }
-        treeDiv.innerHTML = renderTree(fullTreeData);
-        populateNodeDropdowns();
-      } catch (error) {
-        console.error("Failed to fetch tree:", error);
-        window.showNotification(
-          `Error loading folder structure: ${error.message}`,
-          "error"
-        );
-        treeDiv.innerHTML = `<p class="text-[var(--text-red-accent)] p-4">Error loading folder structure. Check console for details.</p>`;
-      }
-    }
-
-    function toggleTreeNode(nodeId, doToggle = true) {
-      const childrenContainer = document.getElementById(`children-${nodeId}`);
-      const toggleIcon = document.getElementById(`toggle-icon-${nodeId}`);
-      if (childrenContainer && toggleIcon) {
-        let isCollapsed;
-        if (doToggle) {
-          isCollapsed = childrenContainer.classList.toggle("collapsed");
-        } else {
-          childrenContainer.classList.remove("collapsed"); // Ensure expanded
-          isCollapsed = false;
-        }
-        toggleIcon.classList.toggle("collapsed", isCollapsed);
-        // Use down arrow for expanded, right arrow for collapsed
-        toggleIcon.innerHTML = isCollapsed
-          ? `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>` // Right arrow
-          : `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" /></svg>`; // Down arrow
-      }
-    }
-
-    function renderTree(nodes) {
-      if (!Array.isArray(nodes)) {
-        return '<p class="text-[var(--text-red-accent)] p-2">Invalid tree data.</p>';
-      }
-      return nodes
-        .map((n) => {
-          if (
-            !n ||
-            typeof n.id === "undefined" ||
-            typeof n.name === "undefined"
-          ) {
-            console.warn("Skipping invalid node:", n);
-            return ""; // Skip rendering this invalid node
-          }
-          const hasChildren = n.children && n.children.length > 0;
-          const hasArtifacts = n.artifacts && n.artifacts.length > 0;
-          const isExpandable = hasChildren || hasArtifacts;
-
-          const childrenHTML = hasChildren ? renderTree(n.children) : "";
-          const nodeNameSafe = escapeJSString(n.name);
-
-          const artifactsHTML = hasArtifacts
-            ? n.artifacts
-                .map((a) => {
-                  if (
-                    !a ||
-                    typeof a.id === "undefined" ||
-                    typeof a.title === "undefined"
-                  ) {
-                    console.warn("Skipping invalid artifact:", a);
-                    return ""; // Skip rendering this invalid artifact
-                  }
-                  const titleContent = escapeJSString(a.title);
-                  const descriptionContent = escapeJSString(
-                    a.description || ""
-                  );
-                  const linkContent = escapeJSString(a.link || "#");
-                  return `
-                    <div class="tree-artifact-wrapper" data-artifact-id="${a.id}" data-node-id="${a.id}" data-node-name="${titleContent}" data-description="${descriptionContent}" data-node-type="ARTIFACT" data-parent-node-id="${n.id}">
-                        <div class="node-content group hover:bg-[var(--bg-card-hover)] rounded-md px-1 py-0.5">
-                            <span class="tree-artifact-text clickable flex items-center text-sm flex-grow" title="View details for: ${titleContent}" onclick="showArtifactDetailsModal('${titleContent}', '${descriptionContent}', '${linkContent}')">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 tree-artifact-icon flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
-                                <span class="truncate pr-1">${titleContent}</span>
-                            </span>InfraCE
-                            <div class="actions opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
-                                <button title="Delete file" class="action-icon-btn delete" onclick="event.stopPropagation(); openDeleteConfirmationModal(${a.id}, 'artifact', '${titleContent}')"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>
-                            </div>
-                        </div>
-                    </div>`;
-                })
-                .join("")
-            : "";
-
-          // Initial state: collapsed (down arrow)
-          const initialToggleIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" /></svg>`;
-
-          return `
-                <div class="tree-node" data-node-id="${
-                  n.id
-                }" data-node-name="${nodeNameSafe}" data-node-type="NODE">
-                    <div class="node-content group hover:bg-[var(--bg-card-hover)] rounded-md px-1 py-0.5">
-                        <span class="font-medium tree-node-text cursor-pointer flex items-center flex-grow min-w-0" onclick="toggleTreeNode(${
-                          n.id
-                        })">
-                             ${
-                               isExpandable
-                                 ? `<span id="toggle-icon-${n.id}" class="tree-toggle-icon">${initialToggleIcon}</span>`
-                                 : '<span class="tree-toggle-icon w-5 h-5 mr-1"></span>'
-                             }
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1 tree-node-icon flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" /></svg>
-                            <span class="truncate pr-1">${nodeNameSafe}</span> <span class="text-xs text-[var(--text-tertiary)] ml-1.5 flex-shrink-0">(ID: ${
-            n.id
-          })</span>
-                        </span>
-                        <div class="actions opacity-0 group-hover:opacity-100 transition-opacity space-x-1 flex-shrink-0">
-                            <button title="Add item to this folder" class="action-icon-btn add" onclick="event.stopPropagation(); showInlineForm(${
-                              n.id
-                            }, this)"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></button>
-                            <button title="Delete folder" class="action-icon-btn delete" onclick="event.stopPropagation(); openDeleteConfirmationModal(${
-                              n.id
-                            }, 'node', '${nodeNameSafe}')"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>
-                        </div>
-                    </div>
-                    <div id="form-${
-                      n.id
-                    }" class="form-inline mt-2 ml-5 p-4 bg-[var(--bg-inline-form)] rounded-lg border border-[var(--border-primary)] shadow-md" style="display:none;">
-                        <input type="text" placeholder="Name (Folder/File)" id="name-${
-                          n.id
-                        }" class="input-field text-sm">
-                        <select id="type-${
-                          n.id
-                        }" class="input-field text-sm" onchange="toggleFileInput(${
-            n.id
-          })"><option value="FOLDER">FOLDER</option><option value="SUBFOLDER">SUBFOLDER</option><option value="FILE">FILE</option></select>
-                        <textarea placeholder="Description (Optional)" id="description-${
-                          n.id
-                        }" class="input-field text-sm" rows="2"></textarea>
-                        <div id="file-method-options-${
-                          n.id
-                        }" style="display:none;">
-                            <div class="mb-2"><label class="label-text text-xs">File Source:</label><select id="file-source-${
-                              n.id
-                            }" class="input-field text-xs py-1" onchange="toggleLinkOrUpload(${
-            n.id
-          })"><option value="link">Enter Link</option><option value="upload">Upload File</option></select></div>
-                            <div id="link-input-container-${
-                              n.id
-                            }"><input type="text" placeholder="Link (e.g., https://...)" id="link-${
-            n.id
-          }" class="input-field text-sm"></div>
-                            <div id="upload-input-container-${
-                              n.id
-                            }" style="display:none;"><input type="file" id="file-upload-${
-            n.id
-          }" class="input-field text-sm p-2"></div>
-                        </div>
-                        <button onclick="submitInlineForm(${
-                          n.id
-                        }, this)" class="submit-button text-sm w-full py-2"><span class="button-text">Add Item</span></button>
-                    </div>
-                     <div class="tree-children-container collapsed" id="children-${
-                       n.id
-                     }">${childrenHTML}${artifactsHTML}</div>
-                </div>`;
-        })
-        .join("");
-    }
-
-    async function fetchNodeName(nodeId) {
-      if (
-        !nodeId ||
-        String(nodeId).toLowerCase() === "null" ||
-        typeof nodeId === "undefined"
-      ) {
-        return "Global / Unspecified Node";
-      }
-      const localNode = flatNodeList.find(
-        (n) => String(n.id) === String(nodeId)
-      );
-      if (localNode) {
-        // Extract only the name part before "(Folder)" or "(File)"
-        const nameMatch = localNode.name.match(
-          /^(—*\s*)(.*)\s+\((Folder|File)\)$/
-        );
-        const cleanName = nameMatch
-          ? nameMatch[2].trim()
-          : localNode.name.replace(/—/g, "").trim();
-        const typeSuffix = localNode.type === "NODE" ? "(Folder)" : "(File)";
-        return `${cleanName} ${typeSuffix} (ID: ${nodeId})`;
+      function hideError() {
+        errorArea.classList.add("hidden");
+        errorMessage.textContent = "";
       }
 
-      // Fallback to API if not found locally (less efficient)
-      console.warn(
-        `Node/Artifact ID ${nodeId} not found in local flat list, attempting API fallback.`
-      );
-      try {
-        let resNode = await secureFetch(`${BASE}/api/nodes/${nodeId}`);
-        if (resNode.ok) {
-          const data = await resNode.json();
-          return data.name
-            ? `${data.name} (Folder) (ID: ${data.id})`
-            : `Item ${nodeId}`;
-        }
-        let resArtifact = await secureFetch(
-          `${BASE}/api/artifacts/${nodeId}`
-        );
-        if (resArtifact.ok) {
-          const data = await resArtifact.json();
-          return data.title
-            ? `${data.title} (File) (ID: ${data.id})`
-            : `Item ${nodeId}`;
-        }
-        console.warn(
-          `API fallback failed for ID ${nodeId} (Node Status: ${resNode.status}, Artifact Status: ${resArtifact.status}).`
-        );
-        return `Item ${nodeId}`;
-      } catch (error) {
-        console.error(`Error fetching details for ID ${nodeId}:`, error);
-        // Don't show notification here, it's a fallback
-        return `Item ${nodeId}`;
-      }
-    }
-
-    // --- User Management ---
-    let allUsersMasterList = [];
-    let currentUsersToDisplay = [];
-    let displayedUserCount = 0;
-    const usersPerPage = 10; // Adjust as needed
-    let isLoadingUsers = false; // Global lock for fetchUsers operation and pagination
-    const userSearchInput = document.getElementById("search-users-input");
-    const userListContainer = document.getElementById("userListContainer");
-    const userListElement = document.getElementById("userList");
-    const userListLoadingIndicator = document.getElementById(
-      "user-list-loading-indicator"
-    );
-    const userListInitialSpinner = document.getElementById(
-      "user-list-initial-spinner"
-    );
-    const userListMessageArea = document.getElementById(
-      "user-list-message-area"
-    );
-
-    function showUserListMessage(message) {
-      userListMessageArea.textContent = message;
-      userListMessageArea.style.display = "block";
-      userListElement.innerHTML = ""; // Clear list content
-      userListInitialSpinner.style.display = "none";
-      userListLoadingIndicator.style.display = "none";
-    }
-
-    function hideUserListMessage() {
-      userListMessageArea.style.display = "none";
-    }
-
-    async function fetchUsers() {
-      if (isLoadingUsers) return;
-      isLoadingUsers = true;
-      userListInitialSpinner.style.display = "block"; // Show initial spinner
-      userListElement.innerHTML = ""; // Clear previous content
-      hideUserListMessage(); // Hide any previous messages
-
-      try {
-        const res = await secureFetch(`${BASE}/api/users`);
-        if (!res.ok) {
-          let errorMsg = `HTTP error! status: ${res.status}`;
-          try {
-            const errData = await res.json();
-            errorMsg += ` - ${
-              errData.message || errData.error || JSON.stringify(errData)
-            }`;
-          } catch (e) {
-            /* ignore */
-          }
-          throw new Error(errorMsg);
-        }
-        const users = await res.json();
-        if (!Array.isArray(users)) {
-          throw new Error("Invalid user data received from server.");
-        }
-        allUsersMasterList = users.sort((a, b) =>
-          a.email > b.email ? 1 : -1
-        ); // Sort alphabetically
-        applyUserSearchFilter(); // This will filter and call renderPaginatedUsers
-      } catch (error) {
-        console.error("Failed to fetch users:", error);
-        window.showNotification(
-          `Error loading users: ${error.message}`,
-          "error"
-        );
-        showUserListMessage("Failed to load users. Please try again later.");
-      } finally {
-        isLoadingUsers = false;
-        userListInitialSpinner.style.display = "none"; // Hide initial spinner after fetch/error
-      }
-    }
-
-    function applyUserSearchFilter() {
-      const searchTerm = userSearchInput.value.toLowerCase().trim();
-      currentUsersToDisplay =
-        searchTerm === ""
-          ? [...allUsersMasterList]
-          : allUsersMasterList.filter((user) =>
-              user.email.toLowerCase().includes(searchTerm)
-            );
-      userListElement.innerHTML = "";
-      displayedUserCount = 0;
-      hideUserListMessage(); // Hide message area when filtering/showing results
-      if (
-        currentUsersToDisplay.length === 0 &&
-        allUsersMasterList.length > 0
-      ) {
-        showUserListMessage(`No users found matching "${searchTerm}".`);
-      } else if (
-        currentUsersToDisplay.length === 0 &&
-        allUsersMasterList.length === 0
-      ) {
-        // Message handled by fetchUsers error or initial state
-      } else {
-        renderPaginatedUsers(); // Render the first page of results
-      }
-    }
-
-    userSearchInput.addEventListener("input", applyUserSearchFilter);
-
-    async function renderPaginatedUsers(loadMore = false) {
-      // This condition prevents multiple scroll-triggered loads if a main fetch is active
-      // OR if another scroll-load is already in progress.
-      if (isLoadingUsers && loadMore) {
-        console.log(
-          "RenderPaginatedUsers: A user list operation is already in progress."
-        );
-        return;
+      function enableForm() {
+        uploadButton.disabled = false;
+        uploadButton.textContent = "Analyze Project";
+        zipFileInput.disabled = false;
       }
 
-      const isCurrentlyPaginatingOperation = loadMore; // True if this specific call is for pagination
-
-      if (isCurrentlyPaginatingOperation) {
-        isLoadingUsers = true; // Use global lock to signify this pagination operation is active
-        userListLoadingIndicator.style.display = "block";
-      }
-      // For !loadMore (initial/filter), isLoadingUsers is managed by fetchUsers or is false for search.
-
-      const usersToRender = currentUsersToDisplay.slice(
-        displayedUserCount,
-        displayedUserCount + usersPerPage
-      );
-
-      if (usersToRender.length === 0) {
-        // Message for empty search results is handled by applyUserSearchFilter
-        // Message for failed initial load is handled by fetchUsers
-        if (isCurrentlyPaginatingOperation) {
-          isLoadingUsers = false; // Release lock if it was set for pagination
-          userListLoadingIndicator.style.display = "none";
-        }
-        return;
+      function disableForm() {
+        uploadButton.disabled = true;
+        zipFileInput.disabled = true;
       }
 
-      hideUserListMessage(); // Ensure message area is hidden when showing users
+      async function handleUpload() {
+        const file = zipFileInput.files[0];
 
-      const userListPromises = usersToRender.map(async (u) => {
-        let nodeAccessSummary = "No specific node roles.";
-        if (u.roles && u.roles.length > 0) {
-          const roleCount = u.roles.length;
-          nodeAccessSummary = `Node Access: ${roleCount} specific role${
-            roleCount > 1 ? "s" : ""
-          }`;
-        }
-        // *** THIS IS THE UPDATED TEMPLATE STRING ***
-        return `
-                <li class="user-list-item p-4 rounded-lg flex flex-col sm:flex-row justify-between sm:items-center gap-4">
-                    <div class="flex-grow min-w-0"> 
-                        <span class="font-semibold user-email-text block text-md truncate" title="${escapeJSString(
-                          u.email
-                        )}">${escapeJSString(u.email)}</span> 
-                        <span class="text-sm user-role-text block mt-0.5">${
-                          u.role ? `Global: ${u.role}` : "No Global Role"
-                        }</span>
-                        <span class="user-node-role-summary block mt-1">${nodeAccessSummary}</span>
-                    </div>
-                    <div class="user-actions space-x-2 flex-shrink-0 flex items-center"> 
-                        <button class="user-action-button manage-access" title="Manage User Access" onclick="openAccessModal('${escapeJSString(
-                          u.email
-                        )}')">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                            Manage Access
-                        </button>
-                        <button class="user-action-button delete-user" title="Delete User & All Access" onclick="deleteUser('${escapeJSString(
-                          u.email
-                        )}')">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                            Delete User
-                        </button>
-                    </div>
-                </li>`;
-      });
-
-      try {
-        const userListHtmlChunk = await Promise.all(userListPromises);
-        userListElement.insertAdjacentHTML(
-          "beforeend",
-          userListHtmlChunk.join("")
-        );
-        displayedUserCount += usersToRender.length;
-      } catch (renderError) {
-        console.error("Error rendering user list items:", renderError);
-        // Potentially show an error message in the list area
-        showUserListMessage("Error displaying some user data.");
-      }
-
-      if (isCurrentlyPaginatingOperation) {
-        isLoadingUsers = false; // Release lock if it was set for pagination
-        userListLoadingIndicator.style.display = "none";
-      }
-    }
-
-    userListContainer.addEventListener("scroll", () => {
-      // Prevent triggering pagination if already loading (either initial or another pagination)
-      if (isLoadingUsers) return;
-
-      const { scrollTop, scrollHeight, clientHeight } = userListContainer;
-      // Trigger slightly before reaching the absolute bottom
-      if (scrollTop + clientHeight >= scrollHeight - 50) {
-        if (displayedUserCount < currentUsersToDisplay.length) {
-          console.log("Reached bottom, loading more users...");
-          renderPaginatedUsers(true); // Pass true to indicate it's a loadMore event
-        } else {
-          // console.log("Reached bottom, but no more users to load.");
-        }
-      }
-    });
-
-    async function deleteUser(email) {
-      // Use the confirmation modal instead of a simple confirm
-      openDeleteConfirmationModal(email, "user", email);
-    }
-
-    function showInlineForm(parentId, buttonElement) {
-      const form = document.getElementById(`form-${parentId}`);
-      if (form) {
-        const isVisible = form.style.display === "block";
-        // Hide all other potentially open inline forms first
-        document.querySelectorAll(".form-inline").forEach((f) => {
-          if (f !== form) f.style.display = "none";
-        });
-        // Toggle the target form
-        form.style.display = isVisible ? "none" : "block";
-        if (!isVisible) {
-          form.querySelector('input[type="text"], select')?.focus();
-          toggleFileInput(parentId); // Ensure correct file input state
-        }
-      }
-    }
-
-    function toggleFileInput(parentId) {
-      const typeSelect = document.getElementById(`type-${parentId}`);
-      const fileMethodOptionsDiv = document.getElementById(
-        `file-method-options-${parentId}`
-      );
-      const descriptionTextarea = document.getElementById(
-        `description-${parentId}`
-      );
-      const fileInput = document.getElementById(`file-upload-${parentId}`);
-      const linkInput = document.getElementById(`link-${parentId}`);
-
-      if (typeSelect.value === "FILE") {
-        fileMethodOptionsDiv.style.display = "block";
-        descriptionTextarea.placeholder = "Description (Optional for File)";
-        document.getElementById(`file-source-${parentId}`).value = "link"; // Default to link
-        toggleLinkOrUpload(parentId); // Update visibility
-      } else {
-        fileMethodOptionsDiv.style.display = "none";
-        descriptionTextarea.placeholder = "Description (Optional for Folder)";
-        // Clear file/link inputs when switching away from FILE type
-        if (fileInput) fileInput.value = "";
-        if (linkInput) linkInput.value = "";
-      }
-    }
-
-    function toggleLinkOrUpload(parentId) {
-      const fileSource = document.getElementById(
-        `file-source-${parentId}`
-      ).value;
-      const linkInputContainer = document.getElementById(
-        `link-input-container-${parentId}`
-      );
-      const uploadInputContainer = document.getElementById(
-        `upload-input-container-${parentId}`
-      );
-      const fileInput = document.getElementById(`file-upload-${parentId}`);
-      const linkInput = document.getElementById(`link-${parentId}`);
-
-      linkInputContainer.style.display =
-        fileSource === "link" ? "block" : "none";
-      uploadInputContainer.style.display =
-        fileSource === "upload" ? "block" : "none";
-
-      // Clear the other input when switching
-      if (fileSource === "link" && fileInput) fileInput.value = "";
-      if (fileSource === "upload" && linkInput) linkInput.value = "";
-    }
-
-    async function submitInlineForm(parentId, buttonElement) {
-      const nameInput = document.getElementById(`name-${parentId}`);
-      const typeSelect = document.getElementById(`type-${parentId}`);
-      const descriptionInput = document.getElementById(
-        `description-${parentId}`
-      );
-      const name = nameInput.value.trim();
-      const type = typeSelect.value;
-      const description = descriptionInput.value.trim();
-
-      const originalButtonText =
-        buttonElement.querySelector(".button-text")?.textContent ||
-        buttonElement.textContent;
-      window.setButtonLoading(buttonElement, true, originalButtonText);
-
-      if (!name) {
-        window.showNotification("Name is required.", "error");
-        window.setButtonLoading(buttonElement, false, originalButtonText);
-        nameInput.focus();
-        return;
-      }
-
-      try {
-        let response;
-        let payload = {};
-        let url;
-        let options = { method: "POST" };
-
-        if (type === "FILE") {
-          url = `${BASE}/api/artifacts`; // Endpoint for creating file artifacts via link
-          const fileSource = document.getElementById(
-            `file-source-${parentId}`
-          ).value;
-
-          if (fileSource === "link") {
-            const linkInput = document.getElementById(`link-${parentId}`);
-            const link = linkInput.value.trim();
-            if (!link) {
-              window.showNotification(
-                "Link is required for FILE type.",
-                "error"
-              );
-              window.setButtonLoading(
-                buttonElement,
-                false,
-                originalButtonText
-              );
-              linkInput.focus();
-              return;
-            }
-            payload = { title: name, description, link, nodeId: parentId };
-            options.body = JSON.stringify(payload);
-            options.headers = { "Content-Type": "application/json" }; // Needed for JSON body
-            response = await secureFetch(url, options);
-          } else {
-            // upload
-            url = `${BASE}/api/upload`; // Separate endpoint for uploads
-            const fileInput = document.getElementById(
-              `file-upload-${parentId}`
-            );
-            const file = fileInput.files[0];
-            if (!file) {
-              window.showNotification(
-                "Please select a file to upload.",
-                "error"
-              );
-              window.setButtonLoading(
-                buttonElement,
-                false,
-                originalButtonText
-              );
-              fileInput.focus();
-              return;
-            }
-            const formData = new FormData();
-            formData.append("file", file);
-            formData.append("title", name);
-            formData.append("description", description);
-            formData.append("nodeId", parentId);
-            options.body = formData; // Let fetch set Content-Type for FormData
-            // Don't set Content-Type header manually for FormData
-            response = await secureFetch(url, options);
-          }
-        } else {
-          // FOLDER or SUBFOLDER
-          url = `${BASE}/api/nodes`;
-          payload = { name, type, parentId, description };
-          options.body = JSON.stringify(payload);
-          options.headers = { "Content-Type": "application/json" }; // Needed for JSON body
-          response = await secureFetch(url, options);
-        }
-
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({
-            message: `Request failed with status ${response.status}`,
-          }));
-          throw new Error(
-            `Failed to add item: ${errorData.message || response.statusText}`
-          );
-        }
-
-        window.showNotification("Item added successfully! ✅", "success");
-        fetchTree(); // Refresh the tree view
-        // Reset and hide the form
-        const form = document.getElementById(`form-${parentId}`);
-        if (form) {
-          form.reset(); // Reset form fields
-          toggleFileInput(parentId); // Reset file input visibility
-          form.style.display = "none"; // Hide form
-        }
-      } catch (error) {
-        console.error("Error submitting inline form:", error);
-        window.showNotification(
-          `Error adding item: ${error.message}`,
-          "error"
-        );
-      } finally {
-        window.setButtonLoading(buttonElement, false, originalButtonText);
-      }
-    }
-
-    // --- Delete Confirmation Modal Logic ---
-    const deleteConfirmationModal = document.getElementById(
-      "delete-confirmation-modal"
-    );
-    const deleteModalTitle = document.getElementById("delete-modal-title");
-    const deleteModalMessage = document.getElementById(
-      "delete-modal-message"
-    );
-    const deleteConfirmInput = document.getElementById(
-      "delete-confirm-input"
-    );
-    const confirmDeleteButton = document.getElementById(
-      "confirm-delete-button"
-    );
-    let itemToDelete = { id: null, type: null, name: "" }; // type can be 'node', 'artifact', or 'user'
-
-    function openDeleteConfirmationModal(itemId, itemType, itemName) {
-      itemToDelete = { id: itemId, type: itemType, name: itemName };
-      deleteModalTitle.textContent = `Confirm Deletion: ${escapeJSString(
-        itemName
-      )}`;
-
-      let message = `Are you sure you want to delete the ${itemType} "${escapeJSString(
-        itemName
-      )}"?`;
-      if (itemType === "node")
-        message +=
-          " All its contents (subfolders and files) will also be deleted.";
-      if (itemType === "user")
-        message += " All associated access roles will be removed.";
-      message += " This action cannot be undone.";
-      deleteModalMessage.textContent = message;
-
-      deleteConfirmInput.value = "";
-      confirmDeleteButton.disabled = true;
-      deleteConfirmationModal.classList.add("active");
-      deleteConfirmInput.focus();
-    }
-
-    function closeDeleteConfirmationModal() {
-      if (deleteConfirmationModal)
-        deleteConfirmationModal.classList.remove("active");
-      // Reset itemToDelete ? maybe not needed if button is disabled
-      // itemToDelete = { id: null, type: null, name: "" };
-    }
-
-    deleteConfirmInput.addEventListener("input", () => {
-      confirmDeleteButton.disabled =
-        deleteConfirmInput.value.trim().toLowerCase() !== "delete";
-    });
-
-    confirmDeleteButton.addEventListener("click", async () => {
-      if (
-        deleteConfirmInput.value.trim().toLowerCase() !== "delete" ||
-        !itemToDelete.id
-      ) {
-        window.showNotification("Deletion not confirmed correctly.", "error");
-        return;
-      }
-      const originalButtonText =
-        confirmDeleteButton.querySelector(".button-text")?.textContent ||
-        confirmDeleteButton.textContent;
-      window.setButtonLoading(confirmDeleteButton, true, originalButtonText);
-      try {
-        let endpoint;
-        if (itemToDelete.type === "node") {
-          endpoint = `${BASE}/api/nodes/${itemToDelete.id}`;
-        } else if (itemToDelete.type === "artifact") {
-          endpoint = `${BASE}/api/artifacts/${itemToDelete.id}`;
-        } else if (itemToDelete.type === "user") {
-          endpoint = `${BASE}/api/users/${itemToDelete.id}`; // User ID is the email
-        } else {
-          throw new Error("Invalid item type for deletion.");
-        }
-
-        const response = await secureFetch(endpoint, { method: "DELETE" });
-        if (!response.ok) {
-          // Try to parse error message from backend
-          const errorData = await response.json().catch(() => ({
-            message: `Request failed with status ${response.status}`,
-          }));
-          throw new Error(
-            `Failed to delete: ${errorData.message || response.statusText}`
-          );
-        }
-        // Handle success
-        const itemTypeDisplay =
-          itemToDelete.type.charAt(0).toUpperCase() +
-          itemToDelete.type.slice(1);
-        window.showNotification(
-          `${itemTypeDisplay} "${escapeJSString(
-            itemToDelete.name
-          )}" deleted. ✅`,
-          "success"
-        );
-
-        // Refresh relevant part of the UI
-        if (itemToDelete.type === "user") {
-          fetchUsers(); // Refresh user list
-        } else {
-          fetchTree(); // Refresh tree for nodes/artifacts
-        }
-        closeDeleteConfirmationModal();
-      } catch (error) {
-        console.error(`Error deleting ${itemToDelete.type}:`, error);
-        window.showNotification(`Error deleting: ${error.message}`, "error");
-      } finally {
-        window.setButtonLoading(
-          confirmDeleteButton,
-          false,
-          originalButtonText
-        );
-      }
-    });
-
-    async function promptNewRoot() {
-      const name = prompt(
-        "Enter new root folder name (e.g., Vertical name):"
-      );
-      if (!name?.trim()) return;
-      try {
-        const response = await secureFetch(`${BASE}/api/nodes`, {
-          method: "POST",
-          body: JSON.stringify({
-            name: name.trim(),
-            type: "VERTICAL",
-            parentId: null,
-            description: "Root Vertical Folder",
-          }),
-          headers: { "Content-Type": "application/json" },
-        });
-        if (!response.ok) {
-          const err = await response
-            .json()
-            .catch(() => ({ message: response.statusText }));
-          throw new Error(`Failed: ${err.message || response.statusText}`);
-        }
-        window.showNotification("New root folder created! ✅", "success");
-        fetchTree();
-      } catch (error) {
-        console.error("Error creating new root:", error);
-        window.showNotification(`Error: ${error.message}`, "error");
-      }
-    }
-
-    // --- Add User Form Submit Handler (MODIFIED) ---
-    document
-      .getElementById("addUserForm")
-      .addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const submitButton = e.target.querySelector('button[type="submit"]');
-        const originalButtonText =
-          submitButton.querySelector(".button-text")?.textContent ||
-          submitButton.textContent;
-        window.setButtonLoading(submitButton, true, originalButtonText);
-
-        const emailInput = document.getElementById("newUserEmail");
-        const globalRoleSelect = document.getElementById("newUserRole");
-        const nodeAccessSelect = document.getElementById("newUserNodeAccess");
-        const nodeRoleSelect = document.getElementById("newUserNodeRole");
-        const applyGlobalCheckbox = document.getElementById(
-          "applyGlobalRoleToAllNodesCheckbox"
-        );
-
-        const email = emailInput.value.trim();
-        const globalRole = globalRoleSelect.value;
-        const selectedNodeIdForAccess = nodeAccessSelect.value; // This can be empty string ""
-        const selectedNodeRoleForAccess = nodeRoleSelect.value;
-        const applyGlobalToAllNodes = applyGlobalCheckbox.checked;
-
-        if (!email || !globalRole) {
-          window.showNotification(
-            "Email and Global Role are required.",
-            "error"
-          );
-          window.setButtonLoading(submitButton, false, originalButtonText);
-          if (!email) emailInput.focus();
-          else globalRoleSelect.focus();
-          return;
-        }
-        if (selectedNodeIdForAccess && applyGlobalToAllNodes) {
-          window.showNotification(
-            "Cannot select both a specific node and 'Apply global role to all nodes'. Please choose one.",
-            "error",
-            6000
-          );
-          window.setButtonLoading(submitButton, false, originalButtonText);
-          nodeAccessSelect.focus();
+        if (!file) {
+          showError("Please select a ZIP file to upload.");
           return;
         }
 
-        let overallSuccessMessage = "";
-        let operationFailed = false; // Track if any part fails
+        if (!file.name.endsWith(".zip")) {
+          showError("Invalid file type. Only .ZIP files are allowed.");
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        disableForm();
+        showStatus(
+          `Processing ${file.name}... This may take a few moments.`,
+          true
+        );
+        uploadButton.textContent = "Analyzing...";
 
         try {
-          // 1. Create the user with the global role
-          console.log(
-            `Attempting to add user: ${email} with global role: ${globalRole}`
-          );
-          let userCreationResponse = await secureFetch(`${BASE}/api/users`, {
+          const response = await fetch(API_URL, {
             method: "POST",
-            body: JSON.stringify({ email, role: globalRole }),
-            headers: { "Content-Type": "application/json" }, // Explicitly set for JSON
+            body: formData,
           });
 
-          if (!userCreationResponse.ok) {
-            const errorData = await userCreationResponse
-              .json()
-              .catch(() => ({ message: userCreationResponse.statusText }));
-            // Handle specific case where user might already exist but update role
-            if (userCreationResponse.status === 409) {
-              // Conflict - User Exists
-              if (
-                confirm(
-                  `User ${email} already exists. Do you want to update their global role to ${globalRole}?`
-                )
-              ) {
-                userCreationResponse = await secureFetch(
-                  `${BASE}/api/users/${email}`,
-                  {
-                    // Assuming PUT updates the user
-                    method: "PUT",
-                    body: JSON.stringify({ role: globalRole }), // Only send role to update
-                    headers: { "Content-Type": "application/json" },
-                  }
-                );
-                if (!userCreationResponse.ok) {
-                  const updateErrorData = await userCreationResponse
-                    .json()
-                    .catch(() => ({
-                      message: userCreationResponse.statusText,
-                    }));
-                  throw new Error(
-                    `Failed to update existing user's role: ${
-                      updateErrorData.message ||
-                      userCreationResponse.statusText
-                    }`
-                  );
+          if (response.ok) {
+            const contentType = response.headers.get("content-type");
+            if (
+              contentType &&
+              contentType.includes(
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+              )
+            ) {
+              showStatus("Analysis complete. Downloading report...", false);
+              const blob = await response.blob();
+              const downloadUrl = window.URL.createObjectURL(blob);
+              const a = document.createElement("a");
+              a.style.display = "none";
+              a.href = downloadUrl;
+
+              let downloadFilename = `gemini_analysis_${file.name.replace(
+                /\.zip$/i,
+                ""
+              )}.xlsx`;
+              const disposition = response.headers.get("content-disposition");
+              if (disposition && disposition.indexOf("attachment") !== -1) {
+                const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+                const matches = filenameRegex.exec(disposition);
+                if (matches != null && matches[1]) {
+                  downloadFilename = matches[1].replace(/['"]/g, "");
                 }
-                overallSuccessMessage = `Existing user's global role updated to ${globalRole}. `; // Start message differently
-              } else {
-                throw new Error(
-                  "User addition cancelled because user already exists."
-                ); // User chose not to update
               }
+              a.download = downloadFilename;
+
+              document.body.appendChild(a);
+              a.click();
+              window.URL.revokeObjectURL(downloadUrl);
+              a.remove();
+              setTimeout(() => {
+                hideStatus();
+                fileNameDisplay.textContent = "";
+                zipFileInput.value = "";
+              }, 1000);
             } else {
-              // Other user creation error
-              throw new Error(
-                `Failed to add user: ${
-                  errorData.message || userCreationResponse.statusText
-                }`
+              const errorText = await response.text();
+              showError(
+                `Unexpected response from server: ${errorText.substring(
+                  0,
+                  200
+                )}`
               );
             }
           } else {
-            overallSuccessMessage = "User added successfully! ✅ ";
-          }
-
-          // 2. Handle node-specific access (only if user creation/update was successful)
-          if (selectedNodeIdForAccess) {
-            console.log(
-              `Granting initial access for node ${selectedNodeIdForAccess} with role ${selectedNodeRoleForAccess}`
-            );
-            // Grant access to a single selected node
-            const accessResponse = await secureFetch(`${BASE}/api/access`, {
-              method: "PUT",
-              body: JSON.stringify({
-                email,
-                nodeId: parseInt(selectedNodeIdForAccess),
-                role: selectedNodeRoleForAccess,
-              }),
-              headers: { "Content-Type": "application/json" },
-            });
-            if (!accessResponse.ok) {
-              const errorData = await accessResponse
-                .json()
-                .catch(() => ({ message: accessResponse.statusText }));
-              overallSuccessMessage += `\n⚠️ Could not grant initial node access: ${
-                errorData.message || accessResponse.statusText
-              }`;
-              operationFailed = true; // Mark failure
-            } else {
-              overallSuccessMessage += ` Initial node access granted.`;
-            }
-          } else if (applyGlobalToAllNodes) {
-            // Grant selected global role to all nodes
-            window.showNotification(
-              `User created/updated. Now applying '${globalRole}' role to all nodes/files. This may take a moment...`,
-              "info",
-              8000
-            );
-            console.log(
-              `Applying global role ${globalRole} to all nodes/files`
-            );
-
-            if (!flatNodeList || flatNodeList.length === 0) {
-              console.warn(
-                "flatNodeList is empty or not yet populated. Cannot apply global role to all nodes."
-              );
-              overallSuccessMessage +=
-                "\n⚠️ No nodes/files found to apply global role to (tree data might be loading or empty).";
-              operationFailed = true; // Mark failure
-            } else {
-              let nodesProcessedCount = 0;
-              let nodesFailedCount = 0;
-              let failedItems = [];
-
-              // Run sequentially to avoid overwhelming the server
-              for (const item of flatNodeList) {
-                // Use item.id which should be the unique ID for both nodes and artifacts in flatNodeList
-                const currentItemId = parseInt(item.id);
-                try {
-                  const nodeAccessResponse = await secureFetch(
-                    `${BASE}/api/access`,
-                    {
-                      method: "PUT",
-                      body: JSON.stringify({
-                        email,
-                        nodeId: currentItemId, // Use the unique ID from flatNodeList
-                        role: globalRole, // Use the selected global role
-                      }),
-                      headers: { "Content-Type": "application/json" },
-                    }
-                  );
-                  if (nodeAccessResponse.ok) {
-                    nodesProcessedCount++;
-                  } else {
-                    nodesFailedCount++;
-                    const errorData = await nodeAccessResponse
-                      .json()
-                      .catch(() => ({
-                        message: nodeAccessResponse.statusText,
-                      }));
-                    const failureReason =
-                      errorData.message || nodeAccessResponse.statusText;
-                    console.warn(
-                      `Failed to apply role to item ${item.id} ('${item.name}'): ${failureReason}`
-                    );
-                    failedItems.push(
-                      `${item.name} (ID: ${item.id}): ${failureReason}`
-                    );
-                  }
-                } catch (loopError) {
-                  nodesFailedCount++;
-                  console.error(
-                    `Error applying role to item ${item.id} ('${item.name}'):`,
-                    loopError
-                  );
-                  failedItems.push(
-                    `${item.name} (ID: ${item.id}): ${loopError.message}`
-                  );
-                }
-                // Optional: Add a small delay to prevent rate limiting, e.g., await new Promise(resolve => setTimeout(resolve, 50));
+            let errorDetail = `HTTP error ${response.status}: ${response.statusText}`;
+            try {
+              const errorJson = await response.json();
+              if (errorJson && errorJson.detail) {
+                errorDetail = errorJson.detail;
               }
-
-              if (nodesFailedCount > 0) {
-                overallSuccessMessage += `\n⚠️ Applied '${globalRole}' to ${nodesProcessedCount} items, but failed for ${nodesFailedCount}. Check console for details.`;
-                operationFailed = true; // Mark failure
-                console.error("Failed items:", failedItems); // Log detailed failures
-              } else {
-                overallSuccessMessage += `\nSuccessfully applied '${globalRole}' role to all ${nodesProcessedCount} nodes/files.`;
-              }
+            } catch (e) {
+              const rawErrorText = await response.text();
+              errorDetail = rawErrorText.substring(0, 200) || errorDetail;
+              console.warn("Error response was not JSON:", rawErrorText);
             }
+            showError(errorDetail);
           }
-          // Final Notification based on success/failure
-          window.showNotification(
-            overallSuccessMessage,
-            operationFailed ? "error" : "success",
-            operationFailed ? 8000 : 5000
-          );
-
-          fetchUsers(); // Refresh user list regardless of partial success
-          document.getElementById("addUserForm").reset();
-          // Uncheck the checkbox manually if it's not part of form.reset()
-          if (applyGlobalCheckbox) applyGlobalCheckbox.checked = false;
         } catch (error) {
-          console.error("Error in add user process:", error);
-          window.showNotification(`Error: ${error.message}`, "error", 6000);
-          operationFailed = true; // Ensure failure state if caught here
-        } finally {
-          window.setButtonLoading(submitButton, false, originalButtonText);
-        }
-      });
-
-    // --- Access Management Modal Logic ---
-    const accessModal = document.getElementById("access-management-modal");
-    const modalUserEmailSpan = document.getElementById("modal-user-email");
-    const modalCurrentAccessDiv = document.getElementById(
-      "access-management-modal-current-access"
-    );
-    const modalEditingUserEmailHidden = document.getElementById(
-      "modal-editing-user-email-hidden"
-    );
-
-    async function openAccessModal(email) {
-      modalUserEmailSpan.textContent = email;
-      modalEditingUserEmailHidden.value = email;
-      // Reset dropdown before opening
-      const modalNodeSelect = document.getElementById("modalNodeSelect");
-      if (modalNodeSelect) modalNodeSelect.value = "";
-
-      accessModal.classList.add("active");
-      await loadUserAccessRolesForModal(email); // Load roles after making modal visible
-    }
-
-    function closeAccessModal() {
-      if (accessModal) accessModal.classList.remove("active");
-      modalCurrentAccessDiv.innerHTML = `<p class="text-[var(--text-tertiary)] p-3">Loading access...</p>`; // Reset content on close
-    }
-
-    async function loadUserAccessRolesForModal(email) {
-      modalCurrentAccessDiv.innerHTML = `<div class="flex justify-center items-center p-4"><div class="spinner" style="border-color: var(--text-primary); border-top-color: transparent;"></div><span class="ml-2 text-[var(--text-secondary)]">Loading roles...</span></div>`;
-      try {
-        // Fetch the specific user's details including roles
-        // Assuming the user list might not be fully up-to-date or detailed enough
-        const res = await secureFetch(`${BASE}/api/users/${email}`); // Fetch specific user
-        if (!res.ok) {
-          const errData = await res.json().catch(() => ({
-            message: `User ${email} not found or error loading roles.`,
-          }));
-          throw new Error(errData.message || `HTTP error ${res.status}`);
-        }
-        const user = await res.json();
-
-        if (!user || !user.roles || user.roles.length === 0) {
-          modalCurrentAccessDiv.innerHTML = `<p class="text-[var(--text-tertiary)] p-3">No specific node/file access granted.</p>`;
-          return;
-        }
-        // Fetch node names and render roles
-        const items = await Promise.all(
-          user.roles.map(async (role) => {
-            const nodeName = await fetchNodeName(role.nodeId); // Fetch readable name
-            const safeEmail = escapeJSString(email);
-            // Role dropdown for editing
-            const roleSelectHTML = `
-                    <select class="input-field text-xs py-1 px-2 w-auto bg-[var(--bg-input)] border-[var(--border-input)]"
-                            data-node-id="${role.nodeId}"
-                            data-original-role="${role.role}"
-                            onchange="updateNodeAccessInModal(this, '${safeEmail}', ${
-              role.nodeId
-            })">
-                        <option value="ADMIN" ${
-                          role.role === "ADMIN" ? "selected" : ""
-                        }>ADMIN</option>
-                        <option value="EDITOR" ${
-                          role.role === "EDITOR" ? "selected" : ""
-                        }>EDITOR</option>
-                        <option value="VIEWER" ${
-                          role.role === "VIEWER" ? "selected" : ""
-                        }>VIEWER</option>
-                    </select>`;
-            // Revoke button
-            const revokeButtonHTML = `
-                    <button class="action-icon-btn delete text-sm" title="Revoke Access" onclick="revokeNodeAccessInModal('${safeEmail}', ${role.nodeId})">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                    </button>`;
-
-            return `<div class="access-item flex justify-between items-center p-2.5 border-b border-[var(--border-primary)] last:border-b-0">
-                            <div><span class="font-medium text-[var(--text-primary)] text-sm">${escapeJSString(
-                              nodeName
-                            )}</span></div>
-                            <div class="flex items-center gap-2">
-                               ${roleSelectHTML}
-                               ${revokeButtonHTML}
-                            </div>
-                        </div>`;
-          })
-        );
-        modalCurrentAccessDiv.innerHTML = items.join("");
-      } catch (error) {
-        console.error("Error loading user access for modal:", error);
-        modalCurrentAccessDiv.innerHTML = `<p class="text-[var(--text-red-accent)] p-3">Error loading roles: ${error.message}</p>`;
-      }
-    }
-
-    async function updateNodeAccessInModal(selectElement, email, nodeId) {
-      const newRole = selectElement.value;
-      const originalRole = selectElement.dataset.originalRole;
-      if (newRole === originalRole) return; // No change
-
-      // Add visual feedback
-      selectElement.disabled = true;
-      selectElement.style.opacity = "0.7";
-
-      try {
-        const response = await secureFetch(`${BASE}/api/access`, {
-          method: "PUT",
-          body: JSON.stringify({ email, nodeId, role: newRole }),
-          headers: { "Content-Type": "application/json" },
-        });
-        if (!response.ok) {
-          const err = await response
-            .json()
-            .catch(() => ({ message: response.statusText }));
-          throw new Error(`Failed: ${err.message || response.statusText}`);
-        }
-
-        window.showNotification("Access updated! ✅", "success");
-        selectElement.dataset.originalRole = newRole; // Update the original role marker
-        fetchUsers(); // Refresh the main user list summary (optional, maybe just update modal?)
-      } catch (error) {
-        console.error("Error updating access:", error);
-        window.showNotification(
-          `Error updating access: ${error.message}`,
-          "error"
-        );
-        selectElement.value = originalRole; // Revert dropdown on error
-      } finally {
-        // Remove visual feedback
-        selectElement.disabled = false;
-        selectElement.style.opacity = "1";
-      }
-    }
-
-    async function revokeNodeAccessInModal(email, nodeId) {
-      const nodeName = await fetchNodeName(nodeId); // Get name for confirm message
-      if (
-        !confirm(
-          `Revoke access for ${email} from "${escapeJSString(nodeName)}"?`
-        )
-      )
-        return;
-
-      // Find the button and disable it
-      const revokeButton = event.target.closest("button");
-      if (revokeButton) revokeButton.disabled = true;
-
-      try {
-        const response = await secureFetch(`${BASE}/api/access`, {
-          method: "DELETE",
-          body: JSON.stringify({ email, nodeId }),
-          headers: { "Content-Type": "application/json" },
-        });
-        if (!response.ok) {
-          const err = await response
-            .json()
-            .catch(() => ({ message: response.statusText }));
-          throw new Error(`Failed: ${err.message || response.statusText}`);
-        }
-
-        window.showNotification("Access revoked! ✅", "success");
-        // Instead of full reload, just remove the item from the modal DOM
-        const accessItemDiv = revokeButton.closest(".access-item");
-        if (accessItemDiv) {
-          accessItemDiv.style.transition = "opacity 0.3s ease";
-          accessItemDiv.style.opacity = "0";
-          setTimeout(() => {
-            accessItemDiv.remove();
-            // Check if list is now empty
-            if (modalCurrentAccessDiv.children.length === 0) {
-              modalCurrentAccessDiv.innerHTML = `<p class="text-[var(--text-tertiary)] p-3">No specific node/file access granted.</p>`;
-            }
-          }, 300);
-        } else {
-          loadUserAccessRolesForModal(email); // Fallback to reload if removal fails
-        }
-        fetchUsers(); // Refresh the main user list summary
-      } catch (error) {
-        console.error("Error revoking access:", error);
-        window.showNotification(
-          `Error revoking access: ${error.message}`,
-          "error"
-        );
-        if (revokeButton) revokeButton.disabled = false; // Re-enable button on error
-      }
-    }
-
-    document
-      .getElementById("grantNewAccessForm")
-      .addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const btn = e.target.querySelector('button[type="submit"]');
-        const originalText =
-          btn.querySelector(".button-text")?.textContent || btn.textContent;
-        window.setButtonLoading(btn, true, originalText);
-
-        const email = modalEditingUserEmailHidden.value;
-        const nodeIdSelect = document.getElementById("modalNodeSelect");
-        const roleSelect = document.getElementById("modalNodeRoleSelect");
-        const nodeId = nodeIdSelect.value;
-        const role = roleSelect.value;
-
-        if (!email || !nodeId || !role) {
-          window.showNotification(
-            "Please select a folder/file and assign a role.",
-            "error"
-          );
-          window.setButtonLoading(btn, false, originalText);
-          if (!nodeId) nodeIdSelect.focus();
-          else roleSelect.focus();
-          return;
-        }
-
-        try {
-          const response = await secureFetch(`${BASE}/api/access`, {
-            method: "PUT",
-            body: JSON.stringify({ email, nodeId: parseInt(nodeId), role }),
-            headers: { "Content-Type": "application/json" },
-          });
-          if (!response.ok) {
-            const err = await response
-              .json()
-              .catch(() => ({ message: response.statusText }));
-            throw new Error(`Failed: ${err.message || response.statusText}`);
-          }
-
-          window.showNotification(
-            "Access granted successfully! ✅",
-            "success"
-          );
-          await loadUserAccessRolesForModal(email); // Refresh the list in the modal
-          fetchUsers(); // Refresh the main user list summary
-          e.target.reset(); // Reset the grant form
-          nodeIdSelect.value = ""; // Explicitly reset select
-        } catch (error) {
-          console.error("Error granting new access:", error);
-          window.showNotification(
-            `Error granting access: ${error.message}`,
-            "error"
+          console.error("Upload error:", error);
+          showError(
+            "An error occurred during upload. Check the console or network connection."
           );
         } finally {
-          window.setButtonLoading(btn, false, originalText);
-        }
-      });
-
-    // --- Artifact Details Modal Logic ---
-    const artifactDetailsModalEl = document.getElementById(
-      "artifact-details-modal"
-    );
-    function showArtifactDetailsModal(title, description, link) {
-      const titleEl = document.getElementById("artifact-modal-title");
-      const descEl = document.getElementById(
-        "artifact-details-modal-description"
-      );
-      const linkEl = document.getElementById("artifact-modal-link");
-      if (!artifactDetailsModalEl || !titleEl || !descEl || !linkEl) {
-        console.error("Artifact modal elements not found.");
-        return;
-      }
-
-      titleEl.textContent = title || "Artifact Details";
-      // Sanitize description before inserting as HTML to prevent XSS
-      // A simple approach is to treat it as text, replacing newlines with <br>
-      const safeDescription = description
-        ? escapeJSString(description).replace(/\n/g, "<br>")
-        : "No description provided.";
-      descEl.innerHTML = safeDescription;
-
-      let pLink = link || "#";
-      // Basic validation: check if it looks like a URL or is just "#"
-      if (
-        pLink &&
-        pLink !== "#" &&
-        !pLink.match(/^(https?:\/\/|mailto:|tel:)/i)
-      ) {
-        // Assume http if no protocol is present and it doesn't look like mailto/tel
-        if (!pLink.includes(".") || pLink.startsWith("/")) {
-          console.warn("Potentially invalid link format:", pLink);
-          // Optionally handle this case, maybe disable the link or show a warning
-          // pLink = "#"; // Fallback to '#' if unsure
-        } else {
-          pLink = `https://${pLink}`; // Prepend https as a default for domain-like strings
+          enableForm();
         }
       }
-      linkEl.href = pLink;
-
-      if (!link || link === "#") {
-        linkEl.classList.add("opacity-50", "cursor-not-allowed");
-        linkEl.removeAttribute("target");
-        linkEl.onclick = (ev) => ev.preventDefault(); // Prevent navigation
-        linkEl.title = "No link provided";
-      } else {
-        linkEl.classList.remove("opacity-50", "cursor-not-allowed");
-        linkEl.setAttribute("target", "_blank"); // Open in new tab
-        linkEl.onclick = null; // Remove previous prevention handler
-        linkEl.title = `Go to: ${pLink}`;
-      }
-      artifactDetailsModalEl.classList.add("active");
-    }
-    function closeArtifactDetailsModal() {
-      if (artifactDetailsModalEl)
-        artifactDetailsModalEl.classList.remove("active");
-    }
-
-    // --- User Menu Dropdown Logic ---
-    if (userMenuButton && userDropdownMenu) {
-      userMenuButton.addEventListener("click", (event) => {
-        event.stopPropagation(); // Prevent click from immediately closing menu via document listener
-        const isExpanded =
-          userMenuButton.getAttribute("aria-expanded") === "true" || false;
-        userMenuButton.setAttribute("aria-expanded", !isExpanded);
-        userDropdownMenu.classList.toggle("hidden");
-      });
-      document.addEventListener("click", (event) => {
-        // Close if clicked outside the button AND outside the menu
-        if (
-          !userMenuButton.contains(event.target) &&
-          !userDropdownMenu.contains(event.target)
-        ) {
-          userDropdownMenu.classList.add("hidden");
-          userMenuButton.setAttribute("aria-expanded", "false");
-        }
-      });
-    }
-    if (logoutButtonDropdown && firebaseAuth) {
-      logoutButtonDropdown.addEventListener("click", async () => {
-        console.log("Logout button clicked.");
-        try {
-          await firebaseAuth.signOut();
-          sessionStorage.removeItem("token");
-          window.showNotification("Logged out successfully.", "success");
-          // onAuthStateChanged will handle the redirect/UI update
-          // Force close dropdown after logout action
-          userDropdownMenu.classList.add("hidden");
-          userMenuButton.setAttribute("aria-expanded", "false");
-        } catch (error) {
-          console.error("Error signing out:", error);
-          window.showNotification(
-            "Logout failed. Please try again.",
-            "error"
-          );
-        }
-      });
-    }
-
-    // --- Initialization ---
-    function initializeAdminPanel() {
-      console.log("Initializing Admin Panel data...");
-      if (firebaseAuth && firebaseAuth.currentUser) {
-        fetchTree(); // Populates fullTreeData and flatNodeList
-        fetchUsers(); // Fetches users and renders the first page
-        fetchActivity(); // Fetches activity log
-      } else {
-        console.log("User not logged in, skipping data fetch.");
-        // Display appropriate messages if elements exist
-        const treeDiv = document.getElementById("tree");
-        if (treeDiv)
-          treeDiv.innerHTML = `<p class="text-[var(--text-tertiary)] p-3 text-center">Please log in to view structure.</p>`;
-        if (userListContainer)
-          showUserListMessage("Please log in to view users.");
-      }
-    }
-
-    // --- Global Event Listeners ---
-    document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape") {
-        // Close modals on Escape key press
-        if (accessModal?.classList.contains("active")) closeAccessModal();
-        if (artifactDetailsModalEl?.classList.contains("active"))
-          closeArtifactDetailsModal();
-        if (deleteConfirmationModal?.classList.contains("active"))
-          closeDeleteConfirmationModal();
-
-        // Close any open inline forms
-        document.querySelectorAll(".form-inline").forEach((form) => {
-          if (form.style.display === "block") {
-            form.style.display = "none";
-          }
-        });
-        // Close user dropdown menu
-        if (
-          userDropdownMenu &&
-          !userDropdownMenu.classList.contains("hidden")
-        ) {
-          userDropdownMenu.classList.add("hidden");
-          userMenuButton.setAttribute("aria-expanded", "false");
-        }
-      }
-    });
-
-    // --- Activity Log ---
-const activityListElement = document.getElementById("activityList");
-const activityListInitialSpinner = document.getElementById("activity-list-initial-spinner");
-const activityListMessageArea = document.getElementById("activity-list-message-area");
-let isLoadingActivity = false;
-
-function showActivityListMessage(message) {
-if (activityListMessageArea && activityListElement && activityListInitialSpinner) {
-  activityListMessageArea.textContent = message;
-  activityListMessageArea.style.display = "block";
-  activityListElement.innerHTML = ""; // Clear list content
-  activityListInitialSpinner.style.display = "none";
-}
-}
-
-function hideActivityListMessage() {
-if (activityListMessageArea && activityListInitialSpinner) {
-  activityListMessageArea.style.display = "none";
-  activityListInitialSpinner.style.display = "none"; // Ensure spinner is also hidden
-}
-}
-
-async function fetchActivity(manualRefresh = false) {
-if (isLoadingActivity && !manualRefresh) return; // Prevent multiple loads unless manual
-isLoadingActivity = true;
-
-if (activityListInitialSpinner) activityListInitialSpinner.style.display = "block";
-if (activityListElement) activityListElement.innerHTML = ""; // Clear previous content for full refresh
-hideActivityListMessage();
-
-try {
-  const res = await secureFetch(`${BASE}/api/activity`);
-  if (!res.ok) {
-    let errorMsg = `HTTP error! status: ${res.status}`;
-    try {
-      const errData = await res.json();
-      errorMsg += ` - ${errData.message || errData.error || JSON.stringify(errData)}`;
-    } catch (e) { /* ignore */ }
-    throw new Error(errorMsg);
-  }
-  const activities = await res.json();
-  if (!Array.isArray(activities)) {
-    throw new Error("Invalid activity data received from server.");
-  }
-  renderActivity(activities);
-  if (activities.length === 0) {
-      showActivityListMessage("No recent activity found.");
-  }
-} catch (error) {
-  console.error("Failed to fetch activity:", error);
-  window.showNotification(`Error loading activity: ${error.message}`, "error");
-  showActivityListMessage("Failed to load activity. Please try again later.");
-} finally {
-  isLoadingActivity = false;
-  if (activityListInitialSpinner) activityListInitialSpinner.style.display = "none";
-}
-}
-
-function renderActivity(activities) {
-if (!activityListElement) return;
-activityListElement.innerHTML = ""; // Clear before rendering new activities
-
-if (activities.length === 0) {
-  // Message handled by showActivityListMessage in fetchActivity
-  return;
-}
-
-const activityItemsHTML = activities.map(activity => {
-  // Directly use the message if it exists, otherwise provide a fallback.
-  const messageContent = escapeJSString(activity.message || 'No message content available.');
-
-  // Simplified list item, focusing on the message.
-  // You can adjust styling as needed.
-  return `
-    <li class="p-2 border-b border-[var(--border-primary)] last:border-b-0 text-sm text-[var(--text-primary)] hover:bg-[var(--bg-card-hover)] rounded-sm transition-colors duration-150">
-      ${messageContent}
-    </li>
-  `;
-}).join("");
-
-activityListElement.innerHTML = activityItemsHTML;
-}
-// --- End Activity Log ---
-
-
-
-  </script>
-</body>
+    </script>
+  </body>
 </html>
