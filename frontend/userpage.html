@@ -2004,11 +2004,9 @@
             `${BASE_API_URL}/api/nodes/${nodeId}/graph`
           );
           if (!response.ok) {
-            const errorData = await response
-              .json()
-              .catch(() => ({
-                detail: `Failed to load graph (Status: ${response.status})`,
-              }));
+            const errorData = await response.json().catch(() => ({
+              detail: `Failed to load graph (Status: ${response.status})`,
+            }));
             throw new Error(errorData.detail);
           }
           const rawApiGraphData = await response.json();
@@ -2044,9 +2042,10 @@
       function renderD3TreeGraph(
         apiNodeData,
         containerElement,
-        centerNodeOriginalId
+        centerNodeOriginalIdStr
       ) {
         containerElement.innerHTML = "";
+        const centerNodeOriginalId = parseInt(centerNodeOriginalIdStr);
 
         const containerRect = containerElement.getBoundingClientRect();
         const width = containerRect.width || 800;
@@ -2062,31 +2061,33 @@
 
         const mainGroup = svg.append("g");
 
-        // Children accessor function for d3.hierarchy
-        // It combines 'children' (folders) and 'artifacts' (files)
         const getChildren = (d) => {
           let combinedChildren = [];
           if (d.children && Array.isArray(d.children)) {
-            combinedChildren = combinedChildren.concat(d.children);
+            // Make sure to create new objects for children to avoid modifying original data
+            combinedChildren = combinedChildren.concat(
+              d.children.map((child) => ({ ...child }))
+            );
           }
           if (d.artifacts && Array.isArray(d.artifacts)) {
-            // Map artifacts to have a 'name' and 'type' consistent with folders for hierarchy
             const mappedArtifacts = d.artifacts.map((artifact) => ({
               ...artifact,
-              name: artifact.title, // Use 'title' as 'name' for artifacts
-              type: "FILE", // Explicitly mark as FILE type for D3 processing
+              name: artifact.title,
+              type: artifact.type || "FILE", // Use artifact's type if present, else default
               children: [], // Artifacts are leaf nodes
             }));
             combinedChildren = combinedChildren.concat(mappedArtifacts);
           }
-          return combinedChildren.length ? combinedChildren : null; // Return null if no children to signify a leaf
+          return combinedChildren.length ? combinedChildren : null;
         };
 
         const root = d3.hierarchy(apiNodeData, getChildren);
 
         root.each((d) => {
+          // Ensure 'type' exists on d.data before trying to access it
+          const type = d.data.type || "UNKNOWN"; // Default to UNKNOWN if type is missing
           d.data.displayType =
-            d.data.type === "FILE" ? "ARTIFACT" : d.data.type;
+            type === "FILE" || type === "ARTIFACT" ? "ARTIFACT" : "FOLDER";
         });
 
         const nodeHeight = 35;
@@ -2133,19 +2134,19 @@
             "class",
             (d) =>
               `graph-node ${
-                d.data.id === parseInt(centerNodeOriginalId) &&
-                d.data.type === "FOLDER"
+                d.data.id === centerNodeOriginalId &&
+                d.data.displayType === "FOLDER"
                   ? "is-center"
                   : ""
               }`
-          ) // Ensure center node is a FOLDER
+          )
           .attr("transform", (d) => `translate(${d.y},${d.x})`);
 
         node
           .append("circle")
           .attr("r", (d) =>
-            d.data.id === parseInt(centerNodeOriginalId) &&
-            d.data.type === "FOLDER"
+            d.data.id === centerNodeOriginalId &&
+            d.data.displayType === "FOLDER"
               ? 10
               : d.data.displayType === "FOLDER"
               ? 8
@@ -2153,8 +2154,8 @@
           )
           .attr("fill", (d) => {
             if (
-              d.data.id === parseInt(centerNodeOriginalId) &&
-              d.data.type === "FOLDER"
+              d.data.id === centerNodeOriginalId &&
+              d.data.displayType === "FOLDER"
             )
               return "var(--text-link-hover)";
             if (d.data.displayType === "FOLDER")
@@ -2164,8 +2165,8 @@
             return "var(--text-secondary)";
           })
           .attr("stroke", (d) =>
-            d.data.id === parseInt(centerNodeOriginalId) &&
-            d.data.type === "FOLDER"
+            d.data.id === centerNodeOriginalId &&
+            d.data.displayType === "FOLDER"
               ? "var(--text-link)"
               : "var(--border-card)"
           );
@@ -2173,23 +2174,18 @@
         node
           .append("text")
           .attr("dy", "0.31em")
-          .attr("x", (d) =>
-            (d.data.children && d.data.children.length > 0) ||
-            (d.data.artifacts &&
-              d.data.artifacts.length > 0 &&
-              d.data.type === "FOLDER")
-              ? -12
-              : 12
-          ) // Position text left for parents (folders with children or artifacts)
-          .attr("text-anchor", (d) =>
-            (d.data.children && d.data.children.length > 0) ||
-            (d.data.artifacts &&
-              d.data.artifacts.length > 0 &&
-              d.data.type === "FOLDER")
+          .attr("x", (d) => {
+            // Check if there are any effective children for text positioning
+            const effectiveChildren = getChildren(d.data);
+            return effectiveChildren && effectiveChildren.length > 0 ? -12 : 12;
+          })
+          .attr("text-anchor", (d) => {
+            const effectiveChildren = getChildren(d.data);
+            return effectiveChildren && effectiveChildren.length > 0
               ? "end"
-              : "start"
-          )
-          .text((d) => d.data.name) // d.data.name should exist for both folders and mapped artifacts
+              : "start";
+          })
+          .text((d) => d.data.name)
           .clone(true)
           .lower()
           .attr("stroke-linejoin", "round")
@@ -2467,11 +2463,9 @@
           response = await secureFetch(endpoint, options);
 
           if (!response.ok) {
-            const errorData = await response
-              .json()
-              .catch(() => ({
-                detail: `Request failed with status ${response.status}. ${response.statusText}`,
-              }));
+            const errorData = await response.json().catch(() => ({
+              detail: `Request failed with status ${response.status}. ${response.statusText}`,
+            }));
             throw new Error(
               errorData.detail ||
                 `Failed to add item (Status: ${response.status})`
