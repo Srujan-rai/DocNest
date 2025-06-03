@@ -2012,6 +2012,7 @@
           const rawApiGraphData = await response.json();
 
           if (!rawApiGraphData || typeof rawApiGraphData.id === "undefined") {
+            // Check if the root of the response is a valid node
             graphErrorPlaceholder.textContent =
               "No graph data available for this node or the folder is empty.";
             graphErrorPlaceholder.style.display = "block";
@@ -2058,27 +2059,20 @@
           .attr("viewBox", `0 0 ${width} ${height}`)
           .attr("preserveAspectRatio", "xMidYMid meet");
 
-        const mainGroup = svg.append("g"); // Group for zoom transformations
+        const mainGroup = svg.append("g");
 
-        // Create a D3 hierarchy from the API data.
-        // D3 expects children to be in a 'children' property by default.
-        // We also add a 'd3Id' to each node for unique identification if needed,
-        // and map 'FILE' type to 'ARTIFACT'.
-        const root = d3.hierarchy(apiNodeData, (d) => d.children);
+        const root = d3.hierarchy(apiNodeData, (d) => d.children); // d.children is used by D3 hierarchy
         root.each((d) => {
-          d.data.d3Id = `${d.data.type.toLowerCase()}_${d.data.id}`;
+          // Add displayType for consistent coloring
           d.data.displayType =
             d.data.type === "FILE" ? "ARTIFACT" : d.data.type;
         });
 
-        // Declare the tree layout and map positions.
-        // We use a horizontal tree. Node size can affect spacing.
-        const nodeHeight = 30; // Vertical separation between nodes
-        const nodeWidth = 180; // Horizontal separation between levels
+        const nodeHeight = 35;
+        const nodeWidth = 200;
         const treeLayout = d3.tree().nodeSize([nodeHeight, nodeWidth]);
         treeLayout(root);
 
-        // Calculate the extent of the tree to center it.
         let x0 = Infinity;
         let x1 = -Infinity;
         root.each((d) => {
@@ -2086,17 +2080,13 @@
           if (d.x > x1) x1 = d.x;
         });
 
-        // Adjust initial zoom and pan
-        // The initial transform centers the tree.
-        // The x and y are swapped for d3.tree() for horizontal layout (y is depth, x is breadth)
-        const initialX = width / 2 - root.y; // Center the root node horizontally initially (root.y is its depth pos)
+        const initialX = 50; // Start with some padding from the left
         const initialY = height / 2 - root.x; // Center vertically
 
         const initialTransform = d3.zoomIdentity
-          .translate(initialX + 50, initialY)
-          .scale(0.8); // Add padding from left, initial scale
+          .translate(initialX, initialY)
+          .scale(0.9);
 
-        // Links
         mainGroup
           .append("g")
           .attr("class", "graph-links")
@@ -2108,11 +2098,10 @@
             "d",
             d3
               .linkHorizontal()
-              .x((d) => d.y) // y coordinate from tree layout becomes x for horizontal
-              .y((d) => d.x) // x coordinate from tree layout becomes y for horizontal
+              .x((d) => d.y)
+              .y((d) => d.x)
           );
 
-        // Nodes
         const node = mainGroup
           .append("g")
           .attr("class", "graph-nodes")
@@ -2126,7 +2115,7 @@
                 d.data.id === parseInt(centerNodeOriginalId) ? "is-center" : ""
               }`
           )
-          .attr("transform", (d) => `translate(${d.y},${d.x})`); // Swap x and y for horizontal tree
+          .attr("transform", (d) => `translate(${d.y},${d.x})`);
 
         node
           .append("circle")
@@ -2139,10 +2128,12 @@
           )
           .attr("fill", (d) => {
             if (d.data.id === parseInt(centerNodeOriginalId))
-              return "var(--text-link-hover)";
-            return d.data.displayType === "FOLDER"
-              ? "var(--text-yellow-accent)"
-              : "var(--text-blue-accent)";
+              return "var(--text-link-hover)"; // Center node
+            if (d.data.displayType === "FOLDER")
+              return "var(--text-yellow-accent)"; // Folder
+            if (d.data.displayType === "ARTIFACT")
+              return "var(--text-green-accent)"; // File/Artifact
+            return "var(--text-secondary)"; // Default fallback
           })
           .attr("stroke", (d) =>
             d.data.id === parseInt(centerNodeOriginalId)
@@ -2153,11 +2144,11 @@
         node
           .append("text")
           .attr("dy", "0.31em")
-          .attr("x", (d) => (d.children ? -12 : 12)) // Position text left for parents, right for leaves
+          .attr("x", (d) => (d.children ? -12 : 12))
           .attr("text-anchor", (d) => (d.children ? "end" : "start"))
           .text((d) => d.data.name)
           .clone(true)
-          .lower() // Clone for text halo effect
+          .lower()
           .attr("stroke-linejoin", "round")
           .attr("stroke-width", 3)
           .attr("stroke", "var(--bg-primary)");
@@ -2171,24 +2162,14 @@
               }\nDescription: ${d.data.description || "N/A"}`
           );
 
-        // Zoom behavior
         const zoom = d3
           .zoom()
-          .scaleExtent([0.2, 3]) // Min/max zoom scale
+          .scaleExtent([0.1, 5]) // Wider zoom range
           .on("zoom", (event) => {
             mainGroup.attr("transform", event.transform);
           });
 
-        svg.call(zoom).call(zoom.transform, initialTransform); // Apply initial transform
-
-        // Optional: Add a button to reset zoom/pan
-        // svg.append("text")
-        //    .attr("x", 10)
-        //    .attr("y", 20)
-        //    .attr("class", "reset-zoom-btn")
-        //    .style("cursor", "pointer").style("fill", "var(--text-link)")
-        //    .text("[Reset View]")
-        //    .on("click", () => svg.transition().duration(750).call(zoom.transform, initialTransform));
+        svg.call(zoom).call(zoom.transform, initialTransform);
       }
 
       // --- End Node Graph Visualization ---
