@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from typing import Optional, List
 from db import db
 from auth import get_current_user
+from datetime import datetime
 
 router = APIRouter()
 
@@ -20,12 +21,28 @@ class NodeUpdate(BaseModel):
     name: str
     description: Optional[str] = None
 
+class ArtifactModel(BaseModel):
+    id: int
+    title: str
+    description: Optional[str]
+    link: Optional[str]
+    nodeId: int
+    createdBy: Optional[int]
+    createdAt: datetime
+    updatedAt: Optional[datetime]
+
+    class Config:
+        orm_mode = True
+
 class NodeGraph(BaseModel):
     id: int
     name: str
     type: str
     description: Optional[str]
+    parentId: Optional[int]
+    createdAt: datetime
     children: List["NodeGraph"] = []
+    artifacts: List[ArtifactModel] = []
 
     class Config:
         orm_mode = True
@@ -118,7 +135,7 @@ async def update_node(node_id: int, payload: NodeUpdate, user=Depends(get_curren
     return updated_node
 
 
-#Build the nodes graph recursively, checking access for each node
+#Build the nodes graph
 
 
 async def build_node_graph(node_id: int, user_id: int) -> Optional[NodeGraph]:
@@ -148,12 +165,34 @@ async def build_node_graph(node_id: int, user_id: int) -> Optional[NodeGraph]:
         if child_graph:
             visible_children.append(child_graph)
 
+    # Fetch artifacts for this node
+    artifacts_raw = await db.artifact.find_many(where={"nodeId": node_id})
+    
+    # Map artifacts to Pydantic models if needed
+    artifacts = [
+        ArtifactModel(
+            id=a.id,
+            title=a.title,
+            description=a.description,
+            link=a.link,
+            nodeId=a.nodeId,
+            createdBy=a.createdBy,
+            createdAt=a.createdAt.isoformat(),
+            updatedAt=a.updatedAt.isoformat() if a.updatedAt else None
+        )
+        for a in artifacts_raw
+    ]
+
     return NodeGraph(
         id=node.id,
         name=node.name,
         type=node.type,
         description=node.description,
-        children=visible_children
+        parentId=node.parentId,
+        createdAt=node.createdAt.isoformat(),
+        children=visible_children,
+        artifacts=artifacts,
+        access=None
     )
 
 # Endpoint to get graph starting at node_id, filtered by user access
@@ -163,4 +202,3 @@ async def get_node_graph(node_id: int, user=Depends(get_current_user)):
     if not graph:
         raise HTTPException(403, "You do not have access to this node or its children.")
     return graph
-
