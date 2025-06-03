@@ -204,6 +204,8 @@
         onAuthStateChanged,
         signOut,
         getIdToken,
+        setPersistence, // <--- IMPORTED
+        browserLocalPersistence, // <--- IMPORTED
       } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
 
       // Firebase project configuration (should be the same as admin login)
@@ -289,12 +291,14 @@
 
       if (
         firebaseConfig.apiKey &&
-        firebaseConfig.apiKey !== "YOUR_FIREBASE_API_KEY" // Replace with a more robust check if needed
+        firebaseConfig.apiKey !== "YOUR_FIREBASE_API_KEY" && // More robust check
+        firebaseConfig.apiKey == "AIzaSyCbHWUEzqGjzeanOiMG0Z5Lb4wIjWWEMUQ" // Also check against the placeholder you use
       ) {
         try {
           app = initializeApp(firebaseConfig);
           auth = getAuth(app);
           googleProvider = new GoogleAuthProvider();
+          console.log("User Login Page: Firebase Initialized.");
         } catch (e) {
           console.error("Error initializing Firebase:", e);
           showLoginError(
@@ -304,7 +308,7 @@
         }
       } else {
         console.warn(
-          "Firebase config is not set with actual values. Please update firebaseConfig in the script."
+          "Firebase config is not set with actual values or is using placeholder. Please update firebaseConfig in the script."
         );
         showLoginError(
           "Application not configured for login. Please contact support."
@@ -323,19 +327,22 @@
           return;
         }
 
-        setButtonLoadingState(true);
+        // No need to setButtonLoadingState(true) here if onAuthStateChanged is the primary trigger
+        // for existing sessions, as the button wouldn't have been clicked.
+        // If triggered by button click, setButtonLoadingState(true) is already handled in triggerGoogleSignIn.
+        if (!isProcessingLogin) setButtonLoadingState(true); // Only set if not already processing from button click
         clearLoginError();
         console.log("User Login: Processing user", user.email);
 
         try {
-          const token = await getIdToken(user, true);
-          sessionStorage.setItem("token", token); // Store token for userpage.html
+          const token = await getIdToken(user, true); // Force refresh for backend check
+          // sessionStorage.setItem("token", token); // This line might be redundant if userpage.html fetches its own token
           console.log(
             "User Login: Token obtained, calling backend /api/auth..."
           );
 
           const backendResponse = await fetch(
-            "https://docnest-780614596615.asia-south1.run.app/api/auth", // Same endpoint as admin
+            "https://docnest-780614596615.asia-south1.run.app/api/auth",
             {
               method: "POST",
               headers: {
@@ -353,7 +360,16 @@
           if (!backendResponse.ok) {
             const errorText = await backendResponse.text();
             console.error("User Login: Backend auth error:", errorText);
-            const errorData = JSON.parse(errorText || "{}");
+            let errorData = {}; // Default to empty object
+            try {
+              errorData = JSON.parse(errorText || "{}"); // Ensure errorText is not null/undefined
+            } catch (parseError) {
+              console.error(
+                "Could not parse backend error response as JSON:",
+                parseError
+              );
+              errorData.detail = errorText; // Use raw text if not JSON
+            }
             throw new Error(
               errorData.detail ||
                 `Authorization failed (Status: ${backendResponse.status})`
@@ -363,8 +379,6 @@
           const userData = await backendResponse.json();
           console.log("User Login: Backend auth success. User data:", userData);
 
-          // Check if the user has general user access (isUser flag from backend)
-          // or if they are an admin (who should also be able to use the user page)
           if (
             userData &&
             (userData.isUser === true || userData.isAdmin === true)
@@ -385,24 +399,29 @@
                 console.error("Sign out error:", e)
               );
             }
-            sessionStorage.removeItem("token");
-            setButtonLoadingState(false);
+            sessionStorage.removeItem("token"); // Ensure token is cleared
+            setButtonLoadingState(false); // Re-enable button after error
           }
         } catch (error) {
           console.error("User Login: Error during authentication:", error);
           showLoginError(`Authentication failed: ${error.message}`);
           if (auth && auth.currentUser) {
-            // Check if auth and currentUser exist
             await signOut(auth).catch((e) =>
               console.error("Sign out error during catch:", e)
             );
           }
-          sessionStorage.removeItem("token");
-          setButtonLoadingState(false);
+          sessionStorage.removeItem("token"); // Ensure token is cleared
+          setButtonLoadingState(false); // Re-enable button after error
         } finally {
-          isProcessingLogin = false;
+          isProcessingLogin = false; // Always reset processing flag in finally
+          // Only set loading to false if it wasn't set by triggerGoogleSignIn
+          if (!loginButton.disabled) {
+            // A bit of a heuristic, better would be to pass a flag
+            setButtonLoadingState(false);
+          }
         }
       }
+      // --- End Centralized Authentication Handler ---
 
       let initialUserAuthCheckProcessed = false;
       if (auth) {
@@ -413,19 +432,19 @@
             }. Initial Check Processed: ${initialUserAuthCheckProcessed}. IsProcessing: ${isProcessingLogin}`
           );
 
-          if (user && !initialUserAuthCheckProcessed && !isProcessingLogin) {
+          if (user && !isProcessingLogin && !initialUserAuthCheckProcessed) {
             initialUserAuthCheckProcessed = true;
             console.log(
-              "User Login Page: Initial check detected user. Handling authentication..."
+              "User Login Page: Initial onAuthStateChanged detected user. Handling authentication..."
             );
-            handleUserAuthentication(user);
+            handleUserAuthentication(user); // This will set isProcessingLogin
           } else if (!user) {
             console.log(
               "User Login Page: No user session detected by onAuthStateChanged or user signed out."
             );
             sessionStorage.removeItem("token");
             setButtonLoadingState(false);
-            isProcessingLogin = false;
+            isProcessingLogin = false; // Reset if user is null
           }
         });
       }
@@ -445,14 +464,25 @@
         clearLoginError();
         setButtonLoadingState(true);
         isProcessingLogin = true;
+        // initialUserAuthCheckProcessed = true; // No longer needed to set here, onAuthStateChanged will handle if needed.
 
         try {
+          // ******** SET PERSISTENCE HERE ********
+          await setPersistence(auth, browserLocalPersistence);
+          console.log("User Login Page: Firebase persistence set to LOCAL.");
+          // *************************************
+
           console.log("Triggering signInWithPopup for User Login...");
           const result = await signInWithPopup(auth, googleProvider);
           console.log(
             "User Login: signInWithPopup successful, user:",
             result.user.email
           );
+          // After successful signInWithPopup, onAuthStateChanged will fire.
+          // handleUserAuthentication will be called by onAuthStateChanged.
+          // However, to ensure immediate processing and UI feedback, call it here too.
+          // The isProcessingLogin flag in handleUserAuthentication and onAuthStateChanged
+          // should prevent redundant heavy operations.
           await handleUserAuthentication(result.user);
         } catch (err) {
           console.error("User Login: Google Sign-In Popup Error:", err);
@@ -469,9 +499,12 @@
               "Sign-in popup was blocked or cancelled. Please try again and allow popups.";
           }
           showLoginError(friendlyMessage);
+          // Error occurred, so reset state. handleUserAuthentication's finally block might not run if error is before its call.
           setButtonLoadingState(false);
           isProcessingLogin = false;
         }
+        // Note: handleUserAuthentication has its own finally block to reset isProcessingLogin
+        // and setButtonLoadingState(false) upon completion or error within it.
       }
 
       if (loginButton) {
