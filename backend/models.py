@@ -7,7 +7,13 @@ class ArtifactCreate(BaseModel):
     link: str
     nodeId: int
 
+
 class NodeCreate(BaseModel):
     name: str
     type: str
     parentId: Optional[int] = None
+    description: Optional[str] = None
+
+class NodeUpdate(BaseModel):
+    name: str
+    description: Optional[str] = None

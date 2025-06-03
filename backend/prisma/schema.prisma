@@ -12,6 +12,7 @@ datasource db {
 model Node {
   id        Int       @id @default(autoincrement())
   name      String
+  description String?   
   type      String    // e.g. "CE", "Sales", "Folder", etc.
   parentId  Int?
   parent    Node?     @relation("NodeParent", fields: [parentId], references: [id])

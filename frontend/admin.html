@@ -1,339 +1,3291 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>JS Code Migration Analyzer</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <style>
-      body {
-        font-family: "Inter", sans-serif;
-      }
-      /* Custom styles for file input - Light & Black theme */
-      .file-input-container {
-        position: relative;
-        overflow: hidden;
-        display: inline-block;
-      }
-      .file-input-styled {
-        border: 2px dashed #d1d5db; /* gray-300 */
-        border-radius: 0.5rem; /* rounded-lg */
-        padding: 2.5rem 1.5rem;
-        text-align: center;
-        cursor: pointer;
-        background-color: #f9fafb; /* gray-50 */
-        transition: border-color 0.3s ease, background-color 0.3s ease;
-      }
-      .file-input-styled:hover {
-        border-color: #000000; /* black */
-        background-color: #f3f4f6; /* gray-100 */
-      }
-      .file-input-styled span {
-        display: block;
-        font-size: 0.875rem; /* text-sm */
-        color: #4b5563; /* gray-600 */
-      }
-      .file-input-styled strong {
-        color: #000000; /* black */
-      }
-      input[type="file"]#zipFile {
-        position: absolute;
-        left: 0;
-        top: 0;
-        opacity: 0;
-        width: 100%;
-        height: 100%;
-        cursor: pointer;
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DocNest Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+
+  <style>
+    :root {
+      /* Dark Theme (Default) */
+      --bg-primary: #0a0a0a;
+      --bg-card: #1a1a1a;
+      --bg-card-hover: #222222;
+      --bg-input: #2d2d2d;
+      --bg-input-readonly: #383838;
+      --bg-button-primary: #f0f0f0;
+      --bg-button-primary-hover: #ffffff;
+      --bg-button-destructive: #c53030;
+      --bg-button-destructive-hover: #b02a2a;
+      --bg-button-secondary: #4a5568; /* gray-600 like */
+      --bg-button-secondary-hover: #2d3748; /* gray-700 like */
+      --bg-action-icon-hover: #333;
+      --bg-user-list-item: #2c2c2c;
+      --bg-user-list-item-hover: #333333;
+      --bg-inline-form: rgba(42, 42, 42, 0.85);
+      --bg-selected-node: #2a2a2a;
+      --bg-modal-overlay: rgba(0, 0, 0, 0.7);
+      --bg-modal-content: #1f2937; /* gray-800 like */
+      --bg-access-item-even: rgba(255, 255, 255, 0.03);
+      --bg-toast-success: #2f5c3b; /* Darker green */
+      --bg-toast-error: #5c2f2f; /* Darker red */
+      --bg-dropdown-menu: var(--bg-card);
+
+      --text-primary: #e0e0e0;
+      --text-secondary: #bbb;
+      --text-tertiary: #999;
+      --text-placeholder: #888;
+      --text-button-primary: #111;
+      --text-button-destructive: #ffffff;
+      --text-button-secondary: #e2e8f0;
+      --text-card-header: #f0f0f0;
+      --text-link-hover: #0095ff;
+      --text-action-icon: #999;
+      --text-action-icon-hover: #ffffff;
+      --text-green-accent: #4ade80;
+      --text-red-accent: #f87171;
+      --text-yellow-accent: #facc15;
+      --text-toast: #ffffff;
+      --text-dropdown-item-hover: var(--text-link-hover);
+
+      --border-primary: #333;
+      --border-input: #555;
+      --border-input-focus: #007acc;
+      --border-button-primary: #ccc;
+      --border-button-primary-hover: #bbb;
+      --border-button-destructive: #a02828;
+      --border-button-secondary: #4a5568;
+      --border-selected-node: #007acc;
+      --border-tree-children: rgba(107, 114, 128, 0.3);
+      --border-tree-line: #444;
+      --border-preview: #555;
+      --border-toast-success: #38a169; /* green-600 */
+      --border-toast-error: #e53e3e; /* red-600 */
+      --border-dropdown-menu: var(--border-primary);
+
+      --shadow-card: 0 8px 20px rgba(0, 0, 0, 0.3);
+      --shadow-input-focus: 0 0 0 3px rgba(0, 122, 204, 0.3);
+      --shadow-selected-node: inset 2px 0 0 var(--border-selected-node);
+      --shadow-modal: 0 10px 25px rgba(0, 0, 0, 0.5);
+      --shadow-toast: 0 4px 12px rgba(0, 0, 0, 0.4);
+      --shadow-dropdown: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+        0 2px 4px -1px rgba(0, 0, 0, 0.06);
+
+      --scrollbar-thumb: #4a4a4a;
+      --scrollbar-track: #1e1e1e;
+
+      /* Add these new CSS variables to your existing :root */
+      --text-blue-accent: #60a5fa;
+      --text-purple-accent: #a78bfa;
+      --shadow-3xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+
+    .light-theme {
+      --bg-primary: #f4f4f5;
+      --bg-card: #ffffff;
+      --bg-card-hover: #f9fafb;
+      --bg-input: #ffffff;
+      --bg-input-readonly: #e5e7eb;
+      --bg-button-primary: #27272a;
+      --bg-button-primary-hover: #18181b;
+      --bg-button-destructive: #ef4444;
+      --bg-button-destructive-hover: #dc2626;
+      --bg-button-secondary: #e5e7eb;
+      --bg-button-secondary-hover: #d1d5db;
+      --bg-action-icon-hover: #e5e7eb;
+      --bg-user-list-item: #f9fafb;
+      --bg-user-list-item-hover: #f3f4f6;
+      --bg-inline-form: rgba(243, 244, 246, 0.9);
+      --bg-selected-node: #dbeafe;
+      --bg-modal-overlay: rgba(0, 0, 0, 0.3);
+      --bg-modal-content: #ffffff;
+      --bg-access-item-even: #f3f4f6;
+      --bg-toast-success: #c6f6d5; /* Lighter green */
+      --bg-toast-error: #fed7d7; /* Lighter red */
+      --bg-dropdown-menu: var(--bg-card);
+
+      --text-primary: #18181b;
+      --text-secondary: #52525b;
+      --text-tertiary: #71717a;
+      --text-placeholder: #a1a1aa;
+      --text-button-primary: #ffffff;
+      --text-button-destructive: #ffffff;
+      --text-button-secondary: #1f2937;
+      --text-card-header: #1f2937;
+      --text-link-hover: #2563eb;
+      --text-action-icon: #71717a;
+      --text-action-icon-hover: #18181b;
+      --text-green-accent: #16a34a;
+      --text-red-accent: #dc2626;
+      --text-yellow-accent: #ca8a04;
+      --text-toast: #1a202c; /* Dark text for light toasts */
+      --text-dropdown-item-hover: var(--text-link-hover);
+
+      --border-primary: #d1d5db;
+      --border-input: #d1d5db;
+      --border-input-focus: #2563eb;
+      --border-button-primary: #27272a;
+      --border-button-primary-hover: #18181b;
+      --border-button-destructive: #ef4444;
+      --border-button-secondary: #d1d5db;
+      --border-selected-node: #2563eb;
+      --border-tree-children: rgba(209, 213, 219, 0.5);
+      --border-tree-line: #ccc;
+      --border-preview: #d1d5db;
+      --border-toast-success: #68d391; /* green-400 */
+      --border-toast-error: #fc8181; /* red-400 */
+      --border-dropdown-menu: var(--border-primary);
+
+      --shadow-card: 0 4px 15px rgba(0, 0, 0, 0.07);
+      --shadow-input-focus: 0 0 0 3px rgba(37, 99, 235, 0.2);
+      --shadow-selected-node: inset 2px 0 0 var(--border-selected-node);
+      --shadow-modal: 0 10px 25px rgba(0, 0, 0, 0.1);
+      --shadow-toast: 0 4px 12px rgba(0, 0, 0, 0.15);
+      --shadow-dropdown: 0 4px 6px -1px rgba(0, 0, 0, 0.07),
+        0 2px 4px -1px rgba(0, 0, 0, 0.04);
+
+      --scrollbar-thumb: #a1a1aa;
+      --scrollbar-track: #e5e7eb;
+
+      /* Enhanced card styles */
+      .card {
+        background-color: var(--bg-card);
+        border: 1px solid var(--border-primary);
+        border-radius: 1rem;
+        box-shadow: var(--shadow-card);
+        transition: all 0.3s ease;
       }
 
-      /* Enhanced Loading Bar - Black/Dark Gray theme */
-      #loadingIndicator {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+      .card:hover {
+        transform: translateY(-2px);
       }
-      .progress-bar-container {
-        width: 80%;
-        height: 8px;
-        background-color: #e5e7eb; /* gray-200 */
+
+      /* Enhanced input field styles */
+      .input-field {
+        transition: all 0.2s ease;
+      }
+
+      .input-field:focus {
+        transform: translateY(-1px);
+      }
+
+      /* Enhanced button styles */
+      .action-icon-btn {
+        transition: all 0.2s ease;
+      }
+
+      .action-icon-btn:hover {
+        transform: scale(1.1);
+      }
+
+      /* Enhanced scrollbar styles */
+      #tree-container::-webkit-scrollbar,
+      #activity-container::-webkit-scrollbar,
+      #userListContainer::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      #tree-container::-webkit-scrollbar-track,
+      #activity-container::-webkit-scrollbar-track,
+      #userListContainer::-webkit-scrollbar-track {
+        background: var(--scrollbar-track);
         border-radius: 4px;
-        overflow: hidden;
-        margin-top: 0.75rem; /* mt-3 */
       }
-      .progress-bar-indeterminate {
-        width: 100%;
-        height: 100%;
-        /* Using shades of dark gray/black for the gradient */
-        background: linear-gradient(
-          to right,
-          #374151 20%,
-          /* gray-700 */ #1f2937 50%,
-          /* gray-800 */ #374151 80% /* gray-700 */
-        );
-        background-size: 200% 100%;
-        animation: indeterminateAnimation 1.5s infinite linear;
+
+      #tree-container::-webkit-scrollbar-thumb,
+      #activity-container::-webkit-scrollbar-thumb,
+      #userListContainer::-webkit-scrollbar-thumb {
+        background: var(--scrollbar-thumb);
         border-radius: 4px;
       }
 
-      @keyframes indeterminateAnimation {
-        0% {
-          background-position: 200% 0;
-        }
-        100% {
-          background-position: -200% 0;
-        }
+      #tree-container::-webkit-scrollbar-thumb:hover,
+      #activity-container::-webkit-scrollbar-thumb:hover,
+      #userListContainer::-webkit-scrollbar-thumb:hover {
+        background: var(--text-tertiary);
       }
+    }
 
-      .status-text {
-        font-size: 0.875rem; /* text-sm */
-        color: #374151; /* gray-700 */
-        margin-top: 0.5rem; /* mt-2 */
+    body {
+      font-family: "Inter", sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    .selected-node-highlight {
+      background-color: var(--bg-selected-node);
+      border-color: var(--border-selected-node);
+      border-left-width: 3px;
+      box-shadow: var(--shadow-selected-node);
+    }
+    .form-inline input,
+    .form-inline select,
+    .form-inline textarea {
+      margin-bottom: 0.75rem;
+    }
+    .node-item:hover .actions,
+    .artifact-item:hover .actions {
+      opacity: 1;
+    }
+    .actions {
+      transition: opacity 0.2s ease-in-out;
+    }
+    #tree-container,
+    #access-management-modal-current-access,
+    #artifact-details-modal-description,
+    #userListContainer /* Added for user list scroll */ {
+      max-height: 70vh; /* Default max height, can be adjusted */
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+    }
+    #tree-container::-webkit-scrollbar,
+    #access-management-modal-current-access::-webkit-scrollbar,
+    #artifact-details-modal-description::-webkit-scrollbar,
+    #userListContainer::-webkit-scrollbar /* Added for user list scroll */ {
+      width: 6px;
+    }
+
+    #tree-container::-webkit-scrollbar-track,
+    #access-management-modal-current-access::-webkit-scrollbar-track,
+    #artifact-details-modal-description::-webkit-scrollbar-track,
+    #userListContainer::-webkit-scrollbar-track /* Added for user list scroll */ {
+      background: var(--scrollbar-track);
+    }
+
+    #tree-container::-webkit-scrollbar-thumb,
+    #access-management-modal-current-access::-webkit-scrollbar-thumb,
+    #artifact-details-modal-description::-webkit-scrollbar-thumb,
+    #userListContainer::-webkit-scrollbar-thumb /* Added for user list scroll */ {
+      background-color: var(--scrollbar-thumb);
+      border-radius: 3px;
+    }
+    #access-management-modal-current-access {
+      max-height: 250px;
+    }
+    #artifact-details-modal-description {
+      max-height: 200px;
+    }
+    #userListContainer {
+      /* Specific height for user list */
+      max-height: 400px; /* Adjust as needed */
+      min-height: 200px; /* Ensure it has some height even when empty */
+      border: 1px solid var(--border-primary); /* Use theme border */
+      border-radius: 0.5rem;
+      padding: 0.5rem;
+    }
+
+    .submit-button {
+      background-color: var(--bg-button-primary);
+      color: var(--text-button-primary);
+      font-weight: 600;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.375rem;
+      border: 1px solid var(--border-button-primary);
+      transition: background-color 0.2s ease-in-out,
+        transform 0.1s ease-in-out, border-color 0.2s ease-in-out;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .submit-button:hover {
+      background-color: var(--bg-button-primary-hover);
+      border-color: var(--border-button-primary-hover);
+      transform: translateY(-1px);
+    }
+    .submit-button:active {
+      transform: translateY(0px);
+    }
+    .submit-button.destructive {
+      background-color: var(--bg-button-destructive);
+      color: var(--text-button-destructive);
+      border-color: var(--border-button-destructive);
+    }
+    .submit-button.destructive:hover {
+      background-color: var(--bg-button-destructive-hover);
+    }
+    .submit-button.secondary {
+      background-color: var(--bg-button-secondary);
+      color: var(--text-button-secondary);
+      border-color: var(--border-button-secondary);
+    }
+    .submit-button.secondary:hover {
+      background-color: var(--bg-button-secondary-hover);
+    }
+    .submit-button:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+    .spinner {
+      animation: spin 1s linear infinite;
+      border: 2px solid var(--text-button-primary);
+      border-top-color: transparent;
+      border-radius: 50%;
+      width: 1em;
+      height: 1em;
+      margin-right: 0.5em;
+    }
+    .light-theme .submit-button .spinner {
+      border: 2px solid var(--text-button-primary);
+      border-top-color: transparent;
+    }
+    .submit-button.secondary .spinner,
+    .submit-button.destructive .spinner {
+      border: 2px solid var(--text-button-secondary);
+      border-top-color: transparent;
+    }
+    .light-theme .submit-button.secondary .spinner {
+      border: 2px solid var(--text-button-secondary);
+      border-top-color: transparent;
+    }
+
+    .input-field,
+    textarea.input-field {
+      margin-top: 0.25rem;
+      display: block;
+      width: 100%;
+      border-radius: 0.375rem;
+      border: 1px solid var(--border-input);
+      background-color: var(--bg-input);
+      color: var(--text-primary);
+      padding: 0.75rem 1rem;
+      font-size: 0.875rem;
+      transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out,
+        background-color 0.2s ease;
+    }
+    textarea.input-field {
+      min-height: 60px;
+    }
+    .input-field::placeholder,
+    textarea.input-field::placeholder {
+      color: var(--text-placeholder);
+    }
+    .input-field:focus,
+    textarea.input-field:focus {
+      border-color: var(--border-input-focus);
+      outline: none;
+      box-shadow: var(--shadow-input-focus);
+    }
+    .input-field.readonly {
+      background-color: var(--bg-input-readonly);
+      cursor: not-allowed;
+    }
+
+    .label-text {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-bottom: 0.25rem;
+    }
+    .card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-primary);
+      border-radius: 0.75rem; /* Reduced from rounded-xl for consistency */
+      box-shadow: var(--shadow-card);
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+    .card-header {
+      color: var(--text-card-header);
+      font-weight: 600;
+    }
+
+    /* Tree Styling with Connection Lines */
+    .tree-node,
+    .tree-artifact-wrapper {
+      position: relative;
+      padding-left: 20px;
+    }
+    .tree-node::before,
+    .tree-artifact-wrapper::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 8px;
+      width: 1px;
+      height: 100%;
+      background-color: var(--border-tree-line);
+    }
+    .tree-node > .node-content::before,
+    .tree-artifact-wrapper > .node-content::before {
+      content: "";
+      position: absolute;
+      top: 12px;
+      left: -11px;
+      width: 12px;
+      height: 1px;
+      background-color: var(--border-tree-line);
+    }
+    .tree-node:last-child::before {
+      height: 13px;
+    }
+    .tree-artifact-wrapper:last-child::before {
+      height: 13px;
+    }
+    .tree-root > .tree-node::before,
+    .tree-root > .tree-artifact-wrapper::before {
+      display: none;
+    }
+    .tree-root > .tree-node > .node-content::before,
+    .tree-root > .tree-artifact-wrapper > .node-content::before {
+      display: none;
+    }
+
+    .node-content {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 2px 0;
+    }
+    .tree-children-container {
+      margin-left: 20px;
+    }
+    .tree-children-container.collapsed {
+      display: none;
+    }
+    .tree-toggle-icon {
+      cursor: pointer;
+      width: 1.25rem;
+      height: 1.25rem;
+      margin-right: 0.25rem;
+      color: var(--text-tertiary);
+      transition: transform 0.2s ease-in-out;
+      display: inline-flex; /* For centering icon */
+      align-items: center;
+      justify-content: center;
+    }
+    .tree-toggle-icon.collapsed svg {
+      transform: rotate(-90deg);
+    }
+
+    .tree-node-text,
+    .tree-artifact-text {
+      transition: color 0.2s ease-in-out;
+      display: flex;
+      align-items: center;
+    }
+    .tree-node-text {
+      color: var(--text-primary);
+    }
+    .tree-artifact-text {
+      color: var(--text-tertiary);
+    }
+    .tree-artifact-text.clickable:hover {
+      color: var(--text-link-hover);
+      cursor: pointer;
+      text-decoration: underline;
+    }
+    .tree-node-icon {
+      color: var(--text-yellow-accent);
+    }
+    .tree-artifact-icon {
+      color: var(--text-tertiary);
+    }
+    .artifact-preview-container {
+      display: none;
+    }
+
+    .user-list-item {
+      background-color: var(--bg-user-list-item);
+      border: 1px solid var(--border-primary);
+      border-radius: 0.5rem;
+      transition: background-color 0.2s ease-in-out,
+        transform 0.2s ease-in-out, border-color 0.2s ease;
+    }
+    .user-list-item:hover {
+      background-color: var(--bg-user-list-item-hover);
+      transform: translateY(-2px);
+    }
+    .user-email-text {
+      color: var(--text-primary);
+    }
+    .user-role-text {
+      color: var(--text-secondary);
+    }
+    .user-node-role-summary {
+      color: var(--text-tertiary);
+      font-size: 0.8rem;
+    }
+
+    .action-icon-btn {
+      color: var(--text-action-icon);
+      padding: 0.3rem;
+      border-radius: 0.25rem;
+      transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+    }
+    .action-icon-btn:hover {
+      color: var(--text-action-icon-hover);
+      background-color: var(--bg-action-icon-hover);
+    }
+    .action-icon-btn.add {
+      color: var(--text-green-accent);
+    }
+    .action-icon-btn.delete {
+      color: var(--text-red-accent);
+    }
+    .action-icon-btn.add:hover {
+      color: var(--text-green-accent); /* Maintain color */
+    }
+    .action-icon-btn.delete:hover {
+      color: var(--text-red-accent); /* Maintain color */
+    }
+
+    .user-action-button {
+      padding: 0.5rem 0.75rem;
+      border-radius: 0.375rem;
+      font-size: 0.8rem;
+      font-weight: 500;
+      transition: background-color 0.2s ease-in-out,
+        transform 0.1s ease-in-out, color 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+    }
+    .user-action-button svg {
+      margin-right: 0.3rem;
+    }
+    .user-action-button.manage-access {
+      background-color: var(--bg-input);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-input);
+    }
+    .user-action-button.manage-access:hover {
+      background-color: var(--bg-action-icon-hover);
+      color: var(--text-action-icon-hover);
+      transform: translateY(-1px);
+    }
+    .user-action-button.delete-user {
+      background-color: var(--bg-button-destructive);
+      color: var(--text-button-destructive);
+      border: 1px solid var(--border-button-destructive);
+    }
+    .user-action-button.delete-user:hover {
+      background-color: var(--bg-button-destructive-hover);
+      transform: translateY(-1px);
+    }
+
+    #theme-toggle-button {
+      background-color: var(--bg-card);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-primary);
+    }
+    #theme-toggle-button:hover {
+      background-color: var(--bg-card-hover);
+      color: var(--text-primary);
+    }
+
+    /* Modal Styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: var(--bg-modal-overlay);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+        visibility 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 1000;
+    }
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    .modal-content {
+      background-color: var(--bg-modal-content);
+      padding: 2rem;
+      border-radius: 0.75rem;
+      box-shadow: var(--shadow-modal);
+      width: 90%;
+      max-width: 600px;
+      max-height: 90vh;
+      overflow-y: auto;
+      transform: scale(0.95) translateY(10px);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+        opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      opacity: 0;
+    }
+    .modal-overlay.active .modal-content {
+      transform: scale(1) translateY(0);
+      opacity: 1;
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+    .modal-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--text-card-header);
+    }
+    .modal-close-btn {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--text-tertiary);
+      transition: color 0.2s ease;
+    }
+    .modal-close-btn:hover {
+      color: var(--text-primary);
+    }
+    .access-item:nth-child(even) {
+      background-color: var(--bg-access-item-even);
+    }
+
+    /* Search Bar & User Menu */
+    #search-tree-input {
+      /* For folder/file search */
+      width: 100%;
+      max-width: 400px;
+      padding: 0.6rem 1rem;
+      font-size: 0.9rem;
+    }
+    #search-users-input {
+      /* Style inherited via .input-field */
+      margin-bottom: 1rem; /* Space below user search */
+    }
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .user-menu-container {
+      position: relative;
+    }
+    #user-menu-button {
+      background-color: var(--bg-card);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-primary);
+      padding: 0.5rem 0.75rem;
+      border-radius: 0.375rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    #user-menu-button:hover {
+      background-color: var(--bg-card-hover);
+      color: var(--text-primary);
+    }
+    #user-dropdown-menu {
+      background-color: var(--bg-dropdown-menu);
+      border: 1px solid var(--border-dropdown-menu);
+      box-shadow: var(--shadow-dropdown);
+      z-index: 1010;
+    }
+    #user-dropdown-menu button:hover {
+      background-color: var(--bg-card-hover);
+      color: var(--text-dropdown-item-hover);
+    }
+
+    .hidden-node {
+      display: none !important;
+    }
+
+    /* Toast Notification Styles */
+    #toast-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 2000;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .toast {
+      padding: 1rem 1.5rem;
+      border-radius: 0.5rem;
+      color: var(--text-toast);
+      box-shadow: var(--shadow-toast);
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .toast.success {
+      background-color: var(--bg-toast-success);
+      border: 1px solid var(--border-toast-success);
+    }
+    .toast.error {
+      background-color: var(--bg-toast-error);
+      border: 1px solid var(--border-toast-error);
+    }
+    .toast.info {
+      /* Added styling for info toasts */
+      background-color: var(--bg-button-secondary); /* Example */
+      border: 1px solid var(--border-button-secondary);
+      color: var(--text-button-secondary);
+    }
+    .light-theme .toast.info {
+      background-color: #e2e8f0; /* Example light info */
+      border: 1px solid #cbd5e1;
+      color: #475569;
+    }
+    .toast-icon {
+      flex-shrink: 0;
+    }
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
       }
-    </style>
-  </head>
-  <body
-    class="bg-gray-100 text-gray-800 flex items-center justify-center min-h-screen p-4"
-  >
-    <div
-      class="bg-white shadow-xl rounded-lg p-6 md:p-10 w-full max-w-md transform transition-all duration-500"
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="toast-container"></div>
+  <div class="container mx-auto p-4 md:p-8">
+    <header
+      class="mb-6 flex flex-col sm:flex-row justify-between items-center gap-4"
     >
-      <header class="text-center mb-8">
+      <div class="flex">
         <img
-          src="Niveus-ntt-data.png"
-          alt="Niveus NTT DATA Logo"
-          class="mx-auto h-12 mb-6"
+          id="docnest-logo"
+          src="https://niveussolutions.com/wp-content/uploads/2025/02/Niveus-ntt-data.png"
+          alt="DocNest Logo"
+          class="h-12 w-auto mr-3 pt-2"
         />
-        <h1 class="text-2xl font-semibold text-gray-700">
-          JS Code Migration Analyzer
-        </h1>
-        <p class="text-gray-500 mt-2 text-sm">
-          Upload a ZIP file of your JavaScript project for analysis.
-        </p>
-      </header>
-
-      <main>
-        <div class="mb-6">
-          <label for="zipFile" class="file-input-container w-full block">
-            <div class="file-input-styled">
-              <svg
-                class="mx-auto h-10 w-10 text-gray-400"
-                stroke="currentColor"
-                fill="none"
-                viewBox="0 0 48 48"
-                aria-hidden="true"
-              >
-                <path
-                  d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-              <span class="mt-2"
-                ><strong>Click to upload</strong> or drag and drop</span
-              >
-              <span class="text-xs text-gray-500"
-                >ZIP files only, max 50MB</span
-              >
-              <span
-                id="fileNameDisplay"
-                class="mt-1 text-sm font-medium text-gray-700"
-              ></span>
-            </div>
-            <input type="file" id="zipFile" accept=".zip" class="opacity-0" />
-          </label>
-        </div>
-
-        <button
-          id="uploadButton"
-          class="w-full bg-black hover:bg-gray-800 text-white font-medium py-2.5 px-4 rounded-md shadow-sm transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+        <h1
+          class="text-4xl sm:text-4xl font-bold tracking-tight text-[var(--text-card-header)]"
         >
-          Analyze Project
-        </button>
+          DocNest Admin
+        </h1>
+      </div>
+      <div class="header-controls flex items-center gap-4 ml-auto">
+        <input
+          type="search"
+          id="search-tree-input"
+          class="input-field flex-grow max-w-xs sm:max-w-sm md:max-w-md"
+          placeholder="Search folders/files..."
+        />
+        <button
+          id="theme-toggle-button"
+          class="p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--border-input-focus)] flex-shrink-0"
+          title="Toggle Theme"
+        ></button>
 
-        <div id="statusArea" class="mt-6 text-center hidden">
-          <div id="loadingIndicator">
-            <p id="statusMessage" class="status-text"></p>
-            <div class="progress-bar-container mt-2">
-              <div class="progress-bar-indeterminate"></div>
+        <div class="user-menu-container">
+          <button
+            id="user-menu-button"
+            type="button"
+            aria-expanded="false"
+            aria-haspopup="true"
+          >
+            <span id="user-display-name" class="text-sm font-medium"
+              >User</span
+            >
+            <svg
+              class="h-5 w-5 text-[var(--text-tertiary)]"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.25 4.25a.75.75 0 01-1.06 0L5.23 8.29a.75.75 0 01.02-1.06z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </button>
+          <div
+            id="user-dropdown-menu"
+            class="absolute right-0 mt-2 w-64 origin-top-right rounded-md bg-[var(--bg-dropdown-menu)] shadow-lg ring-1 ring-[var(--border-dropdown-menu)] ring-opacity-5 focus:outline-none hidden"
+            role="menu"
+            aria-orientation="vertical"
+            aria-labelledby="user-menu-button"
+          >
+            <div class="py-1" role="none">
+              <div class="px-4 py-3 border-b border-[var(--border-primary)]">
+                <p
+                  class="text-sm font-semibold text-[var(--text-primary)]"
+                  id="dropdown-user-name"
+                >
+                  User Name
+                </p>
+                <p
+                  class="text-xs text-[var(--text-secondary)] truncate"
+                  id="dropdown-user-email"
+                >
+                  user@example.com
+                </p>
+              </div>
+              <button
+                id="logout-button-dropdown"
+                class="block w-full px-4 py-2 text-left text-sm text-[var(--text-red-accent)] hover:bg-[var(--bg-card-hover)]"
+                role="menuitem"
+              >
+                Logout
+              </button>
             </div>
           </div>
         </div>
+      </div>
+    </header>
 
-        <div
-          id="errorArea"
-          class="mt-4 p-3 bg-red-100 text-red-700 border border-red-300 rounded-md hidden"
-        >
-          <p id="errorMessage" class="text-sm"></p>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-[1800px] mx-auto">
+      <!-- Left Column -->
+      <div class="space-y-8">
+        <!-- Folder Structure Card -->
+        <div class="card p-6 shadow-2xl hover:shadow-3xl transition-shadow duration-300">
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold card-header flex items-center gap-3">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-[var(--text-yellow-accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+              </svg>
+              Folder Structure
+            </h2>
+            <button
+              onclick="promptNewRoot()"
+              class="action-icon-btn add text-2xl hover:scale-110 transition-transform"
+              title="Add New Root Folder"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M12 4v16m8-8H4"
+                />
+              </svg>
+            </button>
+          </div>
+          <div id="tree-container" class="max-h-[calc(100vh-350px)] overflow-y-auto rounded-lg border border-[var(--border-primary)] bg-[var(--bg-card)]">
+            <div id="tree" class="tree-root space-y-0.5 p-2"></div>
+          </div>
         </div>
-      </main>
 
-      <footer class="text-center mt-10 text-xs text-gray-400">
-        <p>&copy; 2025 AI Code Analyzer. Niveus.</p>
-      </footer>
+        <!-- Add User Card -->
+        <div class="card p-6 shadow-2xl hover:shadow-3xl transition-shadow duration-300">
+          <h2 class="text-2xl font-bold card-header mb-6 flex items-center gap-3">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-[var(--text-green-accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+            </svg>
+            Add New User
+          </h2>
+          <form id="addUserForm" class="space-y-6">
+            <div>
+              <label for="newUserEmail" class="label-text"
+                >Email Address</label
+              >
+              <input
+                type="email"
+                id="newUserEmail"
+                required
+                class="input-field"
+                placeholder="user@example.com"
+              />
+            </div>
+            <div>
+              <label for="newUserRole" class="label-text"
+                >Assign Global Role</label
+              >
+              <select id="newUserRole" class="input-field">
+                <option value="ADMIN">ADMIN</option>
+                <option value="EDITOR">EDITOR</option>
+                <option value="VIEWER">VIEWER</option>
+              </select>
+            </div>
+            <div>
+              <label for="newUserNodeAccess" class="label-text"
+                >Grant Initial Node Access (Optional)</label
+              >
+              <select id="newUserNodeAccess" class="input-field">
+                <option value="">None - Global Role Only</option>
+              </select>
+            </div>
+
+            <div class="flex items-center mt-1 mb-3">
+              <input
+                type="checkbox"
+                id="applyGlobalRoleToAllNodesCheckbox"
+                class="h-4 w-4 text-[var(--text-link-hover)] border-[var(--border-input)] rounded focus:ring-[var(--text-link-hover)] mr-2"
+              />
+              <label
+                for="applyGlobalRoleToAllNodesCheckbox"
+                class="label-text !mb-0 !font-normal text-sm"
+              >
+                Apply global role to all nodes (if 'None' selected above)
+              </label>
+            </div>
+            <div>
+              <label for="newUserNodeRole" class="label-text"
+                >Role for Selected Node</label
+              >
+              <select id="newUserNodeRole" class="input-field">
+                <option value="ADMIN">ADMIN</option>
+                <option value="EDITOR">EDITOR</option>
+                <option value="VIEWER">VIEWER</option>
+              </select>
+            </div>
+            <button type="submit" class="submit-button w-full sm:w-auto">
+              <span class="button-text">Add User</span>
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Right Column -->
+      <div class="space-y-8">
+        <!-- Activity Log Card -->
+        <div class="card p-6 shadow-2xl hover:shadow-3xl transition-shadow duration-300">
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold card-header flex items-center gap-3">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-[var(--text-blue-accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+              </svg>
+              Activity Log
+            </h2>
+            <button
+              onclick="fetchActivity(true)" 
+              class="action-icon-btn text-xl hover:scale-110 transition-transform" 
+              title="Refresh Activity Log"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m-15.357-2a8.001 8.001 0 0015.357 2m0 0H15" />
+              </svg>
+            </button>
+          </div>
+          <div id="activity-container" class="max-h-[calc(100vh-350px)] overflow-y-auto rounded-lg border border-[var(--border-primary)] bg-[var(--bg-card)]">
+            <div id="activity-list-initial-spinner" class="text-center py-6">
+              <div class="inline-block w-8 h-8 border-4 border-[var(--border-primary)] border-t-[var(--text-link-hover)] rounded-full animate-spin"></div>
+              <p class="text-[var(--text-secondary)] mt-2">Loading Activity...</p>
+            </div>
+            <ul id="activityList" class="space-y-1 p-2"></ul>
+            <div id="activity-list-message-area" class="text-center text-[var(--text-tertiary)] py-4 hidden"></div>
+          </div>
+        </div>
+
+        <!-- All Users Card -->
+        <div class="card p-6 shadow-2xl hover:shadow-3xl transition-shadow duration-300">
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 border-b border-[var(--border-primary)] pb-4">
+            <h2 class="text-2xl font-bold card-header flex items-center gap-3">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-[var(--text-purple-accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+              </svg>
+              All Users
+            </h2>
+          </div>
+
+          <div class="mb-4">
+            <input 
+              type="search" 
+              id="search-users-input" 
+              class="input-field w-full rounded-lg shadow-sm focus:shadow-md transition-shadow" 
+              placeholder="Search users by email..." 
+            />
+          </div>
+
+          <div id="userListContainer" class="max-h-[calc(100vh-350px)] overflow-y-auto rounded-lg border border-[var(--border-primary)] bg-[var(--bg-card)]">
+            <div
+              id="user-list-initial-spinner"
+              class="text-center py-6 hidden"
+            >
+              <div
+                class="inline-block w-10 h-10 border-4 border-[var(--border-primary)] border-t-[var(--text-link-hover)] rounded-full animate-spin"
+              ></div>
+              <p class="text-[var(--text-secondary)] mt-3">
+                Loading Users...
+              </p>
+            </div>
+
+            <ul id="userList" class="space-y-3"></ul>
+            <div
+              id="user-list-loading-indicator"
+              class="text-center py-4 hidden"
+            >
+              <div
+                class="inline-block w-8 h-8 border-2 border-[var(--border-primary)] border-t-[var(--text-link-hover)] rounded-full animate-spin"
+              ></div>
+            </div>
+
+            <div
+              id="user-list-message-area"
+              class="text-center text-[var(--text-tertiary)] py-6 hidden"
+            ></div>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <script>
-      const zipFileInput = document.getElementById("zipFile");
-      const uploadButton = document.getElementById("uploadButton");
-      const statusArea = document.getElementById("statusArea");
-      const loadingIndicator = document.getElementById("loadingIndicator");
-      const statusMessage = document.getElementById("statusMessage");
-      const errorArea = document.getElementById("errorArea");
-      const errorMessage = document.getElementById("errorMessage");
-      const fileNameDisplay = document.getElementById("fileNameDisplay");
+  <div id="access-management-modal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">
+          Manage Access for
+          <span id="modal-user-email" class="font-mono"></span>
+        </h3>
+        <button class="modal-close-btn" onclick="closeAccessModal()">
+          &times;
+        </button>
+      </div>
+      <input type="hidden" id="modal-editing-user-email-hidden" />
 
-      // Configure your backend API URL here
-      const API_URL = "http://127.0.0.1:8000/analyze-js-zip/";
+      <h4 class="text-lg font-semibold mb-2 text-[var(--text-secondary)]">
+        Current Node Access:
+      </h4>
+      <div
+        id="access-management-modal-current-access"
+        class="mb-6 space-y-0 border border-[var(--border-primary)] rounded-md"
+      >
+        <p class="text-[var(--text-tertiary)] p-3">Loading access...</p>
+      </div>
 
-      zipFileInput.addEventListener("change", () => {
-        if (zipFileInput.files.length > 0) {
-          fileNameDisplay.textContent = `Selected: ${zipFileInput.files[0].name}`;
-          hideError();
-        } else {
-          fileNameDisplay.textContent = "";
+      <h4 class="text-lg font-semibold mb-3 text-[var(--text-secondary)]">
+        Grant New Node Access:
+      </h4>
+      <form
+        id="grantNewAccessForm"
+        class="space-y-4 p-4 border border-[var(--border-primary)] rounded-md bg-[var(--bg-inline-form)]"
+      >
+        <div>
+          <label for="modalNodeSelect" class="label-text"
+            >Select Folder/File</label
+          >
+          <select id="modalNodeSelect" class="input-field">
+            <option value="">-- Select Node --</option>
+          </select>
+        </div>
+        <div>
+          <label for="modalNodeRoleSelect" class="label-text"
+            >Assign Role</label
+          >
+          <select id="modalNodeRoleSelect" class="input-field">
+            <option value="ADMIN">ADMIN</option>
+            <option value="EDITOR">EDITOR</option>
+            <option value="VIEWER">VIEWER</option>
+          </select>
+        </div>
+        <button
+          type="submit"
+          class="submit-button secondary w-full sm:w-auto"
+        >
+          <span class="button-text">Grant Access</span>
+        </button>
+      </form>
+      <div class="mt-6 text-right">
+        <button class="submit-button secondary" onclick="closeAccessModal()">
+          <span class="button-text">Close</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="artifact-details-modal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="artifact-modal-title" class="modal-title">
+          Artifact Details
+        </h3>
+        <button class="modal-close-btn" onclick="closeArtifactDetailsModal()">
+          &times;
+        </button>
+      </div>
+
+      <div class="mb-4">
+        <label class="label-text">Description:</label>
+        <div
+          id="artifact-details-modal-description"
+          class="p-3 border border-[var(--border-input)] rounded-md bg-[var(--bg-input)] text-sm min-h-[60px]"
+        >
+          No description provided.
+        </div>
+      </div>
+
+      <div class="mt-6 text-right space-x-3">
+        <a
+          id="artifact-modal-link"
+          href="#"
+          target="_blank"
+          class="submit-button inline-block"
+        >
+          Go to Resource
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-4 w-4 inline-block ml-1"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+            />
+          </svg>
+        </a>
+        <button
+          class="submit-button secondary"
+          onclick="closeArtifactDetailsModal()"
+        >
+          <span class="button-text">Close</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="delete-confirmation-modal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="delete-modal-title" class="modal-title">Confirm Deletion</h3>
+        <button
+          class="modal-close-btn"
+          onclick="closeDeleteConfirmationModal()"
+        >
+          &times;
+        </button>
+      </div>
+      <p id="delete-modal-message" class="mb-4 text-[var(--text-secondary)]">
+        Are you sure you want to delete this item? This action cannot be
+        undone.
+      </p>
+      <div class="mb-4">
+        <label for="delete-confirm-input" class="label-text"
+          >To confirm, type "DELETE" in the box below:</label
+        >
+        <input
+          type="text"
+          id="delete-confirm-input"
+          class="input-field"
+          placeholder="DELETE"
+        />
+      </div>
+      <div class="mt-6 text-right space-x-3">
+        <button
+          class="submit-button secondary"
+          onclick="closeDeleteConfirmationModal()"
+        >
+          <span class="button-text">Cancel</span>
+        </button>
+        <button
+          id="confirm-delete-button"
+          class="submit-button destructive"
+          disabled
+        >
+          <span class="button-text">Delete</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  // --- Firebase Configuration ---
+  const firebaseConfig = {
+    apiKey: "AIzaSyCbHWUEzqGjzeanOiMG0Z5Lb4wIjWWEMUQ", // Replace with your actual API key if this is a placeholder
+    authDomain: "docnest-f85e2.firebaseapp.com", // Replace with your actual auth domain
+    projectId: "docnest-f85e2", // Replace with your actual project ID
+    storageBucket: "docnest-f85e2.appspot.com", // Replace with your actual storage bucket
+    messagingSenderId: "102395439437", // Replace with your actual sender ID
+    appId: "1:102395439437:web:84e6676388b5d54395af04", // Replace with your actual App ID
+    measurementId: "G-YRMBR8BVSE", // Optional: Replace with your actual Measurement ID
+  };
+
+  // --- Global Helper Functions (defined early) ---
+  window.showNotification = function (
+    message,
+    type = "success",
+    duration = 3000
+  ) {
+    const toastContainer = document.getElementById("toast-container");
+    if (!toastContainer) return;
+
+    const toast = document.createElement("div");
+    toast.classList.add("toast", type);
+
+    let iconHtml = "";
+    if (type === "success") {
+      iconHtml = `<svg class="toast-icon h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
+    } else if (type === "error") {
+      iconHtml = `<svg class="toast-icon h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
+    } else if (type === "info") {
+      iconHtml = `<svg class="toast-icon h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
+    }
+
+    toast.innerHTML = `${iconHtml}<span>${message}</span>`;
+    toastContainer.appendChild(toast);
+
+    toast.offsetHeight; // Trigger reflow
+
+    toast.classList.add("show");
+
+    setTimeout(() => {
+      toast.classList.remove("show");
+      setTimeout(() => {
+        toast.remove();
+      }, 300);
+    }, duration);
+  };
+
+  window.setButtonLoading = function (
+    button,
+    isLoading,
+    originalText = null
+  ) {
+    if (!(button instanceof HTMLElement)) {
+      console.error(
+        "setButtonLoading: button argument is not an HTMLElement",
+        button
+      );
+      return;
+    }
+    const buttonTextSpan = button.querySelector(".button-text");
+    if (isLoading) {
+      button.disabled = true;
+      if (buttonTextSpan) {
+        if (
+          originalText !== null &&
+          typeof buttonTextSpan.dataset.originalText === "undefined"
+        ) {
+          buttonTextSpan.dataset.originalText = buttonTextSpan.innerHTML;
         }
-      });
-
-      uploadButton.addEventListener("click", handleUpload);
-
-      function showStatus(message, showSpinner = false) {
-        statusArea.classList.remove("hidden");
-        statusMessage.textContent = message;
-        hideError();
-      }
-
-      function hideStatus() {
-        statusArea.classList.add("hidden");
-        statusMessage.textContent = "";
-      }
-
-      function showError(message) {
-        errorArea.classList.remove("hidden");
-        errorMessage.textContent = message;
-        hideStatus();
-      }
-
-      function hideError() {
-        errorArea.classList.add("hidden");
-        errorMessage.textContent = "";
-      }
-
-      function enableForm() {
-        uploadButton.disabled = false;
-        uploadButton.textContent = "Analyze Project";
-        zipFileInput.disabled = false;
-      }
-
-      function disableForm() {
-        uploadButton.disabled = true;
-        zipFileInput.disabled = true;
-      }
-
-      async function handleUpload() {
-        const file = zipFileInput.files[0];
-
-        if (!file) {
-          showError("Please select a ZIP file to upload.");
-          return;
+        buttonTextSpan.innerHTML = `<span class="spinner"></span>Processing...`;
+      } else {
+        if (
+          originalText !== null &&
+          typeof button.dataset.originalText === "undefined"
+        ) {
+          button.dataset.originalText = button.innerHTML;
         }
+        button.innerHTML = `<span class="spinner"></span>Processing...`;
+      }
+    } else {
+      button.disabled = false;
+      if (buttonTextSpan) {
+        buttonTextSpan.innerHTML =
+          buttonTextSpan.dataset.originalText || originalText || "Submit";
+        delete buttonTextSpan.dataset.originalText;
+      } else {
+        button.innerHTML =
+          button.dataset.originalText || originalText || "Submit";
+        delete button.dataset.originalText;
+      }
+    }
+  };
+  // --- End Global Helper Functions ---
 
-        if (!file.name.endsWith(".zip")) {
-          showError("Invalid file type. Only .ZIP files are allowed.");
-          return;
-        }
+  // Initialize Firebase (compat version)
+  let firebaseApp;
+  let firebaseAuth;
 
-        const formData = new FormData();
-        formData.append("file", file);
-
-        disableForm();
-        showStatus(
-          `Processing ${file.name}... This may take a few moments.`,
-          true
+  // Standard Firebase initialization. Ensure firebaseConfig.apiKey is correctly set.
+  if (
+    firebaseConfig.apiKey &&
+    firebaseConfig.apiKey !== "YOUR_FIREBASE_API_KEY_PLACEHOLDER" &&
+    !firebaseConfig.apiKey.startsWith("AIzaSyC_THIS_IS_A_COMMON_PLACEHOLDER_PREFIX")
+  ) {
+    try {
+      firebaseApp = firebase.initializeApp(firebaseConfig);
+      firebaseAuth = firebase.auth();
+      console.log("Admin Panel: Firebase initialized successfully.");
+    } catch (e) {
+      console.error("Admin Panel: Error initializing Firebase:", e);
+      if (window.showNotification)
+        window.showNotification(
+          "Critical Error: Could not initialize Firebase. Check console.",
+          "error",
+          10000
         );
-        uploadButton.textContent = "Analyzing...";
+    }
+  } else {
+    console.warn(
+      "Admin Panel: Firebase config apiKey might be a placeholder or missing. Please update firebaseConfig."
+    );
+    if (window.showNotification)
+      window.showNotification(
+        "Firebase not configured. Admin panel may not work correctly.",
+        "error",
+        10000
+      );
+    // Potentially disable UI elements that depend on Firebase if it's not initialized
+  }
 
+  
+
+  // --- Auth State Management ---
+  const userMenuButton = document.getElementById("user-menu-button");
+  const userDisplayNameSpan = document.getElementById("user-display-name");
+  const userDropdownMenu = document.getElementById("user-dropdown-menu");
+  const dropdownUserName = document.getElementById("dropdown-user-name");
+  const dropdownUserEmail = document.getElementById("dropdown-user-email");
+  const logoutButtonDropdown = document.getElementById("logout-button-dropdown");
+
+  if (firebaseAuth) {
+    // Only proceed if firebaseAuth was initialized
+    firebaseAuth.onAuthStateChanged((user) => {
+      if (user) {
+        console.log("✅ Admin Panel: Logged in as", user.email);
+        if (userDisplayNameSpan)
+          userDisplayNameSpan.textContent =
+            user.displayName || user.email.split("@")[0];
+        if (dropdownUserName)
+          dropdownUserName.textContent = user.displayName || "N/A";
+        if (dropdownUserEmail) dropdownUserEmail.textContent = user.email;
+
+        // Check if BASE (now BASE_API_URL) is configured before initializing panel
+        if (
+          BASE_API_URL &&
+          !BASE_API_URL.includes("your-docnest-backend-servicename") &&
+          !BASE_API_URL.includes("your-actual-cloud-run-url")
+        ) {
+          initializeAdminPanel();
+        } else {
+          console.error(
+            "Admin Panel: Backend API URL is not properly configured. Halting data load."
+          );
+          if (window.showNotification)
+            window.showNotification(
+              "Backend service URL not configured. Please contact support.",
+              "error",
+              60000
+            );
+        }
+      } else {
+        console.log(
+          "🚫 Admin Panel: No user logged in. Redirecting to login_admin.html"
+        );
+        sessionStorage.removeItem("token"); // This is consistent with login_admin.html
+        if (!window.location.pathname.endsWith("login_admin.html")) {
+          window.location.href = "login_admin.html";
+          // The console.warn for commented out redirect can be removed if redirect is active.
+        }
+      }
+    });
+  } else {
+    console.error(
+      "Admin Panel: Firebase Auth is not available (likely due to config issue). Admin panel features requiring authentication will not work."
+    );
+    if (document.body && !window.location.pathname.endsWith("login_admin.html")) {
+      if (window.showNotification)
+        window.showNotification(
+          "Authentication service unavailable. Please check console.",
+          "error",
+          10000
+        );
+      // Fallback redirect
+      setTimeout(() => {
+        if (!window.location.pathname.endsWith("login_admin.html")) {
+          window.location.href = "login_admin.html";
+        }
+      }, 3000);
+    }
+  }
+
+  async function getAuthToken() {
+    if (!firebaseAuth || !firebaseAuth.currentUser) {
+      console.warn(
+        "Admin Panel: No current user for getAuthToken. Redirecting to login."
+      );
+      if (!window.location.pathname.endsWith("login_admin.html")) {
+        window.location.href = "login_admin.html";
+      }
+      return null;
+    }
+    try {
+      const token = await firebaseAuth.currentUser.getIdToken(true);
+      sessionStorage.setItem("token", token); // Consistent with login_admin.html
+      return token;
+    } catch (error) {
+      console.error("Admin Panel: Error getting ID token:", error);
+      if (window.showNotification)
+        window.showNotification(
+          "Could not refresh auth token. Please log in again.",
+          "error"
+        );
+      if (firebaseAuth)
+        await firebaseAuth
+          .signOut()
+          .catch((e) =>
+            console.error("Sign out error after token refresh failure", e)
+          );
+      return null; // onAuthStateChanged will handle redirect
+    }
+  }
+
+ async function secureFetch(url, options = {}) {
+    let token = await getAuthToken();
+
+    // If getAuthToken() returned null but we have an active Firebase user, try one more refresh.
+    // This can happen if the token expired and getAuthToken's internal refresh failed, or if currentUser was briefly unavailable.
+    if (!token && firebaseAuth && firebaseAuth.currentUser) {
+        console.log("Admin Panel: Initial token missing in secureFetch, attempting one refresh...");
         try {
-          const response = await fetch(API_URL, {
+            token = await firebaseAuth.currentUser.getIdToken(true); // Force refresh
+            sessionStorage.setItem("token", token); // Ensure it's stored
+        } catch (e) {
+            console.error("Admin Panel: Token refresh attempt in secureFetch failed during initial check.", e);
+            // On critical refresh failure, sign out and throw to propagate.
+            if (firebaseAuth) await firebaseAuth.signOut().catch(err => console.error("Sign out after refresh fail in secureFetch failed", err));
+            throw new Error("Authentication token refresh failed. Please log in again.");
+        }
+    }
+
+    if (!token) {
+        console.error("Admin Panel: Auth token unavailable for secureFetch to " + url);
+        // This case should be handled by getAuthToken's internal redirect/signout.
+        // If we reach here, it implies an unusual state, so force sign out if a user is somehow still perceived.
+        if (firebaseAuth && firebaseAuth.currentUser) {
+            await firebaseAuth.signOut().catch(e => console.error("Sign out due to no token in secureFetch failed", e));
+        }
+        throw new Error("Authentication token not available. Please log in again.");
+    }
+
+    const headers = { ...options.headers };
+    headers["Authorization"] = `Bearer ${token}`;
+    if (options.body && !(options.body instanceof FormData) && (options.method === 'POST' || options.method === 'PUT' || options.method === 'PATCH')) {
+        headers["Content-Type"] = "application/json";
+    }
+
+    try {
+        let response = await fetch(url, { ...options, headers });
+
+        if (response.status === 401) {
+            console.log(`Admin Panel: Received 401 for ${url}, attempting token refresh and retry...`);
+            if (firebaseAuth && firebaseAuth.currentUser) {
+                try {
+                    const newToken = await firebaseAuth.currentUser.getIdToken(true); // Force refresh
+                    sessionStorage.setItem("token", newToken);
+                    headers["Authorization"] = `Bearer ${newToken}`; // Update header with the new token
+
+                    console.log(`Admin Panel: Retrying ${url} with new token.`);
+                    response = await fetch(url, { ...options, headers }); // Retry the request
+                } catch (refreshError) {
+                    console.error("Admin Panel: Token refresh for 401 retry failed:", refreshError);
+                    if (firebaseAuth) await firebaseAuth.signOut().catch(e => console.error("Sign out after 401 retry refresh fail", e));
+                    throw new Error("Session expired after failed refresh. Please log in again.");
+                }
+            } else {
+                console.warn("Admin Panel: No Firebase user for 401 token refresh. Proceeding to final 401 handling.");
+            }
+        }
+
+        // --- IMPORTANT CHANGE HERE ---
+        if (response.status === 403) {
+            console.error(`Admin Panel: Permission denied (403) for ${url}.`);
+            if(window.showNotification) window.showNotification("Access Denied: You do not have permission to perform this action.", "error", 7000);
+            throw new Error(`Permission Denied (403)`); // Throw, but DO NOT SIGN OUT
+        }
+
+        if (response.status === 401) { // If it's still 401 after potential retry or initially no user for retry
+            console.error(`Admin Panel: Final Authorization error (401) for ${url}.`);
+            if(window.showNotification) window.showNotification("Authentication required. Your session may have expired. Please log in again.", "error", 7000);
+            if (firebaseAuth) await firebaseAuth.signOut().catch(e => console.error("Sign out after final 401", e));
+            throw new Error(`Authorization Failed (401)`);
+        }
+        // --- END IMPORTANT CHANGE ---
+
+        // For non-auth server errors (like 500), response.ok will be false
+        if (!response.ok) {
+            let errorDetail = `Request failed with status ${response.status}`;
+            try {
+                const errorData = await response.json();
+                errorDetail = errorData.detail || errorData.message || JSON.stringify(errorData);
+            } catch (e) {
+                try { errorDetail = await response.text(); } catch (e2) { /* keep original errorDetail */ }
+            }
+            console.error(`Admin Panel: HTTP error ${response.status} for ${url}. Details: ${errorDetail}`);
+            throw new Error(errorDetail);
+        }
+
+        return response;
+    } catch (networkOrThrownError) {
+        console.error(`Admin Panel: Error in secureFetch for ${url}:`, networkOrThrownError);
+        // Avoid double-notifying for auth errors that already showed a specific message
+        if (!networkOrThrownError.message.toLowerCase().includes("authorization") &&
+            !networkOrThrownError.message.toLowerCase().includes("authentication") &&
+            !networkOrThrownError.message.toLowerCase().includes("session expired") &&
+            !networkOrThrownError.message.toLowerCase().includes("permission denied")) { // Added "permission denied"
+            if(window.showNotification) window.showNotification(`Network or Server Error: ${networkOrThrownError.message}.`, "error", 7000);
+        }
+        throw networkOrThrownError;
+    }
+}
+  // ================================================================
+  // DYNAMIC BACKEND URL CONFIGURATION
+  // ================================================================
+  let BASE_API_URL; // Using a more descriptive name
+  const localBaseUrl = "http://localhost:8000"; // NO TRAILING SLASH
+
+  // YOUR ACTUAL CLOUD RUN BASE URL (without any /api paths)
+  const cloudRunBaseUrl = "https://docnest-780614596615.asia-south1.run.app"; // NO TRAILING SLASH
+
+  if (
+    window.location.hostname === "localhost" ||
+    window.location.hostname === "127.0.0.1"
+  ) {
+    BASE_API_URL = localBaseUrl;
+    console.log("ADMIN PANEL: Using LOCAL backend API base:", BASE_API_URL);
+  } else {
+    BASE_API_URL = cloudRunBaseUrl;
+    console.log("ADMIN PANEL: Using CLOUD backend API base:", BASE_API_URL);
+
+    // Safety check for common generic placeholder strings
+    if (
+      cloudRunBaseUrl.includes("your-docnest-backend-servicename") ||
+      cloudRunBaseUrl.includes("your-actual-cloud-run-url") ||
+      cloudRunBaseUrl === "https://placeholder-url.a.run.app"
+    ) {
+      // Add any other placeholders you might use
+      const warningMessage =
+        "CRITICAL: Admin Panel Cloud Run URL (BASE_API_URL) looks like a placeholder! API calls will likely fail. Please update 'cloudRunBaseUrl' in the admin.html script.";
+      console.error(warningMessage);
+      if (window.showNotification) {
+        window.showNotification(warningMessage, "error", 60000);
+      } else {
+        alert(warningMessage);
+      }
+      // Consider disabling UI or halting further execution
+    }
+  }
+  // ================================================================
+
+  let fullTreeData = [];
+  let flatNodeList = [];
+
+  // --- Theme Toggle ---
+  // (Your existing theme toggle code using themeToggleButton, sunIcon, moonIcon, applyTheme is here)
+  // Ensure themeToggleButton is correctly selected from DOM.
+  const themeToggleButton = document.getElementById("theme-toggle-button");
+  const sunIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>`;
+  const moonIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>`;
+
+
+  const LIGHT_MODE_LOGO = "https://niveussolutions.com/wp-content/uploads/2025/02/Niveus-ntt-data.png";
+const DARK_MODE_LOGO = "https://gitlab.niveussolutions.com/uploads/-/system/appearance/header_logo/1/Nivues_log.png";
+const docnestLogo = document.getElementById('docnest-logo');
+
+  function applyTheme(theme) {
+  if (!docnestLogo) return; // Ensure logo element exists
+
+  if (theme === "light") {
+    document.body.classList.add("light-theme");
+    if(themeToggleButton) themeToggleButton.innerHTML = moonIcon;
+    docnestLogo.src = LIGHT_MODE_LOGO; // Set light mode logo
+    localStorage.setItem("adminTheme", "light");
+  } else {
+    document.body.classList.remove("light-theme");
+    if(themeToggleButton) themeToggleButton.innerHTML = sunIcon;
+    docnestLogo.src = DARK_MODE_LOGO; // Set dark mode logo
+    localStorage.setItem("adminTheme", "dark");
+  }
+}
+  if (themeToggleButton) {
+    // Check if button exists
+    themeToggleButton.addEventListener("click", () =>
+      applyTheme(
+        document.body.classList.contains("light-theme") ? "dark" : "light"
+      )
+    );
+    // Apply initial theme
+    applyTheme(
+      localStorage.getItem("adminTheme") ||
+        (window.matchMedia("(prefers-color-scheme: dark)").matches
+          ? "dark"
+          : "dark")
+    );
+  }
+
+  function escapeJSString(str) {
+    if (typeof str !== "string") return "";
+    return str
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;")
+      .replace(/`/g, "&#96;");
+  }
+
+  // --- Tree Search ---
+  // (Your existing filterTreeDOM and its related code)
+  // Ensure searchTreeInput is correctly selected.
+  const searchTreeInput = document.getElementById("search-tree-input");
+  if (searchTreeInput) {
+    searchTreeInput.addEventListener("input", (e) =>
+      filterTreeDOM(e.target.value.toLowerCase())
+    );
+  }
+  function filterTreeDOM(searchTerm) {
+    const treeElement = document.getElementById("tree");
+    if (!treeElement) return;
+
+    function checkVisibility(element, term) {
+      let directMatch = false;
+      const nodeName = (element.dataset.nodeName || "").toLowerCase();
+      const description = (element.dataset.description || "").toLowerCase();
+      if (nodeName.includes(term) || description.includes(term)) {
+        directMatch = true;
+      }
+      let childrenMatch = false;
+      if (element.classList.contains("tree-node")) {
+        const childrenContainer = element.querySelector(
+          ".tree-children-container"
+        );
+        if (childrenContainer) {
+          const childrenElements = childrenContainer.children;
+          for (const child of childrenElements) {
+            if (
+              child.classList.contains("tree-node") ||
+              child.classList.contains("tree-artifact-wrapper")
+            ) {
+              if (checkVisibility(child, term)) {
+                childrenMatch = true;
+              }
+            }
+          }
+        }
+      }
+      const shouldBeVisible = directMatch || childrenMatch;
+      element.classList.toggle("hidden-node", !shouldBeVisible && term.length > 0);
+      if (shouldBeVisible && childrenMatch && element.classList.contains("tree-node")) {
+        const childrenContainer = document.getElementById(`children-${element.dataset.nodeId}`);
+        if (childrenContainer && childrenContainer.classList.contains("collapsed") && term.length > 0) {
+          toggleTreeNode(element.dataset.nodeId, false);
+        }
+      }
+      return shouldBeVisible;
+    }
+
+    if (searchTerm.length === 0) {
+      treeElement
+        .querySelectorAll(".hidden-node")
+        .forEach((el) => el.classList.remove("hidden-node"));
+      return;
+    }
+    const topLevelNodes = Array.from(treeElement.children);
+    topLevelNodes.forEach((node) => {
+      if (
+        node.classList.contains("tree-node") ||
+        node.classList.contains("tree-artifact-wrapper")
+      ) {
+        checkVisibility(node, searchTerm);
+      }
+    });
+  }
+
+  // --- Tree and Node Dropdown Population ---
+  // (Your existing generateFlatNodeList, populateNodeDropdowns, fetchTree, toggleTreeNode, renderTree, fetchNodeName)
+  // IMPORTANT: Ensure all fetch calls inside these use `${BASE_API_URL}/...`
+  function generateFlatNodeList(nodes, prefix = "", level = 0) {
+    let list = [];
+    nodes.forEach((node) => {
+      const nodeType = node.type || "NODE";
+      const displayName = `${"—".repeat(level)} ${node.name}`;
+      if (nodeType !== "ARTIFACT") {
+        list.push({ id: node.id, name: `${displayName} (Folder)`, type: "NODE" });
+      }
+      if (node.artifacts) {
+        node.artifacts.forEach((artifact) => {
+          list.push({
+            id: artifact.id,
+            name: `${"—".repeat(level + 1)} ${artifact.title} (File)`,
+            type: "ARTIFACT",
+            nodeId: artifact.id,
+          });
+        });
+      }
+      if (node.children) {
+        list = list.concat(
+          generateFlatNodeList(node.children, prefix + "—", level + 1)
+        );
+      }
+    });
+    return list;
+  }
+
+  function populateNodeDropdowns() {
+    flatNodeList = generateFlatNodeList(fullTreeData);
+    const newUserNodeSelect = document.getElementById("newUserNodeAccess");
+    const modalNodeSelect = document.getElementById("modalNodeSelect");
+    if (!newUserNodeSelect || !modalNodeSelect) return;
+    newUserNodeSelect.length = 1;
+    modalNodeSelect.length = 1;
+    flatNodeList.forEach((item) => {
+      const valueId = item.type === "ARTIFACT" ? item.nodeId : item.id;
+      const option = new Option(item.name, valueId);
+      option.dataset.type = item.type;
+      try {
+        newUserNodeSelect.add(option.cloneNode(true));
+        modalNodeSelect.add(option);
+      } catch (e) {
+        console.error("Error adding option to select:", e, item);
+      }
+    });
+  }
+
+  async function fetchTree() {
+    console.log("Admin Panel: Fetching tree data...");
+    const treeDiv = document.getElementById("tree");
+    if (treeDiv)
+      treeDiv.innerHTML = `<p class="text-[var(--text-secondary)] p-2">Loading structure...</p>`;
+
+    try {
+      const res = await secureFetch(`${BASE_API_URL}/api/tree`); // USE DYNAMIC URL
+      if (!res.ok) {
+        let errorMsg = `HTTP error! status: ${res.status}`;
+        try {
+          const errData = await res.json();
+          errorMsg += ` - ${errData.message || errData.error || JSON.stringify(errData)}`;
+        } catch (e) {
+          /* ignore */
+        }
+
+        // Check if it's a database connection error
+        if (errorMsg.includes("database server") || errorMsg.includes("Can't reach database")) {
+          if (treeDiv)
+            treeDiv.innerHTML = `
+           <div class="p-4 text-center">
+             <p class="text-[var(--text-red-accent)] mb-2">Database Connection Error</p>
+             <p class="text-[var(--text-secondary)] text-sm">Unable to connect to the database. Please try again later.</p>
+             <button onclick="fetchTree()" class="mt-3 submit-button secondary">
+               <span class="button-text">Retry</span>
+             </button>
+           </div>`;
+          if (window.showNotification)
+            window.showNotification(
+              "Database connection error. Please try again later.",
+              "error",
+              5000
+            );
+          return;
+        }
+
+        throw new Error(errorMsg);
+      }
+      const data = await res.json();
+      if (!Array.isArray(data)) {
+        console.error("Admin Panel: Invalid tree data received:", data);
+        throw new Error("Invalid tree data format received from server.");
+      }
+      fullTreeData = data;
+      if (treeDiv) treeDiv.innerHTML = renderTree(fullTreeData);
+      populateNodeDropdowns();
+    } catch (error) {
+      console.error("Admin Panel: Failed to fetch tree:", error);
+      if (treeDiv)
+        treeDiv.innerHTML = `
+         <div class="p-4 text-center">
+           <p class="text-[var(--text-red-accent)] mb-2">Error Loading Structure</p>
+           <p class="text-[var(--text-secondary)] text-sm">${error.message}</p>
+           <button onclick="fetchTree()" class="mt-3 submit-button secondary">
+             <span class="button-text">Retry</span>
+           </button>
+         </div>`;
+      if (window.showNotification)
+        window.showNotification(`Error loading folder structure: ${error.message}`, "error");
+    }
+  }
+
+  // Inside your <script> tags
+
+function toggleTreeNode(nodeId, doToggle = true) {
+  const childrenContainer = document.getElementById(`children-${nodeId}`);
+  const toggleIconSpan = document.getElementById(`toggle-icon-${nodeId}`); // Get the parent span
+  const svgElement = toggleIconSpan ? toggleIconSpan.querySelector('svg') : null; // Get the SVG inside it
+
+  if (childrenContainer && toggleIconSpan && svgElement) {
+    let isCollapsed;
+
+    if (doToggle) {
+      isCollapsed = childrenContainer.classList.toggle("collapsed");
+      // Also toggle a class on the span itself to control its SVG's rotation
+      toggleIconSpan.classList.toggle("collapsed", isCollapsed);
+    } else {
+      // Force expand
+      childrenContainer.classList.remove("collapsed");
+      toggleIconSpan.classList.remove("collapsed");
+      isCollapsed = false;
+    }
+
+    // The CSS rule `tree-toggle-icon.collapsed svg { transform: rotate(-90deg); }`
+    // already handles this if the 'collapsed' class is present on the span.
+    // So, we don't need to manually manipulate the 'rotate-0'/'rotate-[-90deg]' classes here
+    // IF the CSS rule is robustly applied. Let's make sure the CSS is robust.
+    // If the CSS is not picking up `transform`, directly toggle the classes on SVG.
+    if (isCollapsed) {
+        svgElement.classList.remove('rotate-0');
+        svgElement.classList.add('rotate-[-90deg]');
+    } else {
+        svgElement.classList.remove('rotate-[-90deg]');
+        svgElement.classList.add('rotate-0');
+    }
+  }
+}
+
+
+function renderTree(nodes) {
+  if (!Array.isArray(nodes)) {
+    return '<p class="text-[var(--text-red-accent)] p-2">Invalid tree data.</p>';
+  }
+  return nodes.map((n) => {
+    if (!n || typeof n.id === "undefined" || typeof n.name === "undefined") {
+      console.warn("Skipping invalid node in renderTree:", n); return "";
+    }
+    const hasChildren = n.children && n.children.length > 0;
+    const hasArtifacts = n.artifacts && n.artifacts.length > 0;
+    const isExpandable = hasChildren || hasArtifacts;
+
+    // Initial state: collapsed. So the arrow should point right/left (-90deg).
+    // The `transform` is defined in CSS, so we just need the correct class.
+    // The CSS applies `rotate(-90deg)` when `.tree-toggle-icon.collapsed` is present.
+    // We want it to be collapsed initially, so add 'collapsed' class to the span.
+    const initialToggleIconHtml = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 transform transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" /></svg>`;
+
+    const childrenHTML = hasChildren ? renderTree(n.children) : "";
+    const nodeNameSafe = escapeJSString(n.name);
+    const artifactsHTML = hasArtifacts ? n.artifacts.map((a) => {
+      if (!a || typeof a.id === "undefined" || typeof a.title === "undefined") {
+        console.warn("Skipping invalid artifact in renderTree:", a); return "";
+      }
+      const titleContent = escapeJSString(a.title);
+      const descriptionContent = escapeJSString(a.description || "");
+      const linkContent = escapeJSString(a.link || "#");
+      return `
+        <div class="tree-artifact-wrapper" data-artifact-id="${a.id}" data-node-id="${a.id}" data-node-name="${titleContent}" data-description="${descriptionContent}" data-node-type="ARTIFACT" data-parent-node-id="${n.id}">
+          <div class="node-content group hover:bg-[var(--bg-card-hover)] rounded-md px-1 py-0.5">
+            <span class="tree-artifact-text clickable flex items-center text-sm flex-grow" title="View details for: ${titleContent}" onclick="showArtifactDetailsModal('${titleContent}', '${descriptionContent}', '${linkContent}')">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 tree-artifact-icon flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+              <span class="truncate pr-1">${titleContent}</span>
+            </span>
+            <div class="actions opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
+              <button title="Rename file" class="action-icon-btn" onclick="event.stopPropagation(); startRename(${a.id}, 'artifact', '${titleContent}')">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+              </button>
+              <button title="Delete file" class="action-icon-btn delete" onclick="event.stopPropagation(); openDeleteConfirmationModal(${a.id}, 'artifact', '${titleContent}')">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>`;
+    }).join("") : "";
+
+    // Apply the 'collapsed' class to the tree-toggle-icon span initially
+    // This makes the CSS rule '.tree-toggle-icon.collapsed svg' apply from the start.
+    const toggleIconClasses = isExpandable ? 'tree-toggle-icon collapsed' : 'tree-toggle-icon w-5 h-5 mr-1';
+
+    return `
+      <div class="tree-node" data-node-id="${n.id}" data-node-name="${nodeNameSafe}" data-node-type="NODE">
+        <div class="node-content group hover:bg-[var(--bg-card-hover)] rounded-md px-1 py-0.5">
+          <span class="font-medium tree-node-text cursor-pointer flex items-center flex-grow min-w-0" onclick="toggleTreeNode(${n.id})">
+            ${isExpandable ? `<span id="toggle-icon-${n.id}" class="${toggleIconClasses}">${initialToggleIconHtml}</span>` : '<span class="tree-toggle-icon w-5 h-5 mr-1"></span>'}
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1 tree-node-icon flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" /></svg>
+            <span class="node-display-name truncate pr-1">${nodeNameSafe}</span> <span class="text-xs text-[var(--text-tertiary)] ml-1.5 flex-shrink-0">(ID: ${n.id})</span>
+          </span>
+          <div class="actions opacity-0 group-hover:opacity-100 transition-opacity space-x-1 flex-shrink-0">
+            <button title="Add item to this folder" class="action-icon-btn add" onclick="event.stopPropagation(); showInlineForm(${n.id}, this)">
+            <button title="Add item to this folder" class="action-icon-btn add" onclick="event.stopPropagation(); showInlineForm(${n.id}, this)">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8V16M8 12H16" />
+              </svg>
+            </button>
+            <button title="Rename folder" class="action-icon-btn" onclick="event.stopPropagation(); startRename(${n.id}, 'node', '${nodeNameSafe}')">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
+            </button>
+            <button title="Delete folder" class="action-icon-btn delete" onclick="event.stopPropagation(); openDeleteConfirmationModal(${n.id}, 'node', '${nodeNameSafe}')">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div id="form-${n.id}" class="form-inline mt-2 ml-5 p-4 bg-[var(--bg-inline-form)] rounded-lg border border-[var(--border-primary)] shadow-md" style="display:none;">
+        </div>
+        <div class="tree-children-container collapsed" id="children-${n.id}">${childrenHTML}${artifactsHTML}</div>
+      </div>`;
+  }).join("");
+}
+
+  async function fetchNodeName(nodeId) {
+    if (!nodeId || String(nodeId).toLowerCase() === "null" || typeof nodeId === "undefined") {
+      return "Global / Unspecified Node";
+    }
+    const localNode = flatNodeList.find((n) => String(n.id) === String(nodeId));
+    if (localNode) {
+      const nameMatch = localNode.name.match(/^(—*\s*)(.*)\s+\((Folder|File)\)$/);
+      const cleanName = nameMatch ? nameMatch[2].trim() : localNode.name.replace(/—/g, "").trim();
+      const typeSuffix = localNode.type === "NODE" ? "(Folder)" : "(File)";
+      return `${cleanName} ${typeSuffix} (ID: ${nodeId})`;
+    }
+    console.warn(`Admin Panel: Node/Artifact ID ${nodeId} not found locally, attempting API fallback.`);
+    try {
+      let resNode = await secureFetch(`${BASE_API_URL}/api/nodes/${nodeId}`); // USE DYNAMIC URL
+      if (resNode.ok) {
+        const data = await resNode.json();
+        return data.name ? `${data.name} (Folder) (ID: ${data.id})` : `Item ${nodeId}`;
+      }
+      // Fallback to check artifacts if not found as a node
+      let resArtifact = await secureFetch(`${BASE_API_URL}/api/artifacts/${nodeId}`); // USE DYNAMIC URL
+      if (resArtifact.ok) {
+        const data = await resArtifact.json();
+        return data.title ? `${data.title} (File) (ID: ${data.id})` : `Item ${nodeId}`;
+      }
+      console.warn(
+        `Admin Panel: API fallback failed for ID ${nodeId} (Node: ${resNode.status}, Artifact: ${resArtifact.status}).`
+      );
+      return `Item ${nodeId}`;
+    } catch (error) {
+      console.error(`Admin Panel: Error fetching details for ID ${nodeId}:`, error);
+      return `Item ${nodeId}`;
+    }
+  }
+  // --- End Tree and Node Dropdown ---
+
+  // --- User Management ---
+  // (Your existing fetchUsers, applyUserSearchFilter, renderPaginatedUsers, deleteUser functions)
+  // IMPORTANT: Ensure all fetch calls inside these use `${BASE_API_URL}/...`
+  let allUsersMasterList = [];
+  let currentUsersToDisplay = [];
+  let displayedUserCount = 0;
+  const usersPerPage = 10;
+  let isLoadingUsers = false;
+  const userSearchInput = document.getElementById("search-users-input");
+  const userListContainer = document.getElementById("userListContainer");
+  const userListElement = document.getElementById("userList");
+  const userListLoadingIndicator = document.getElementById(
+    "user-list-loading-indicator"
+  );
+  const userListInitialSpinner = document.getElementById(
+    "user-list-initial-spinner"
+  );
+  const userListMessageArea = document.getElementById("user-list-message-area");
+
+  function showUserListMessage(message) {
+    if (
+      userListMessageArea &&
+      userListElement &&
+      userListInitialSpinner &&
+      userListLoadingIndicator
+    ) {
+      userListMessageArea.textContent = message;
+      userListMessageArea.style.display = "block";
+      userListElement.innerHTML = "";
+      userListInitialSpinner.style.display = "none";
+      userListLoadingIndicator.style.display = "none";
+    }
+  }
+
+  function hideUserListMessage() {
+    if (userListMessageArea) userListMessageArea.style.display = "none";
+  }
+
+  async function fetchUsers() {
+    if (isLoadingUsers) return;
+    isLoadingUsers = true;
+    if (userListInitialSpinner) userListInitialSpinner.style.display = "block";
+    if (userListElement) userListElement.innerHTML = "";
+    hideUserListMessage();
+
+    try {
+      const res = await secureFetch(`${BASE_API_URL}/api/users`); // USE DYNAMIC URL
+      if (!res.ok) {
+        let errorMsg = `HTTP error! status: ${res.status}`;
+        try {
+          const errData = await res.json();
+          errorMsg += ` - ${errData.message || errData.error || JSON.stringify(errData)}`;
+        } catch (e) {
+          /* ignore */
+        }
+        throw new Error(errorMsg);
+      }
+      const users = await res.json();
+      if (!Array.isArray(users)) {
+        throw new Error("Invalid user data received from server.");
+      }
+      allUsersMasterList = users.sort((a, b) => a.email.localeCompare(b.email));
+      applyUserSearchFilter();
+    } catch (error) {
+      console.error("Admin Panel: Failed to fetch users:", error);
+      if (window.showNotification)
+        window.showNotification(`Error loading users: ${error.message}`, "error");
+      showUserListMessage("Failed to load users. Please try again later.");
+    } finally {
+      isLoadingUsers = false;
+      if (userListInitialSpinner) userListInitialSpinner.style.display = "none";
+    }
+  }
+  if (userSearchInput) userSearchInput.addEventListener("input", applyUserSearchFilter);
+
+  function applyUserSearchFilter() {
+    const searchTerm = userSearchInput ? userSearchInput.value.toLowerCase().trim() : "";
+    currentUsersToDisplay =
+      searchTerm === "" ?
+      [...allUsersMasterList] :
+      allUsersMasterList.filter((user) =>
+        user.email.toLowerCase().includes(searchTerm)
+      );
+    if (userListElement) userListElement.innerHTML = "";
+    displayedUserCount = 0;
+    hideUserListMessage();
+    if (currentUsersToDisplay.length === 0 && allUsersMasterList.length > 0) {
+      showUserListMessage(`No users found matching "${escapeJSString(searchTerm)}".`);
+    } else if (
+      currentUsersToDisplay.length === 0 &&
+      allUsersMasterList.length === 0 &&
+      !isLoadingUsers
+    ) {
+      // This case is tricky because fetchUsers might be loading.
+      // Rely on fetchUsers to show initial "no users" or "failed to load".
+    } else {
+      renderPaginatedUsers();
+    }
+  }
+  async function renderPaginatedUsers(loadMore = false) {
+    if (isLoadingUsers && loadMore) return;
+    const isCurrentlyPaginatingOperation = loadMore;
+    if (isCurrentlyPaginatingOperation) {
+      isLoadingUsers = true;
+      if (userListLoadingIndicator)
+        userListLoadingIndicator.style.display = "block";
+    }
+    const usersToRender = currentUsersToDisplay.slice(
+      displayedUserCount,
+      displayedUserCount + usersPerPage
+    );
+    if (usersToRender.length === 0 && isCurrentlyPaginatingOperation) {
+      // No more to load
+      isLoadingUsers = false;
+      if (userListLoadingIndicator)
+        userListLoadingIndicator.style.display = "none";
+      return;
+    }
+    if (
+      usersToRender.length === 0 &&
+      displayedUserCount === 0 &&
+      !isLoadingUsers
+    ) {
+      // This message is handled by applyUserSearchFilter or fetchUsers
+    }
+
+    hideUserListMessage();
+    const userListPromises = usersToRender.map(async (u) => {
+      let nodeAccessSummary = "No specific node roles.";
+      if (u.roles && u.roles.length > 0) {
+        const roleCount = u.roles.length;
+        nodeAccessSummary = `Node Access: ${roleCount} specific role${roleCount > 1 ? "s" : ""}`;
+      }
+      return `
+           <li class="user-list-item p-4 rounded-lg flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+             <div class="flex-grow min-w-0">
+               <span class="font-semibold user-email-text block text-md truncate" title="${escapeJSString(u.email)}">${escapeJSString(u.email)}</span>
+               <span class="text-sm user-role-text block mt-0.5">${u.role ? `Global: ${u.role}` : "No Global Role"}</span>
+               <span class="user-node-role-summary block mt-1">${nodeAccessSummary}</span>
+             </div>
+             <div class="user-actions space-x-2 flex-shrink-0 flex items-center">
+               <button class="user-action-button manage-access" title="Manage User Access" onclick="openAccessModal('${escapeJSString(u.email)}')">
+                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                 Manage Access
+               </button>
+               <button class="user-action-button delete-user" title="Delete User & All Access" onclick="deleteUser('${escapeJSString(u.email)}')">
+                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                 Delete User
+               </button>
+             </div>
+           </li>`;
+    });
+
+    try {
+      const userListHtmlChunk = await Promise.all(userListPromises);
+      if (userListElement)
+        userListElement.insertAdjacentHTML("beforeend", userListHtmlChunk.join(""));
+      displayedUserCount += usersToRender.length;
+    } catch (renderError) {
+      console.error("Admin Panel: Error rendering user list items:", renderError);
+      showUserListMessage("Error displaying some user data.");
+    }
+    if (isCurrentlyPaginatingOperation) {
+      isLoadingUsers = false;
+      if (userListLoadingIndicator)
+        userListLoadingIndicator.style.display = "none";
+    }
+  }
+  if (userListContainer) {
+    userListContainer.addEventListener("scroll", () => {
+      if (isLoadingUsers) return;
+      const {
+        scrollTop,
+        scrollHeight,
+        clientHeight
+      } = userListContainer;
+      if (scrollTop + clientHeight >= scrollHeight - 50) {
+        if (displayedUserCount < currentUsersToDisplay.length) {
+          console.log("Admin Panel: Reached bottom, loading more users...");
+          renderPaginatedUsers(true);
+        }
+      }
+    });
+  }
+  async function deleteUser(email) {
+    openDeleteConfirmationModal(email, "user", email);
+  }
+  // --- End User Management ---
+
+  // --- Inline Form (Add item to folder) ---
+  // (Your showInlineForm, toggleFileInput, toggleLinkOrUpload, submitInlineForm functions)
+  // IMPORTANT: Ensure submitInlineForm uses `${BASE_API_URL}/...`
+  function showInlineForm(parentId, buttonElement) {
+    const form = document.getElementById(`form-${parentId}`);
+    if (form) {
+      const isVisible = form.style.display === "block";
+      document.querySelectorAll(".form-inline").forEach((f) => {
+        if (f !== form) f.style.display = "none";
+      });
+      form.style.display = isVisible ? "none" : "block";
+      if (!isVisible) {
+        // Create form if it doesn't exist
+        if (!form.querySelector("form")) {
+          form.innerHTML = `
+             <form class="space-y-4">
+               <div>
+                 <label class="label-text">Name</label>
+                 <input type="text" id="name-${parentId}" class="input-field" required placeholder="Enter name">
+               </div>
+               <div>
+                 <label class="label-text">Type</label>
+                 <select id="type-${parentId}" class="input-field" onchange="toggleFileInput(${parentId})">
+                   <option value="FOLDER">Folder</option>
+                   <option value="FILE">File</option>
+                 </select>
+               </div>
+               <div id="file-method-options-${parentId}" style="display: none;">
+                 <label class="label-text">File Source</label>
+                 <select id="file-source-${parentId}" class="input-field" onchange="toggleLinkOrUpload(${parentId})">
+                   <option value="link">Link</option>
+                   <option value="upload">Upload</option>
+                 </select>
+               </div>
+               <div id="link-input-container-${parentId}" style="display: none;">
+                 <label class="label-text">Link URL</label>
+                 <input type="url" id="link-${parentId}" class="input-field" placeholder="https://...">
+               </div>
+               <div id="upload-input-container-${parentId}" style="display: none;">
+                 <label class="label-text">Upload File</label>
+                 <input type="file" id="file-upload-${parentId}" class="input-field">
+               </div>
+               <div>
+                 <label class="label-text">Description</label>
+                 <textarea id="description-${parentId}" class="input-field" placeholder="Enter description"></textarea>
+               </div>
+               <div class="flex justify-end gap-2">
+                 <button type="button" class="submit-button secondary" onclick="showInlineForm(${parentId})">Cancel</button>
+                 <button type="submit" class="submit-button">
+                   <span class="button-text">Add Item</span>
+                 </button>
+               </div>
+             </form>`;
+
+          // Add form submit event listener
+          const formElement = form.querySelector("form");
+          if (formElement) {
+            formElement.addEventListener("submit", async (e) => {
+              e.preventDefault();
+              await submitInlineForm(parentId, e.target.querySelector('button[type="submit"]'));
+            });
+          }
+        }
+        form.querySelector('input[type="text"], select')?.focus();
+        toggleFileInput(parentId);
+      }
+    }
+  }
+
+  function toggleFileInput(parentId) {
+    const typeSelect = document.getElementById(`type-${parentId}`);
+    const fileMethodOptionsDiv = document.getElementById(
+      `file-method-options-${parentId}`
+    );
+    const descriptionTextarea = document.getElementById(`description-${parentId}`);
+    const fileInput = document.getElementById(`file-upload-${parentId}`);
+    const linkInput = document.getElementById(`link-${parentId}`);
+
+    if (!typeSelect || !fileMethodOptionsDiv || !descriptionTextarea) return;
+
+    if (typeSelect.value === "FILE") {
+      fileMethodOptionsDiv.style.display = "block";
+      descriptionTextarea.placeholder = "Description (Optional for File)";
+      const fileSourceSelect = document.getElementById(`file-source-${parentId}`);
+      if (fileSourceSelect) fileSourceSelect.value = "link";
+      toggleLinkOrUpload(parentId);
+    } else {
+      fileMethodOptionsDiv.style.display = "none";
+      descriptionTextarea.placeholder = "Description (Optional for Folder)";
+      if (fileInput) fileInput.value = "";
+      if (linkInput) linkInput.value = "";
+    }
+  }
+  function toggleLinkOrUpload(parentId) {
+    const fileSourceSelect = document.getElementById(`file-source-${parentId}`);
+    const linkInputContainer = document.getElementById(
+      `link-input-container-${parentId}`
+    );
+    const uploadInputContainer = document.getElementById(
+      `upload-input-container-${parentId}`
+    );
+    const fileInput = document.getElementById(`file-upload-${parentId}`);
+    const linkInput = document.getElementById(`link-${parentId}`);
+
+    if (!fileSourceSelect || !linkInputContainer || !uploadInputContainer) return;
+
+    const fileSource = fileSourceSelect.value;
+    linkInputContainer.style.display = fileSource === "link" ? "block" : "none";
+    uploadInputContainer.style.display = fileSource === "upload" ? "block" : "none";
+    if (fileSource === "link" && fileInput) fileInput.value = "";
+    if (fileSource === "upload" && linkInput) linkInput.value = "";
+  }
+  async function submitInlineForm(parentId, submitButton) {
+    const name = document.getElementById(`name-${parentId}`).value;
+    const type = document.getElementById(`type-${parentId}`).value;
+    const description = document.getElementById(`description-${parentId}`).value;
+    const fileSource = document.getElementById(`file-source-${parentId}`).value;
+    const link = document.getElementById(`link-${parentId}`).value;
+    const fileUpload = document.getElementById(`file-upload-${parentId}`).files[0];
+
+    if (!name) {
+      if (window.showNotification) window.showNotification("Please enter a name", "error");
+      return;
+    }
+
+    if (type === "FILE") {
+      if (fileSource === "link" && !link) {
+        if (window.showNotification)
+          window.showNotification("Please enter a link URL", "error");
+        return;
+      }
+      if (fileSource === "upload" && !fileUpload) {
+        if (window.showNotification)
+          window.showNotification("Please select a file to upload", "error");
+        return;
+      }
+    }
+
+    const originalButtonText =
+      submitButton.querySelector(".button-text")?.textContent ||
+      submitButton.textContent;
+    window.setButtonLoading(submitButton, true, originalButtonText);
+
+    try {
+      if (type === "FOLDER") {
+        const response = await secureFetch(`${BASE_API_URL}/api/nodes`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name,
+            type: "FOLDER",
+            description,
+            parentId: parseInt(parentId),
+          }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({
+            message: response.statusText
+          }));
+          throw new Error(
+            `Failed to create folder: ${errorData.message || errorData.detail || response.statusText}`
+          );
+        }
+
+        if (window.showNotification)
+          window.showNotification("Folder created successfully! ✅", "success");
+        await fetchTree(); // Refresh the tree
+        await fetchActivity(); // Update activity log
+      } else {
+        // Handle file creation
+        const formData = new FormData();
+        formData.append("title", name);
+        formData.append("description", description);
+        formData.append("nodeId", String(parentId));
+
+        if (fileSource === "link") {
+          formData.append("link", link);
+          const response = await secureFetch(`${BASE_API_URL}/api/artifacts`, {
+            method: "POST",
+            body: JSON.stringify({
+              title: name,
+              description,
+              link,
+              nodeId: parseInt(parentId),
+            }),
+          });
+
+          if (!response.ok) {
+            const errorData = await response.json().catch(() => ({
+              message: response.statusText
+            }));
+            throw new Error(
+              `Failed to create file: ${errorData.message || errorData.detail || response.statusText}`
+            );
+          }
+        } else if (fileUpload) {
+          formData.append("file", fileUpload);
+          const response = await secureFetch(`${BASE_API_URL}/api/upload`, {
             method: "POST",
             body: formData,
           });
 
-          if (response.ok) {
-            const contentType = response.headers.get("content-type");
+          if (!response.ok) {
+            const errorData = await response.json().catch(() => ({
+              message: response.statusText
+            }));
+            throw new Error(
+              `Failed to upload file: ${errorData.message || errorData.detail || response.statusText}`
+            );
+          }
+        }
+
+        if (window.showNotification)
+          window.showNotification("File created successfully! ✅", "success");
+        await fetchTree(); // Refresh the tree
+        await fetchActivity(); // Update activity log
+      }
+
+      // Reset and hide the form
+      const formElement = document.getElementById(`form-${parentId}`);
+      if (formElement) {
+        const innerForm = formElement.querySelector("form");
+        if (innerForm) innerForm.reset();
+        toggleFileInput(parentId);
+        formElement.style.display = "none";
+      }
+    } catch (error) {
+      console.error("Error creating item:", error);
+      if (window.showNotification)
+        window.showNotification(`Error: ${error.message}`, "error");
+    } finally {
+      window.setButtonLoading(submitButton, false, originalButtonText);
+    }
+  }
+  // --- End Inline Form ---
+
+  // --- Delete Confirmation Modal ---
+  // (Your openDeleteConfirmationModal, closeDeleteConfirmationModal, and event listeners)
+  // IMPORTANT: Ensure confirmDeleteButton listener uses `${BASE_API_URL}/...`
+  const deleteConfirmationModal = document.getElementById(
+    "delete-confirmation-modal"
+  );
+  const deleteModalTitle = document.getElementById("delete-modal-title");
+  const deleteModalMessage = document.getElementById("delete-modal-message");
+  const deleteConfirmInput = document.getElementById("delete-confirm-input");
+  const confirmDeleteButton = document.getElementById("confirm-delete-button");
+  let itemToDelete = {
+    id: null,
+    type: null,
+    name: ""
+  };
+
+  function openDeleteConfirmationModal(itemId, itemType, itemName) {
+    itemToDelete = {
+      id: itemId,
+      type: itemType,
+      name: itemName
+    };
+    if (deleteModalTitle)
+      deleteModalTitle.textContent = `Confirm Deletion: ${escapeJSString(itemName)}`;
+
+    let message = `Are you sure you want to delete the ${itemType} "${escapeJSString(itemName)}"?`;
+    if (itemType === "node")
+      message += " All its contents (subfolders and files) will also be deleted.";
+    if (itemType === "user") message += " All associated access roles will be removed.";
+    message += " This action cannot be undone.";
+    if (deleteModalMessage) deleteModalMessage.textContent = message;
+
+    if (deleteConfirmInput) deleteConfirmInput.value = "";
+    if (confirmDeleteButton) confirmDeleteButton.disabled = true;
+    if (deleteConfirmationModal) deleteConfirmationModal.classList.add("active");
+    if (deleteConfirmInput) deleteConfirmInput.focus();
+  }
+  function closeDeleteConfirmationModal() {
+    if (deleteConfirmationModal)
+      deleteConfirmationModal.classList.remove("active");
+  }
+  if (deleteConfirmInput && confirmDeleteButton) {
+    deleteConfirmInput.addEventListener("input", () => {
+      confirmDeleteButton.disabled =
+        deleteConfirmInput.value.trim().toLowerCase() !== "delete";
+    });
+    confirmDeleteButton.addEventListener("click", async () => {
+      if (
+        deleteConfirmInput.value.trim().toLowerCase() !== "delete" ||
+        !itemToDelete.id
+      ) {
+        if (window.showNotification)
+          window.showNotification("Deletion not confirmed correctly.", "error");
+        return;
+      }
+      const originalButtonText =
+        confirmDeleteButton.querySelector(".button-text")?.textContent ||
+        confirmDeleteButton.textContent;
+      window.setButtonLoading(confirmDeleteButton, true, originalButtonText);
+      try {
+        let endpoint;
+        if (itemToDelete.type === "node")
+          endpoint = `${BASE_API_URL}/api/nodes/${itemToDelete.id}`; // USE DYNAMIC URL
+        else if (itemToDelete.type === "artifact")
+          endpoint = `${BASE_API_URL}/api/artifacts/${itemToDelete.id}`; // USE DYNAMIC URL
+        else if (itemToDelete.type === "user")
+          endpoint = `${BASE_API_URL}/api/users/${itemToDelete.id}`; // USE DYNAMIC URL
+        else throw new Error("Invalid item type for deletion.");
+
+        const response = await secureFetch(endpoint, {
+          method: "DELETE"
+        });
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({
+            message: `Request failed with status ${response.status}`
+          }));
+          throw new Error(
+            `Failed to delete: ${errorData.message || errorData.detail || response.statusText}`
+          );
+        }
+        const itemTypeDisplay =
+          itemToDelete.type.charAt(0).toUpperCase() + itemToDelete.type.slice(1);
+        if (window.showNotification)
+          window.showNotification(
+            `${itemTypeDisplay} "${escapeJSString(itemToDelete.name)}" deleted. ✅`,
+            "success"
+          );
+
+        if (itemToDelete.type === "user") {
+          await fetchUsers();
+          await fetchActivity();
+        } else {
+          await fetchTree();
+          await fetchActivity();
+        }
+        closeDeleteConfirmationModal();
+      } catch (error) {
+        console.error(`Admin Panel: Error deleting ${itemToDelete.type}:`, error);
+        if (window.showNotification)
+          window.showNotification(`Error deleting: ${error.message}`, "error");
+      } finally {
+        window.setButtonLoading(confirmDeleteButton, false, originalButtonText);
+      }
+    });
+  }
+  // --- End Delete Modal ---
+
+  // --- Root Folder Prompt ---
+  // (Your promptNewRoot function)
+  // IMPORTANT: Ensure it uses `${BASE_API_URL}/...`
+  async function promptNewRoot() {
+    const name = prompt("Enter new root folder name (e.g., Vertical name):");
+    if (!name?.trim()) return;
+    try {
+      const response = await secureFetch(`${BASE_API_URL}/api/nodes`, {
+        // USE DYNAMIC URL
+        method: "POST",
+        body: JSON.stringify({
+          name: name.trim(),
+          type: "VERTICAL",
+          parentId: null,
+          description: "Root Vertical Folder",
+        }),
+      });
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({
+          message: response.statusText
+        }));
+        throw new Error(
+          `Failed: ${err.message || err.detail || response.statusText}`
+        );
+      }
+      if (window.showNotification)
+        window.showNotification("New root folder created! ✅", "success");
+      await fetchTree();
+      await fetchActivity();
+    } catch (error) {
+      console.error("Admin Panel: Error creating new root:", error);
+      if (window.showNotification)
+        window.showNotification(`Error: ${error.message}`, "error");
+    }
+  }
+  // --- End Root Folder ---
+
+  // --- Add User Form ---
+  // (Your addUserForm event listener)
+  // IMPORTANT: Ensure all fetch calls use `${BASE_API_URL}/...`
+  const addUserFormElement = document.getElementById("addUserForm");
+  if (addUserFormElement) {
+    addUserFormElement.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const submitButton = e.target.querySelector('button[type="submit"]');
+      const originalButtonText =
+        submitButton.querySelector(".button-text")?.textContent ||
+        submitButton.textContent;
+      window.setButtonLoading(submitButton, true, originalButtonText);
+
+      const emailInput = document.getElementById("newUserEmail");
+      const globalRoleSelect = document.getElementById("newUserRole");
+      const nodeAccessSelect = document.getElementById("newUserNodeAccess");
+      const nodeRoleSelect = document.getElementById("newUserNodeRole");
+      const applyGlobalCheckbox = document.getElementById(
+        "applyGlobalRoleToAllNodesCheckbox"
+      );
+
+      const email = emailInput.value.trim();
+      const globalRole = globalRoleSelect.value;
+      const selectedNodeIdForAccess = nodeAccessSelect.value;
+      const selectedNodeRoleForAccess = nodeRoleSelect.value;
+      const applyGlobalToAllNodes = applyGlobalCheckbox.checked;
+
+      if (!email || !globalRole) {
+        if (window.showNotification)
+          window.showNotification("Email and Global Role are required.", "error");
+        window.setButtonLoading(submitButton, false, originalButtonText);
+        if (!email) emailInput.focus();
+        else globalRoleSelect.focus();
+        return;
+      }
+      if (selectedNodeIdForAccess && applyGlobalToAllNodes) {
+        if (window.showNotification)
+          window.showNotification(
+            "Cannot select both a specific node and 'Apply global role to all nodes'.",
+            "error",
+            6000
+          );
+        window.setButtonLoading(submitButton, false, originalButtonText);
+        nodeAccessSelect.focus();
+        return;
+      }
+
+      let overallSuccessMessage = "";
+      let operationFailed = false;
+
+      try {
+        console.log(
+          `Admin Panel: Attempting to add/update user: ${email} with global role: ${globalRole}`
+        );
+        let userCreationResponse = await secureFetch(`${BASE_API_URL}/api/users`, {
+          // USE DYNAMIC URL
+          method: "POST",
+          body: JSON.stringify({
+            email,
+            role: globalRole
+          }),
+        });
+
+        if (!userCreationResponse.ok) {
+          const errorData = await userCreationResponse.json().catch(() => ({
+            message: userCreationResponse.statusText
+          }));
+          if (userCreationResponse.status === 409) {
             if (
-              contentType &&
-              contentType.includes(
-                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+              confirm(
+                `User ${email} already exists. Update global role to ${globalRole}?`
               )
             ) {
-              showStatus("Analysis complete. Downloading report...", false);
-              const blob = await response.blob();
-              const downloadUrl = window.URL.createObjectURL(blob);
-              const a = document.createElement("a");
-              a.style.display = "none";
-              a.href = downloadUrl;
-
-              let downloadFilename = `gemini_analysis_${file.name.replace(
-                /\.zip$/i,
-                ""
-              )}.xlsx`;
-              const disposition = response.headers.get("content-disposition");
-              if (disposition && disposition.indexOf("attachment") !== -1) {
-                const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
-                const matches = filenameRegex.exec(disposition);
-                if (matches != null && matches[1]) {
-                  downloadFilename = matches[1].replace(/['"]/g, "");
+              userCreationResponse = await secureFetch(
+                `${BASE_API_URL}/api/users/${email}`, {
+                  // USE DYNAMIC URL
+                  method: "PUT",
+                  body: JSON.stringify({
+                    role: globalRole
+                  }),
                 }
-              }
-              a.download = downloadFilename;
-
-              document.body.appendChild(a);
-              a.click();
-              window.URL.revokeObjectURL(downloadUrl);
-              a.remove();
-              setTimeout(() => {
-                hideStatus();
-                fileNameDisplay.textContent = "";
-                zipFileInput.value = "";
-              }, 1000);
-            } else {
-              const errorText = await response.text();
-              showError(
-                `Unexpected response from server: ${errorText.substring(
-                  0,
-                  200
-                )}`
               );
+              if (!userCreationResponse.ok) {
+                const updateErrorData = await userCreationResponse.json().catch(() => ({
+                  message: userCreationResponse.statusText
+                }));
+                throw new Error(
+                  `Failed to update user: ${updateErrorData.message || updateErrorData.detail || userCreationResponse.statusText}`
+                );
+              }
+              overallSuccessMessage = `User's global role updated. `;
+            } else {
+              throw new Error("User addition cancelled (already exists).");
             }
           } else {
-            let errorDetail = `HTTP error ${response.status}: ${response.statusText}`;
-            try {
-              const errorJson = await response.json();
-              if (errorJson && errorJson.detail) {
-                errorDetail = errorJson.detail;
-              }
-            } catch (e) {
-              const rawErrorText = await response.text();
-              errorDetail = rawErrorText.substring(0, 200) || errorDetail;
-              console.warn("Error response was not JSON:", rawErrorText);
-            }
-            showError(errorDetail);
+            throw new Error(
+              `Failed to add user: ${errorData.message || errorData.detail || userCreationResponse.statusText}`
+            );
           }
-        } catch (error) {
-          console.error("Upload error:", error);
-          showError(
-            "An error occurred during upload. Check the console or network connection."
-          );
-        } finally {
-          enableForm();
+        } else {
+          overallSuccessMessage = "User added successfully! ✅ ";
         }
+
+        if (selectedNodeIdForAccess) {
+          console.log(
+            `Admin Panel: Granting initial node access for ${selectedNodeIdForAccess}`
+          );
+          const accessResponse = await secureFetch(`${BASE_API_URL}/api/access`, {
+            // USE DYNAMIC URL
+            method: "PUT",
+            body: JSON.stringify({
+              email,
+              nodeId: parseInt(selectedNodeIdForAccess),
+              role: selectedNodeRoleForAccess,
+            }),
+          });
+          if (!accessResponse.ok) {
+            const errorData = await accessResponse.json().catch(() => ({
+              message: accessResponse.statusText
+            }));
+            overallSuccessMessage += `\n⚠️ Node access grant failed: ${errorData.message || errorData.detail || accessResponse.statusText}`;
+            operationFailed = true;
+          } else {
+            overallSuccessMessage += ` Initial node access granted.`;
+          }
+        } else if (applyGlobalToAllNodes) {
+          if (window.showNotification)
+            window.showNotification(
+              `Applying '${globalRole}' to all nodes for ${email}. This may take time...`,
+              "info",
+              8000
+            );
+          if (!flatNodeList || flatNodeList.length === 0) {
+            overallSuccessMessage += "\n⚠️ No nodes found to apply global role.";
+            operationFailed = true;
+          } else {
+            let nodesProcessedCount = 0,
+              nodesFailedCount = 0;
+            for (const item of flatNodeList) {
+              try {
+                const nodeAccessResponse = await secureFetch(
+                  `${BASE_API_URL}/api/access`, {
+                    // USE DYNAMIC URL
+                    method: "PUT",
+                    body: JSON.stringify({
+                      email,
+                      nodeId: parseInt(item.id),
+                      role: globalRole
+                    }),
+                  }
+                );
+                if (nodeAccessResponse.ok) nodesProcessedCount++;
+                else nodesFailedCount++;
+              } catch (loopErr) {
+                nodesFailedCount++;
+                console.error(`Error applying role to item ${item.id}:`, loopErr);
+              }
+            }
+            if (nodesFailedCount > 0) {
+              overallSuccessMessage += `\n⚠️ Applied to ${nodesProcessedCount}, failed for ${nodesFailedCount}.`;
+              operationFailed = true;
+            } else {
+              overallSuccessMessage += `\nApplied to all ${nodesProcessedCount} items.`;
+            }
+          }
+        }
+        if (window.showNotification)
+          window.showNotification(
+            overallSuccessMessage,
+            operationFailed ? "error" : "success",
+            operationFailed ? 8000 : 5000
+          );
+        await fetchUsers();
+        await fetchActivity();
+        e.target.reset();
+        if (applyGlobalCheckbox) applyGlobalCheckbox.checked = false;
+      } catch (error) {
+        console.error("Admin Panel: Error in add user process:", error);
+        if (window.showNotification)
+          window.showNotification(`Error: ${error.message}`, "error", 6000);
+      } finally {
+        window.setButtonLoading(submitButton, false, originalButtonText);
       }
-    </script>
-  </body>
+    });
+  }
+  // --- End Add User ---
+
+  // --- Access Management Modal ---
+  // (Your openAccessModal, closeAccessModal, loadUserAccessRolesForModal, updateNodeAccessInModal, revokeNodeAccessInModal, grantNewAccessForm submit listener)
+  // IMPORTANT: Ensure all fetch calls use `${BASE_API_URL}/...`
+  const accessModal = document.getElementById("access-management-modal");
+  const modalUserEmailSpan = document.getElementById("modal-user-email");
+  const modalCurrentAccessDiv = document.getElementById(
+    "access-management-modal-current-access"
+  );
+  const modalEditingUserEmailHidden = document.getElementById(
+    "modal-editing-user-email-hidden"
+  );
+
+  async function openAccessModal(email) {
+    if (modalUserEmailSpan) modalUserEmailSpan.textContent = email;
+    if (modalEditingUserEmailHidden) modalEditingUserEmailHidden.value = email;
+    const modalNodeSelect = document.getElementById("modalNodeSelect");
+    if (modalNodeSelect) modalNodeSelect.value = "";
+    if (accessModal) accessModal.classList.add("active");
+    await loadUserAccessRolesForModal(email);
+  }
+
+  function closeAccessModal() {
+    if (accessModal) accessModal.classList.remove("active");
+    if (modalCurrentAccessDiv)
+      modalCurrentAccessDiv.innerHTML = `<p class="text-[var(--text-tertiary)] p-3">Loading access...</p>`;
+  }
+
+  async function loadUserAccessRolesForModal(email) {
+    if (!modalCurrentAccessDiv) return;
+    modalCurrentAccessDiv.innerHTML = `<div class="flex justify-center items-center p-4"><div class="spinner" style="border-color: var(--text-primary); border-top-color: transparent;"></div><span class="ml-2 text-[var(--text-secondary)]">Loading roles...</span></div>`;
+    try {
+      const res = await secureFetch(`${BASE_API_URL}/api/users/${email}`); // USE DYNAMIC URL
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({
+          message: `User ${email} roles load failed.`
+        }));
+        throw new Error(errData.message || `HTTP error ${res.status}`);
+      }
+      const user = await res.json();
+      if (!user || !user.roles || user.roles.length === 0) {
+        modalCurrentAccessDiv.innerHTML = `<p class="text-[var(--text-tertiary)] p-3">No specific node/file access granted.</p>`;
+        return;
+      }
+      const items = await Promise.all(
+        user.roles.map(async (role) => {
+          const nodeName = await fetchNodeName(role.nodeId);
+          const safeEmail = escapeJSString(email);
+          const roleSelectHTML = `
+              <select class="input-field text-xs py-1 px-2 w-auto bg-[var(--bg-input)] border-[var(--border-input)]"
+                      data-node-id="${role.nodeId}" data-original-role="${role.role}"
+                      onchange="updateNodeAccessInModal(this, '${safeEmail}', ${role.nodeId})">
+                    <option value="ADMIN" ${role.role === "ADMIN" ? "selected" : ""}>ADMIN</option>
+                    <option value="EDITOR" ${role.role === "EDITOR" ? "selected" : ""}>EDITOR</option>
+                    <option value="VIEWER" ${role.role === "VIEWER" ? "selected" : ""}>VIEWER</option>
+              </select>`;
+          const revokeButtonHTML = `
+              <button class="action-icon-btn delete text-sm" title="Revoke Access" onclick="revokeNodeAccessInModal('${safeEmail}', ${role.nodeId})">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+              </button>`;
+          return `<div class="access-item flex justify-between items-center p-2.5 border-b border-[var(--border-primary)] last:border-b-0">
+                            <div><span class="font-medium text-[var(--text-primary)] text-sm">${escapeJSString(nodeName)}</span></div>
+                            <div class="flex items-center gap-2">${roleSelectHTML}${revokeButtonHTML}</div>
+                        </div>`;
+        })
+      );
+      modalCurrentAccessDiv.innerHTML = items.join("");
+    } catch (error) {
+      console.error("Admin Panel: Error loading user access for modal:", error);
+      modalCurrentAccessDiv.innerHTML = `<p class="text-[var(--text-red-accent)] p-3">Error loading roles: ${error.message}</p>`;
+    }
+  }
+
+  async function updateNodeAccessInModal(selectElement, email, nodeId) {
+    const newRole = selectElement.value;
+    const originalRole = selectElement.dataset.originalRole;
+    if (newRole === originalRole) return;
+    selectElement.disabled = true;
+    selectElement.style.opacity = "0.7";
+    try {
+      const response = await secureFetch(`${BASE_API_URL}/api/access`, {
+        // USE DYNAMIC URL
+        method: "PUT",
+        body: JSON.stringify({
+          email,
+          nodeId,
+          role: newRole
+        }),
+      });
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({
+          message: response.statusText
+        }));
+        throw new Error(`Failed: ${err.message || err.detail || response.statusText}`);
+      }
+      if (window.showNotification)
+        window.showNotification("Access updated! ✅", "success");
+      selectElement.dataset.originalRole = newRole;
+      await fetchUsers();
+      await fetchActivity();
+    } catch (error) {
+      console.error("Admin Panel: Error updating access:", error);
+      if (window.showNotification)
+        window.showNotification(`Error updating access: ${error.message}`, "error");
+      selectElement.value = originalRole;
+    } finally {
+      selectElement.disabled = false;
+      selectElement.style.opacity = "1";
+    }
+  }
+
+  async function revokeNodeAccessInModal(email, nodeId) {
+    const nodeName = await fetchNodeName(nodeId);
+    if (!confirm(`Revoke access for ${email} from "${escapeJSString(nodeName)}"?`))
+      return;
+    const revokeButton = event.target.closest("button");
+    if (revokeButton) revokeButton.disabled = true;
+    try {
+      const response = await secureFetch(`${BASE_API_URL}/api/access`, {
+        // USE DYNAMIC URL
+        method: "DELETE",
+        body: JSON.stringify({
+          email,
+          nodeId
+        }),
+      });
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({
+          message: response.statusText
+        }));
+        throw new Error(`Failed: ${err.message || err.detail || response.statusText}`);
+      }
+      if (window.showNotification)
+        window.showNotification("Access revoked! ✅", "success");
+      const accessItemDiv = revokeButton.closest(".access-item");
+      if (accessItemDiv) {
+        accessItemDiv.style.transition = "opacity 0.3s ease";
+        accessItemDiv.style.opacity = "0";
+        setTimeout(() => {
+          accessItemDiv.remove();
+          if (modalCurrentAccessDiv && modalCurrentAccessDiv.children.length === 0) {
+            modalCurrentAccessDiv.innerHTML = `<p class="text-[var(--text-tertiary)] p-3">No specific node/file access granted.</p>`;
+          }
+        }, 300);
+      } else {
+        await loadUserAccessRolesForModal(email);
+      }
+      await fetchUsers();
+      await fetchActivity();
+    } catch (error) {
+      console.error("Admin Panel: Error revoking access:", error);
+      if (window.showNotification)
+        window.showNotification(`Error revoking access: ${error.message}`, "error");
+      if (revokeButton) revokeButton.disabled = false;
+    }
+  }
+  const grantNewAccessFormElement = document.getElementById("grantNewAccessForm");
+  if (grantNewAccessFormElement) {
+    grantNewAccessFormElement.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const btn = e.target.querySelector('button[type="submit"]');
+      const originalText =
+        btn.querySelector(".button-text")?.textContent || btn.textContent;
+      window.setButtonLoading(btn, true, originalText);
+
+      const email = modalEditingUserEmailHidden.value;
+      const nodeIdSelect = document.getElementById("modalNodeSelect");
+      const roleSelect = document.getElementById("modalNodeRoleSelect");
+      const nodeId = nodeIdSelect.value;
+      const role = roleSelect.value;
+
+      if (!email || !nodeId || !role) {
+        if (window.showNotification)
+          window.showNotification(
+            "Please select a folder/file and assign a role.",
+            "error"
+          );
+        window.setButtonLoading(btn, false, originalText);
+        if (!nodeId) nodeIdSelect.focus();
+        else roleSelect.focus();
+        return;
+      }
+      try {
+        const response = await secureFetch(`${BASE_API_URL}/api/access`, {
+          // USE DYNAMIC URL
+          method: "PUT",
+          body: JSON.stringify({
+            email,
+            nodeId: parseInt(nodeId),
+            role
+          }),
+        });
+        if (!response.ok) {
+          const err = await response.json().catch(() => ({
+            message: response.statusText
+          }));
+          throw new Error(`Failed: ${err.message || err.detail || response.statusText}`);
+        }
+        if (window.showNotification)
+          window.showNotification("Access granted successfully! ✅", "success");
+        await loadUserAccessRolesForModal(email);
+        await fetchUsers();
+        await fetchActivity();
+        e.target.reset();
+        nodeIdSelect.value = "";
+      } catch (error) {
+        console.error("Admin Panel: Error granting new access:", error);
+        if (window.showNotification)
+          window.showNotification(`Error granting access: ${error.message}`, "error");
+      } finally {
+        window.setButtonLoading(btn, false, originalText);
+      }
+    });
+  }
+  // --- End Access Modal ---
+
+  // --- Artifact Details Modal Logic ---
+  // (Your showArtifactDetailsModal and closeArtifactDetailsModal functions)
+  const artifactDetailsModalEl = document.getElementById("artifact-details-modal");
+  function showArtifactDetailsModal(title, description, link) {
+    const titleEl = document.getElementById("artifact-modal-title");
+    const descEl = document.getElementById("artifact-details-modal-description");
+    const linkEl = document.getElementById("artifact-modal-link");
+    if (!artifactDetailsModalEl || !titleEl || !descEl || !linkEl) {
+      console.error("Admin Panel: Artifact modal elements not found.");
+      return;
+    }
+    titleEl.textContent = title || "Artifact Details";
+    descEl.innerHTML = description ?
+      escapeJSString(description).replace(/\n/g, "<br>") :
+      "<em>No description provided.</em>";
+    let pLink = link || "#";
+    if (pLink && pLink !== "#" && !pLink.match(/^(https?:\/\/|mailto:|tel:)/i)) {
+      if (!pLink.includes(".") || pLink.startsWith("/")) {
+        console.warn("Admin Panel: Potentially invalid link format in artifact modal:", pLink);
+      } else {
+        pLink = `https://${pLink}`;
+      }
+    }
+    linkEl.href = pLink;
+    if (!link || link === "#") {
+      linkEl.classList.add("opacity-50", "cursor-not-allowed");
+      linkEl.removeAttribute("target");
+      linkEl.onclick = (ev) => ev.preventDefault();
+      linkEl.title = "No link provided";
+    } else {
+      linkEl.classList.remove("opacity-50", "cursor-not-allowed");
+      linkEl.setAttribute("target", "_blank");
+      linkEl.onclick = null;
+      linkEl.title = `Go to: ${pLink}`;
+    }
+    artifactDetailsModalEl.classList.add("active");
+  }
+  function closeArtifactDetailsModal() {
+    if (artifactDetailsModalEl) artifactDetailsModalEl.classList.remove("active");
+  }
+  // --- End Artifact Modal ---
+
+  // --- User Menu Dropdown Logic ---
+  // (Your existing user menu dropdown logic)
+  if (userMenuButton && userDropdownMenu) {
+    userMenuButton.addEventListener("click", (event) => {
+      event.stopPropagation();
+      const isExpanded = userMenuButton.getAttribute("aria-expanded") === "true" || false;
+      userMenuButton.setAttribute("aria-expanded", !isExpanded);
+      userDropdownMenu.classList.toggle("hidden");
+    });
+    document.addEventListener("click", (event) => {
+      if (
+        userMenuButton &&
+        userDropdownMenu &&
+        !userMenuButton.contains(event.target) &&
+        !userDropdownMenu.contains(event.target)
+      ) {
+        userDropdownMenu.classList.add("hidden");
+        userMenuButton.setAttribute("aria-expanded", "false");
+      }
+    });
+  }
+  if (logoutButtonDropdown && firebaseAuth) {
+    logoutButtonDropdown.addEventListener("click", async () => {
+      console.log("Admin Panel: Logout button clicked.");
+      try {
+        await firebaseAuth.signOut();
+        sessionStorage.removeItem("token"); // Consistent token name
+        if (window.showNotification)
+          window.showNotification("Logged out successfully.", "success");
+        // onAuthStateChanged will handle the redirect
+        if (userDropdownMenu) userDropdownMenu.classList.add("hidden");
+        if (userMenuButton) userMenuButton.setAttribute("aria-expanded", "false");
+      } catch (error) {
+        console.error("Admin Panel: Error signing out:", error);
+        if (window.showNotification)
+          window.showNotification("Logout failed. Please try again.", "error");
+      }
+    });
+  }
+  // --- End User Menu ---
+
+  // --- Initialization ---
+  function initializeAdminPanel() {
+    console.log("Admin Panel: Initializing data with BASE URL:", BASE_API_URL); // Use the dynamic var
+    if (firebaseAuth && firebaseAuth.currentUser) {
+      fetchTree();
+      fetchUsers();
+      fetchActivity();
+    } else {
+      console.log("Admin Panel: User not logged in, skipping data fetch.");
+      const treeDiv = document.getElementById("tree");
+      if (treeDiv)
+        treeDiv.innerHTML = `<p class="text-[var(--text-tertiary)] p-3 text-center">Please log in to view structure.</p>`;
+      if (userListContainer) showUserListMessage("Please log in to view users.");
+      // Activity log will also show its initial message or error from fetchActivity
+    }
+  }
+  // --- End Initialization ---
+
+  // --- Global Event Listeners ---
+  // (Your existing keydown listener for Escape key)
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      if (accessModal?.classList.contains("active")) closeAccessModal();
+      if (artifactDetailsModalEl?.classList.contains("active"))
+        closeArtifactDetailsModal();
+      const deleteModal = document.getElementById("delete-confirmation-modal");
+      if (deleteModal?.classList.contains("active")) closeDeleteConfirmationModal();
+
+      document.querySelectorAll(".form-inline").forEach((form) => {
+        if (form.style.display === "block") form.style.display = "none";
+      });
+      if (userDropdownMenu && !userDropdownMenu.classList.contains("hidden")) {
+        userDropdownMenu.classList.add("hidden");
+        if (userMenuButton) userMenuButton.setAttribute("aria-expanded", "false");
+      }
+    }
+  });
+  // --- End Global Event Listeners ---
+
+  // --- Activity Log ---
+  // (Your existing Activity Log functions: showActivityListMessage, hideActivityListMessage, fetchActivity, renderActivity)
+  // IMPORTANT: Ensure fetchActivity uses `${BASE_API_URL}/...`
+  const activityListElement = document.getElementById("activityList");
+  const activityListInitialSpinnerElement = document.getElementById(
+    "activity-list-initial-spinner"
+  ); // Renamed for clarity
+  const activityListMessageAreaElement = document.getElementById(
+    "activity-list-message-area"
+  ); // Renamed
+  let isLoadingActivity = false;
+
+  function showActivityListMessage(message) {
+    if (
+      activityListMessageAreaElement &&
+      activityListElement &&
+      activityListInitialSpinnerElement
+    ) {
+      activityListMessageAreaElement.textContent = message;
+      activityListMessageAreaElement.style.display = "block";
+      activityListElement.innerHTML = "";
+      activityListInitialSpinnerElement.style.display = "none";
+    }
+  }
+
+  function hideActivityListMessage() {
+    if (activityListMessageAreaElement && activityListInitialSpinnerElement) {
+      activityListMessageAreaElement.style.display = "none";
+      activityListInitialSpinnerElement.style.display = "none";
+    }
+  }
+
+  async function fetchActivity(manualRefresh = false) {
+    if (isLoadingActivity && !manualRefresh) return;
+    isLoadingActivity = true;
+
+    if (activityListInitialSpinnerElement)
+      activityListInitialSpinnerElement.style.display = "block";
+    if (activityListElement) activityListElement.innerHTML = "";
+    hideActivityListMessage();
+
+    try {
+      const res = await secureFetch(`${BASE_API_URL}/api/activity`); // USE DYNAMIC URL
+      if (!res.ok) {
+        let errorMsg = `HTTP error! status: ${res.status}`;
+        try {
+          const errData = await res.json();
+          errorMsg += ` - ${errData.message || errData.error || JSON.stringify(errData)}`;
+        } catch (e) {
+          /* ignore */
+        }
+        throw new Error(errorMsg);
+      }
+      const activities = await res.json();
+      if (!Array.isArray(activities)) {
+        throw new Error("Invalid activity data received from server.");
+      }
+      renderActivity(activities);
+      if (activities.length === 0) {
+        showActivityListMessage("No recent activity found.");
+      }
+    } catch (error) {
+      console.error("Admin Panel: Failed to fetch activity:", error);
+      if (window.showNotification)
+        window.showNotification(`Error loading activity: ${error.message}`, "error");
+      showActivityListMessage("Failed to load activity. Please try again later.");
+    } finally {
+      isLoadingActivity = false;
+      if (activityListInitialSpinnerElement)
+        activityListInitialSpinnerElement.style.display = "none";
+    }
+  }
+
+  function renderActivity(activities) {
+    if (!activityListElement) return;
+    activityListElement.innerHTML = "";
+
+    if (activities.length === 0) {
+      // Message handled by caller
+      return;
+    }
+    const activityItemsHTML = activities
+      .map((activity) => {
+        const messageContent = escapeJSString(
+          activity.message || "Log message unavailable."
+        );
+        return `<li class="p-2 border-b border-[var(--border-primary)] last:border-b-0 text-sm text-[var(--text-primary)] hover:bg-[var(--bg-card-hover)] rounded-sm transition-colors duration-150">${messageContent}</li>`;
+      })
+      .join("");
+    activityListElement.innerHTML = activityItemsHTML;
+  }
+  // --- End Activity Log ---
+
+  // Add these new functions for rename functionality
+  async function startRename(id, type, currentName) {
+    const nodeElement = document.querySelector(`[data-node-id="${id}"]`);
+    if (!nodeElement) return;
+
+    // Correctly target the span that displays the name, which might be nested differently
+    // for nodes vs. artifacts, and account for the "ID: " part if it's a node.
+    let nameContainer;
+    let nameSpanToReplace;
+    if (type === 'node') {
+      nameContainer = nodeElement.querySelector('.tree-node-text');
+      nameSpanToReplace = nodeElement.querySelector('.tree-node-text .node-display-name');
+    } else { // type === 'artifact'
+      nameContainer = nodeElement.querySelector('.tree-artifact-text');
+      nameSpanToReplace = nodeElement.querySelector('.tree-artifact-text span.truncate'); // This was mostly correct for artifact
+    }
+
+    if (!nameContainer || !nameSpanToReplace) {
+      console.error("Could not find name element for renaming.", {
+        id,
+        type,
+        currentName,
+        nodeElement
+      });
+      return;
+    }
+
+    const originalName = nameSpanToReplace.textContent.trim();
+
+    // Create the input field
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.value = originalName;
+    input.className = 'input-field text-sm py-0.5 px-1 w-full bg-[var(--bg-input)] border-[var(--border-input)] flex-grow'; // flex-grow to take available space
+
+    // Create the confirm button
+    const confirmButton = document.createElement('button');
+    confirmButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>`;
+    confirmButton.className = 'action-icon-btn add ml-2 flex-shrink-0'; // Added flex-shrink-0
+    confirmButton.title = 'Confirm Rename';
+
+    // Create a wrapper for the input and button to replace the entire name container
+    const inputWrapper = document.createElement('div');
+    inputWrapper.className = 'flex items-center flex-grow min-w-0'; // Ensure it takes space
+    inputWrapper.appendChild(input);
+    inputWrapper.appendChild(confirmButton);
+
+    // Store original content and replace
+    const originalContentContainer = nameContainer.cloneNode(true); // Clone for later restoration
+    nameContainer.replaceWith(inputWrapper);
+
+    input.focus();
+    input.select();
+
+    const executeRename = async () => {
+      const newName = input.value.trim();
+      if (!newName || newName === originalName) {
+        // Revert if empty or unchanged
+        inputWrapper.replaceWith(originalContentContainer);
+        return;
+      }
+
+      confirmButton.disabled = true; // Disable button during processing
+      input.disabled = true;
+
+      try {
+        const endpoint =
+          type === 'node' ?
+          `${BASE_API_URL}/api/nodes/${id}` :
+          `${BASE_API_URL}/api/artifacts/${id}`;
+        const payload = type === 'node' ? {
+          name: newName
+        } : {
+          title: newName
+        };
+
+        const response = await secureFetch(endpoint, {
+          method: 'PUT',
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+          throw new Error(`Failed to rename: ${response.statusText}`);
+        }
+
+        // Update the text content of the original span inside the cloned container
+        if (type === 'node') {
+          originalContentContainer.querySelector('.node-display-name').textContent = newName;
+          originalContentContainer.querySelector('.tree-node-text .text-xs')?.remove(); // Remove old ID span if present for node
+          originalContentContainer.querySelector('.tree-node-text').appendChild(document.createTextNode(` (ID: ${id})`));
+        } else {
+          originalContentContainer.querySelector('span.truncate').textContent = newName;
+        }
+
+        // Replace the input field with the updated original content container
+        inputWrapper.replaceWith(originalContentContainer);
+
+        if (window.showNotification)
+          window.showNotification(
+            `${type === 'node' ? 'Folder' : 'File'} renamed successfully! ✅`,
+            "success"
+          );
+        await fetchActivity();
+      } catch (error) {
+        console.error('Error renaming:', error);
+        if (window.showNotification)
+          window.showNotification(`Error renaming: ${error.message}`, "error");
+        // Revert UI to original state on error
+        inputWrapper.replaceWith(originalContentContainer);
+      } finally {
+        confirmButton.disabled = false;
+        input.disabled = false;
+      }
+    };
+
+    // Event listeners
+    input.addEventListener('blur', () => {
+      // Small delay to allow click on button to register before blur handler
+      setTimeout(() => {
+        if (!inputWrapper.contains(document.activeElement)) {
+          executeRename();
+        }
+      }, 100);
+    });
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault(); // Prevent new line in input
+        executeRename();
+      } else if (e.key === 'Escape') {
+        inputWrapper.replaceWith(originalContentContainer);
+      }
+    });
+    confirmButton.addEventListener('click', executeRename);
+  }
+</script>
+</body>
 </html>
