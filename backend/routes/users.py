@@ -53,7 +53,7 @@ def send_invite_email(email: str, name: str, token: str):
     msg["To"] = email
 
     msg.set_content(f"""
-        Hi {name},
+        Hi ,
 
         You've been invited to join DocNest.
 
@@ -69,7 +69,7 @@ def send_invite_email(email: str, name: str, token: str):
 """)
 
     with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
-        smtp.login("srujan.int@niveussolutions.com", "tqlg oeif kebt ehzr")
+        smtp.login("srujan.rai@niveussolutions.com", "tqlg oeif kebt ehzr")
         smtp.send_message(msg)
 
 

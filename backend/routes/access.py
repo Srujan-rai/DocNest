@@ -93,6 +93,7 @@ async def update_access(data: UpdateAccess, current_user=Depends(get_current_use
 
     return {"message": "Role updated recursively", "updatedNodes": updated}
 
+
 @router.delete("/api/access")
 async def revoke_access(data: RevokeAccess, current_user=Depends(get_current_user)):
     await assert_admin_access(current_user.id, data.nodeId)()

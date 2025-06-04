@@ -1000,7 +1000,7 @@
           <h3
             class="text-xl md:text-2xl font-bold text-[var(--text-card-header)] mb-4"
           >
-            Node Connectivity Graph
+            Folder hierarchy
           </h3>
           <div
             id="node-graph-loading"
@@ -1430,18 +1430,11 @@
             console.error(
               `User Page: Authorization error (${response.status}) for ${url}.`
             );
-            window.showNotification(
-              "Authorization error. Your session may have expired. Please log in again.",
-              "error",
-              5000
-            );
-            if (firebaseAuth)
-              // Attempt to sign out on auth error
-              await firebaseAuth
-                .signOut()
-                .catch((e) =>
-                  console.error("Sign out after auth error failed", e)
-                );
+            window.showNotification("Access Denied", "error", 5000);
+            setTimeout(() => {
+              window.location.href = "/userpage.html";
+            }, 500);
+
             throw new Error(`Authorization failed (${response.status})`);
           }
           return response;

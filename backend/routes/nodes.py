@@ -55,7 +55,7 @@ NodeGraph.update_forward_refs()
 
 @router.post("/api/nodes")
 async def create_node(payload: NodeCreate, user=Depends(get_current_user)):
-    # If this is a child node, check permission
+    # Step 1: Check permission on parent node (if not root)
     if payload.parentId:
         access = await db.access.find_first(
             where={
@@ -67,7 +67,7 @@ async def create_node(payload: NodeCreate, user=Depends(get_current_user)):
         if not access:
             raise HTTPException(403, "You don't have permission to add a folder here.")
 
-    # Create node
+    # Step 2: Create the new node
     node = await db.node.create(
         data={
             "name": payload.name,
@@ -77,7 +77,7 @@ async def create_node(payload: NodeCreate, user=Depends(get_current_user)):
         }
     )
 
-    # Grant creator ADMIN access
+    # Step 3: Grant creator ADMIN access
     await db.access.create(
         data={
             "userId": user.id,
@@ -85,6 +85,28 @@ async def create_node(payload: NodeCreate, user=Depends(get_current_user)):
             "role": "ADMIN"
         }
     )
+
+    # Step 4: Traverse up to find the root node
+    root_id = payload.parentId
+    while root_id:
+        parent_node = await db.node.find_unique(where={"id": root_id})
+        if not parent_node or parent_node.parentId is None:
+            break
+        root_id = parent_node.parentId
+
+    # Step 5: Inherit root access as VIEWERs
+    if root_id:
+        root_access_list = await db.access.find_many(where={"nodeId": root_id})
+        for acc in root_access_list:
+            if acc.userId != user.id:  # exclude creator
+                # Add them as VIEWER (even if they were ADMIN/EDITOR at root)
+                await db.access.create(
+                    data={
+                        "userId": acc.userId,
+                        "nodeId": node.id,
+                        "role": "VIEWER"
+                    }
+                )
 
     return node
 

@@ -6,9 +6,12 @@ from firebase_setup import db as firebase_db
 from datetime import datetime
 import asyncio
 from pydantic import BaseModel
-
+from typing import Optional
 class ArtifactUpdate(BaseModel):
     title: str
+    description: Optional[str] = None  
+
+    
 
 router = APIRouter()
 
@@ -167,7 +170,7 @@ async def update_artifact(artifact_id: int, payload: ArtifactUpdate, user=Depend
     
     update_task = asyncio.create_task(db.artifact.update(
         where={"id": artifact_id},
-        data={"title": payload.title}))
+        data={"title": payload.title,"description": payload.description}))
     logs_task = asyncio.create_task(fetch_activity_logs())
     
     updated_artifact, logs = await asyncio.gather(update_task, logs_task)
