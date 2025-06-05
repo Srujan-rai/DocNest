@@ -111,7 +111,7 @@ async def list_users(user=Depends(get_current_user)):
     ]
 
 
-<<<<<<< HEAD
+
 @router.get("/api/users/{email}")
 async def get_user_access(email: str, user=Depends(get_current_user)):
     # ✅ Only allow ADMIN users to query others
@@ -146,9 +146,6 @@ async def get_user_access(email: str, user=Depends(get_current_user)):
             for a in access if a.nodeId is not None
         ]
     }
-
-=======
->>>>>>> 87d6ce0b22bf1e083d0933171f4471f8cb46d2aa
 @router.post("/api/users")
 async def create_user(payload: UserCreate, user=Depends(get_current_user)):
     try:
