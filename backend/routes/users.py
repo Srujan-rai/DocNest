@@ -11,6 +11,9 @@ from email.message import EmailMessage
 import traceback
 import  base64
 import asyncio
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+
 
 def get_user_log_ref():
     return firebase_db.reference("/activityLogs")
@@ -45,33 +48,200 @@ class UserUpdate(BaseModel):
     email: Optional[EmailStr] = None
 
 def send_invite_email(email: str, name: str, token: str):
-    signup_url = f"https://doc-nest-signup.vercel.app/?token={token}"
+    """
+    Sends an HTML and plain-text invitation email to a user.
 
-    msg = EmailMessage()
-    msg["Subject"] = "You're Invited to DocNest"
-    msg["From"] = "noreply@yourapp.com"
+    Args:
+        email (str): The recipient's email address.
+        name (str): The recipient's name (can be empty).
+        token (str): The unique invitation token.
+    """
+    signup_url = f"https://doc-nest-signup.vercel.app/?token={token}"
+    # This is the user page they will be directed to *after* successful signup.
+    # This information is more for your application logic post-signup,
+    # rather than directly in this email sending function's core logic,
+    # but good to keep in mind for the overall flow.
+    # user_dashboard_url = "https://docnest-niveus-user.vercel.app/"
+
+
+    # Create the root message and set the headers
+    msg = MIMEMultipart("alternative")
+    msg["Subject"] = "You're Invited to Join DocNest!"
+    msg["From"] = "DocNest Team <noreply@yourapp.com>" # Using a more descriptive sender
     msg["To"] = email
 
-    msg.set_content(f"""
-        Hi ,
+    # --- Create the plain-text version of your message ---
+    text_content = f"""
+Hi {name if name else "there"},
 
-        You've been invited to join DocNest.
+You've been invited to join DocNest!
 
-        Click the link below to sign up using your Google account:
+DocNest is a robust knowledge base system for secure storage, retrieval, and management of hierarchical content like files and folders.
 
-        {signup_url}
+To get started, please click the link below to sign up using your Google account:
+{signup_url}
 
-        This invite is valid only for {email} and will expire in 48 hours.
+This invitation is exclusively for {email} and will expire in 48 hours.
 
-        If you didn’t request this, you can ignore the email.
+If you didn't request this invitation, please disregard this email. No further action is required.
 
-        - The DocNest Team
-""")
+Thanks,
+The DocNest Team
+"""
+    part_text = MIMEText(text_content, "plain")
+    msg.attach(part_text)
 
-    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
-        smtp.login("srujan.rai@niveussolutions.com", "tqlg oeif kebt ehzr")
-        smtp.send_message(msg)
+    # --- Create the HTML version of your message ---
+    html_content = f"""
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>You're Invited to DocNest!</title>
+    <style>
+        body {{
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5; /* A light, neutral background */
+            color: #333333;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }}
+        .email-container {{
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden; /* Ensures border-radius is respected by children */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }}
+        .header {{
+            background-color: #4A90E2; /* A welcoming blue, adjust to your brand */
+            color: #ffffff;
+            padding: 25px;
+            text-align: center;
+        }}
+        .header h1 {{
+            margin: 0;
+            font-size: 26px;
+            font-weight: 600;
+        }}
+        .header img.logo {{ /* Optional: Add a logo */
+            max-width: 150px;
+            margin-bottom: 15px;
+        }}
+        .content {{
+            padding: 25px 30px; /* More padding for content */
+            line-height: 1.65;
+            font-size: 16px;
+            color: #333;
+        }}
+        .content p {{
+            margin: 0 0 15px 0;
+        }}
+        .content strong {{
+            color: #2c3e50;
+        }}
+        .button-container {{
+            text-align: center;
+            padding: 15px 0 25px 0;
+        }}
+        .button {{
+            background-color: #5cb85c; /* A positive action color, e.g., green */
+            color: #ffffff !important; /* Important to override default link color */
+            padding: 14px 28px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+            display: inline-block;
+            font-size: 17px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out;
+        }}
+        .button:hover {{
+            background-color: #4cae4c; /* Slightly darker on hover */
+        }}
+        .footer {{
+            text-align: center;
+            padding: 20px;
+            font-size: 13px;
+            color: #888888;
+            background-color: #f9f9f9;
+            border-top: 1px solid #eeeeee;
+        }}
+        .footer a {{
+            color: #4A90E2; /* Match header or brand color */
+            text-decoration: none;
+        }}
+        .footer a:hover {{
+            text-decoration: underline;
+        }}
+        .important-note {{
+            font-size: 14px;
+            color: #777777;
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-left: 3px solid #ffc107; /* An accent for important notes */
+        }}
+        .app-name {{
+            font-weight: bold;
+            color: #4A90E2; /* Brand color for emphasis */
+        }}
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            {f'<img src="YOUR_DOCNEST_LOGO_URL_HERE" alt="DocNest Logo" class="logo">' if False else ''} 
+            <h1>You're Invited!</h1>
+        </div>
+        <div class="content">
+            <p>Hi {name if name else "there"},</p>
+            <p>You've received an invitation to join <span class="app-name">DocNest</span>! We're excited to help you with our robust knowledge base system, designed for secure storage, retrieval, and management of hierarchical content like files and folders.</p>
+            <p>To accept your invitation and create your account, please click the button below:</p>
+        </div>
+        <div class="button-container">
+            <a href="{signup_url}" class="button">Accept Invitation & Sign Up</a>
+        </div>
+        <div class="content">
+            <p>This invitation link is just for you (<strong>{email}</strong>) and will expire in <strong>48 hours</strong>.</p>
+            <p class="important-note">If you weren't expecting this invitation, or if you believe it was sent in error, you can safely ignore this email. No account will be created unless you click the link above.</p>
+        </div>
+        <div class="footer">
+            <p>&copy; { "2025" } DocNest by Niveus Solutions Part of NTT Data. All rights reserved.</p> 
+            <p>If you have questions, please <a href="mailto:support@yourdocnestapp.com">contact our support team</a>.</p> 
+            <p>The DocNest Team</p>
+        </div>
+    </div>
+</body>
+</html>
+"""
+    part_html = MIMEText(html_content, "html")
+    msg.attach(part_html)
 
+    # --- Send the email ---
+    try:
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
+            # IMPORTANT: Storing credentials directly in code is not secure for production.
+            # Consider using environment variables, a config file, or a secrets manager.
+            # The password "tqlg oeif kebt ehzr" appears to be a Google App Password, which is good.
+            smtp.login("srujan.rai@niveussolutions.com", "tqlg oeif kebt ehzr")
+            smtp.send_message(msg)
+        print(f"Invitation email successfully sent to {email}")
+    except smtplib.SMTPAuthenticationError as e:
+        print(f"SMTP Authentication Error: Failed to send email to {email}. Check credentials. Error: {e}")
+    except smtplib.SMTPConnectError as e:
+        print(f"SMTP Connect Error: Failed to connect to the server for {email}. Error: {e}")
+    except smtplib.SMTPServerDisconnected as e:
+        print(f"SMTP Server Disconnected: Connection lost while sending to {email}. Error: {e}")
+    except Exception as e:
+        print(f"An unexpected error occurred while sending email to {email}: {e}")
 
 
 @router.get("/api/users")
