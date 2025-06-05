@@ -1,5 +1,6 @@
 
-under_dev/venv/
+backend/venv/
+backend/__pycache__/
 backend/docnest-f85e2-firebase-adminsdk-fbsvc-4f30712b1b.json
 under_dev/docnest-f85e2-firebase-adminsdk-fbsvc-4f30712b1b.json
 under_dev/.env

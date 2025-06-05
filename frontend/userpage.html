@@ -1424,6 +1424,7 @@
           headers["Content-Type"] = "application/json";
         }
 
+<<<<<<< HEAD
         try {
           const response = await fetch(url, { ...options, headers });
           if (response.status === 401 || response.status === 403) {
@@ -1455,6 +1456,9 @@
         }
       }
       // --- End Authentication & Authorization ---
+=======
+      const BASE = "http://localhost:3000";
+>>>>>>> 87d6ce0b22bf1e083d0933171f4471f8cb46d2aa
 
       // --- Initial Data Loading (Parallel) ---
       async function fetchRoles() {

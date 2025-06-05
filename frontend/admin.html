@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -1048,6 +1049,19 @@
         </button>
       </div>
       <input type="hidden" id="modal-editing-user-email-hidden" />
+=======
+<script>
+      // --- Firebase Configuration ---
+      const firebaseConfig = {
+        apiKey: "AIzaSyCbHWUEzqGjzeanOiMG0Z5Lb4wIjWWEMUQ", // Replace with your actual API key if this is a placeholder
+        authDomain: "docnest-f85e2.firebaseapp.com",
+        projectId: "docnest-f85e2",
+        storageBucket: "docnest-f85e2.appspot.com",
+        messagingSenderId: "102395439437",
+        appId: "1:102395439437:web:84e6676388b5d54395af04",
+        measurementId: "G-YRMBR8BVSE",
+      };
+>>>>>>> 87d6ce0b22bf1e083d0933171f4471f8cb46d2aa
 
       <h4 class="text-lg font-semibold mb-2 text-[var(--text-secondary)]">
         Current Node Access:
@@ -1099,6 +1113,7 @@
     </div>
   </div>
 
+<<<<<<< HEAD
   <div id="artifact-details-modal" class="modal-overlay">
     <div class="modal-content">
       <div class="modal-header">
@@ -1357,6 +1372,180 @@
           !BASE_API_URL.includes("your-actual-cloud-run-url")
         ) {
           initializeAdminPanel();
+=======
+        let iconHtml = "";
+        if (type === "success") {
+          iconHtml = `<svg class="toast-icon h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
+        } else if (type === "error") {
+          iconHtml = `<svg class="toast-icon h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
+        } else if (type === "info") { // Added info type
+          iconHtml = `<svg class="toast-icon h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
+        }
+
+
+        toast.innerHTML = `${iconHtml}<span>${message}</span>`;
+        toastContainer.appendChild(toast);
+
+        toast.offsetHeight; // Trigger reflow
+
+        toast.classList.add("show");
+
+        setTimeout(() => {
+          toast.classList.remove("show");
+          setTimeout(() => {
+            toast.remove();
+          }, 300);
+        }, duration);
+      };
+
+      window.setButtonLoading = function (
+        button,
+        isLoading,
+        originalText = null
+      ) {
+        if (!(button instanceof HTMLElement)) {
+          console.error("setButtonLoading: button argument is not an HTMLElement", button);
+          return;
+        }
+        const buttonTextSpan = button.querySelector(".button-text");
+        if (isLoading) {
+          button.disabled = true;
+          if (buttonTextSpan) {
+            if (originalText !== null && typeof buttonTextSpan.dataset.originalText === 'undefined') { // Store original text only once if not already stored
+                buttonTextSpan.dataset.originalText = buttonTextSpan.innerHTML;
+            }
+            buttonTextSpan.innerHTML = `<span class="spinner"></span>Processing...`;
+          } else {
+            if (originalText !== null && typeof button.dataset.originalText === 'undefined') { // Store original text only once
+                button.dataset.originalText = button.innerHTML;
+            }
+            button.innerHTML = `<span class="spinner"></span>Processing...`;
+          }
+        } else {
+          button.disabled = false;
+          if (buttonTextSpan) {
+            buttonTextSpan.innerHTML = buttonTextSpan.dataset.originalText || originalText || "Submit";
+            delete buttonTextSpan.dataset.originalText; // Clean up after restoring
+          } else {
+            button.innerHTML = button.dataset.originalText || originalText || "Submit";
+            delete button.dataset.originalText; // Clean up
+          }
+        }
+      };
+      // --- End Global Helper Functions ---
+
+      // Initialize Firebase (compat version)
+      let firebaseApp;
+      let firebaseAuth;
+
+      try {
+        firebaseApp = firebase.initializeApp(firebaseConfig);
+        firebaseAuth = firebase.auth();
+        console.log("Firebase initialized successfully.");
+      } catch (e) {
+        console.error("Error initializing Firebase:", e);
+        window.showNotification("Critical Error: Could not initialize Firebase. Check console and API Key.", "error", 10000);
+      }
+
+      // --- Auth State Management ---
+      const userMenuButton = document.getElementById("user-menu-button");
+      const userDisplayNameSpan = document.getElementById("user-display-name");
+      const userDropdownMenu = document.getElementById("user-dropdown-menu");
+      const dropdownUserName = document.getElementById("dropdown-user-name");
+      const dropdownUserEmail = document.getElementById("dropdown-user-email");
+      const logoutButtonDropdown = document.getElementById("logout-button-dropdown");
+
+      if (firebaseAuth) {
+        firebaseAuth.onAuthStateChanged((user) => {
+          if (user) {
+            console.log("✅ Admin Panel: Logged in as", user.email);
+            if (userDisplayNameSpan) userDisplayNameSpan.textContent = user.displayName || user.email.split("@")[0];
+            if (dropdownUserName) dropdownUserName.textContent = user.displayName || "N/A";
+            if (dropdownUserEmail) dropdownUserEmail.textContent = user.email;
+            initializeAdminPanel();
+          } else {
+            console.log("🚫 Admin Panel: No user logged in. Redirecting to login page.");
+            sessionStorage.removeItem("token");
+            // Only redirect if not already on login page to prevent loops
+            if (!window.location.pathname.endsWith("login_admin.html")) {
+              window.location.href = "login_admin.html";
+            }
+          }
+        });
+      } else {
+        console.error("Firebase Auth is not available. Admin panel features requiring authentication will not work.");
+        // Ensure body is loaded before showing notification
+        if (document.body && !window.location.pathname.endsWith("login_admin.html")) {
+            window.showNotification("Authentication service unavailable. Please check console or contact support.", "error",10000);
+        }
+      }
+
+      async function getAuthToken() {
+        if (!firebaseAuth || !firebaseAuth.currentUser) {
+          console.warn("No current user for getAuthToken. User might be logged out or session expired.");
+          if(firebaseAuth) window.showNotification("Session expired or not logged in. Please try logging in again.", "error");
+          return null;
+        }
+        try {
+          const token = await firebaseAuth.currentUser.getIdToken(true); // forceRefresh = true
+          sessionStorage.setItem("token", token);
+          return token;
+        } catch (error) {
+          console.error("Error getting ID token:", error);
+          window.showNotification("Could not refresh authentication token. Please try logging in again.", "error");
+          if (error.code === "auth/user-token-expired" || error.code === "auth/invalid-user-token") {
+            // If token is invalid/expired, sign out and redirect
+            // if (firebaseAuth) await firebaseAuth.signOut().catch(e => console.error("Signout failed after token error", e));
+            // sessionStorage.removeItem("token");
+            // if (!window.location.pathname.endsWith("login_admin.html")) {
+            //   window.location.href = "login_admin.html";
+            // }
+          }
+          return null;
+        }
+      }
+
+      async function secureFetch(url, options = {}) {
+        const token = await getAuthToken();
+        // Allow /api/tree to be fetched even without a token if necessary (e.g., for a public viewer part, though admin usually needs auth)
+        // For admin panel, most calls should require a token.
+        if (!token && url !== `${BASE}/api/tree`) { 
+          console.error("Authentication token not available for secureFetch to " + url);
+          throw new Error("Authentication token not available. Please log in.");
+        }
+        const headers = { ...options.headers };
+        if (token) { // Only add Authorization header if token exists
+            headers["Authorization"] = `Bearer ${token}`;
+        }
+
+        if (!(options.body instanceof FormData) && options.method && options.method.toUpperCase() !== 'GET' && options.method.toUpperCase() !== 'OPTIONS' ) { // Don't set for GET or OPTIONS
+          headers["Content-Type"] = "application/json";
+        }
+
+        try {
+            const response = await fetch(url, { ...options, headers });
+            return response;
+        } catch (networkError) {
+            console.error("Network error during secureFetch:", networkError);
+            window.showNotification("A network error occurred. Please check your connection and try again.", "error");
+            throw networkError; // Re-throw for calling function to handle
+        }
+      }
+
+      const BASE = "http://localhost:3000"; // Using port 3000 for Next.js backend
+      let fullTreeData = [];
+      let flatNodeList = []; // Used for dropdowns
+
+      // --- Theme Toggle ---
+      const themeToggleButton = document.getElementById("theme-toggle-button");
+      const sunIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>`;
+      const moonIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>`;
+      function applyTheme(theme) {
+        if (theme === "light") {
+          document.body.classList.add("light-theme");
+          themeToggleButton.innerHTML = moonIcon;
+          localStorage.setItem("theme", "light");
+>>>>>>> 87d6ce0b22bf1e083d0933171f4471f8cb46d2aa
         } else {
           console.error(
             "Admin Panel: Backend API URL is not properly configured. Halting data load."
@@ -1378,6 +1567,7 @@
           // The console.warn for commented out redirect can be removed if redirect is active.
         }
       }
+<<<<<<< HEAD
     });
   } else {
     console.error(
@@ -1406,6 +1596,14 @@
       );
       if (!window.location.pathname.endsWith("login_admin.html")) {
         window.location.href = "login_admin.html";
+=======
+      themeToggleButton.addEventListener("click", () => applyTheme(document.body.classList.contains("light-theme") ? "dark" : "light"));
+      applyTheme(localStorage.getItem("theme") || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "dark"));
+
+      function escapeJSString(str) {
+        if (typeof str !== "string") return "";
+        return str.replace(/\\/g, "\\\\").replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/`/g, "\\`");
+>>>>>>> 87d6ce0b22bf1e083d0933171f4471f8cb46d2aa
       }
       return null;
     }
@@ -1430,6 +1628,7 @@
     }
   }
 
+<<<<<<< HEAD
  async function secureFetch(url, options = {}) {
     let token = await getAuthToken();
 
@@ -1447,6 +1646,15 @@
             throw new Error("Authentication token refresh failed. Please log in again.");
         }
     }
+=======
+      // --- Tree Search ---
+      const searchTreeInput = document.getElementById("search-tree-input");
+      searchTreeInput.addEventListener("input", (e) => filterTreeDOM(e.target.value.toLowerCase()));
+      
+      function filterTreeDOM(searchTerm) {
+        const treeElement = document.getElementById("tree");
+        if (!treeElement) return;
+>>>>>>> 87d6ce0b22bf1e083d0933171f4471f8cb46d2aa
 
     if (!token) {
         console.error("Admin Panel: Auth token unavailable for secureFetch to " + url);
@@ -1458,6 +1666,7 @@
         throw new Error("Authentication token not available. Please log in again.");
     }
 
+<<<<<<< HEAD
     const headers = { ...options.headers };
     headers["Authorization"] = `Bearer ${token}`;
     if (options.body && !(options.body instanceof FormData) && (options.method === 'POST' || options.method === 'PUT' || options.method === 'PATCH')) {
@@ -1481,6 +1690,17 @@
                     console.error("Admin Panel: Token refresh for 401 retry failed:", refreshError);
                     if (firebaseAuth) await firebaseAuth.signOut().catch(e => console.error("Sign out after 401 retry refresh fail", e));
                     throw new Error("Session expired after failed refresh. Please log in again.");
+=======
+          let childrenMatch = false;
+          if (element.classList.contains("tree-node")) {
+            const childrenContainer = element.querySelector(".tree-children-container");
+            if (childrenContainer) {
+              const childrenElements = childrenContainer.children;
+              for (const child of childrenElements) {
+                if (checkVisibility(child, term)) {
+                  childrenMatch = true;
+                  break; 
+>>>>>>> 87d6ce0b22bf1e083d0933171f4471f8cb46d2aa
                 }
             } else {
                 console.warn("Admin Panel: No Firebase user for 401 token refresh. Proceeding to final 401 handling.");
@@ -1661,7 +1881,36 @@ const docnestLogo = document.getElementById('docnest-logo');
               }
             }
           }
+<<<<<<< HEAD
+=======
+
+          const shouldBeVisible = directMatch || childrenMatch;
+          element.classList.toggle("hidden-node", !shouldBeVisible && term.length > 0);
+          
+          // Expand parent if a child matches and parent itself doesn't, and search term is active
+          if (shouldBeVisible && childrenMatch && element.classList.contains("tree-node") && term.length > 0) {
+            const childrenContainer = document.getElementById(`children-${element.dataset.nodeId}`);
+            const toggleIcon = document.getElementById(`toggle-icon-${element.dataset.nodeId}`);
+            if (childrenContainer && childrenContainer.classList.contains("collapsed")) {
+                toggleTreeNode(element.dataset.nodeId, false); // Expand, don't just toggle
+            }
+          }
+          return shouldBeVisible;
         }
+
+        if (searchTerm.length === 0) { // If search term is empty, show all and collapse all (or restore previous state)
+            treeElement.querySelectorAll(".hidden-node").forEach((el) => el.classList.remove("hidden-node"));
+            // Optionally, collapse all nodes when search is cleared
+            // treeElement.querySelectorAll(".tree-children-container:not(.collapsed)").forEach(cc => {
+            //     const nodeId = cc.id.split('-')[1];
+            //     if(nodeId) toggleTreeNode(nodeId, true, true); // Collapse
+            // });
+            return;
+>>>>>>> 87d6ce0b22bf1e083d0933171f4471f8cb46d2aa
+        }
+
+        const topLevelNodes = Array.from(treeElement.children);
+        topLevelNodes.forEach(node => checkVisibility(node, searchTerm));
       }
       const shouldBeVisible = directMatch || childrenMatch;
       element.classList.toggle("hidden-node", !shouldBeVisible && term.length > 0);
@@ -1674,6 +1923,7 @@ const docnestLogo = document.getElementById('docnest-logo');
       return shouldBeVisible;
     }
 
+<<<<<<< HEAD
     if (searchTerm.length === 0) {
       treeElement
         .querySelectorAll(".hidden-node")
@@ -2371,8 +2621,368 @@ function renderTree(nodes) {
           window.showNotification("File created successfully! ✅", "success");
         await fetchTree(); // Refresh the tree
         await fetchActivity(); // Update activity log
+=======
+      // --- Tree and Node Dropdown Population ---
+      function generateFlatNodeList(nodes, prefix = "", level = 0) {
+        let list = [];
+        if (!Array.isArray(nodes)) return list;
+        nodes.forEach((node) => {
+          list.push({ id: node.id, name: `${"—".repeat(level)} ${node.name} (Folder)`, type: "NODE" });
+          if (node.artifacts && Array.isArray(node.artifacts)) {
+            node.artifacts.forEach((artifact) => {
+              list.push({ id: artifact.id, name: `${"—".repeat(level + 1)} ${artifact.title} (File)`, type: "ARTIFACT", nodeId: artifact.id }); // Using artifact.id as item.id
+            });
+          }
+          if (node.children && Array.isArray(node.children)) {
+            list = list.concat(generateFlatNodeList(node.children, prefix + "—", level + 1));
+          }
+        });
+        return list;
+      }
+      function populateNodeDropdowns() {
+        flatNodeList = generateFlatNodeList(fullTreeData);
+        const newUserNodeSelect = document.getElementById("newUserNodeAccess");
+        const modalNodeSelect = document.getElementById("modalNodeSelect");
+        if (!newUserNodeSelect || !modalNodeSelect) {
+            console.warn("Node select dropdowns not found in populateNodeDropdowns.");
+            return;
+        }
+        newUserNodeSelect.length = 1; // Keep "None - Global Role Only" option
+        modalNodeSelect.length = 1;   // Keep "-- Select Node --" option
+        flatNodeList.forEach((item) => {
+          const option = new Option(item.name, item.id); // Use item.id (which is node.id or artifact.id)
+          newUserNodeSelect.add(option.cloneNode(true));
+          modalNodeSelect.add(option);
+        });
+      }
+      async function fetchTree() {
+        try {
+          const res = await secureFetch(`${BASE}/api/tree`);
+          if (!res.ok) {
+            let errorMsg = `HTTP error! status: ${res.status}`;
+            try { const errData = await res.json(); errorMsg += ` - ${errData.message || errData.error || JSON.stringify(errData)}`; } catch (e) { /* ignore */ }
+            throw new Error(errorMsg);
+          }
+          fullTreeData = await res.json();
+          if (!Array.isArray(fullTreeData)) {
+            console.error("Fetched tree data is not an array:", fullTreeData);
+            fullTreeData = []; // Default to empty array on invalid data
+            throw new Error("Invalid tree data structure received from server.");
+          }
+          document.getElementById("tree").innerHTML = renderTree(fullTreeData);
+          populateNodeDropdowns();
+        } catch (error) {
+          console.error("Failed to fetch tree:", error);
+          window.showNotification(`Error loading folder structure: ${error.message}`, "error");
+          document.getElementById("tree").innerHTML = `<p class="text-[var(--text-red-accent)] p-4">Error loading folder structure. Please try again.</p>`;
+        }
+      }
+      function toggleTreeNode(nodeId, forceCollapse = false, doToggle = true) { // Added doToggle and forceCollapse
+        const childrenContainer = document.getElementById(`children-${nodeId}`);
+        const toggleIcon = document.getElementById(`toggle-icon-${nodeId}`);
+        if (childrenContainer && toggleIcon) {
+            let isCollapsed;
+            if (forceCollapse) {
+                childrenContainer.classList.add("collapsed");
+                isCollapsed = true;
+            } else if (doToggle) {
+                isCollapsed = childrenContainer.classList.toggle("collapsed");
+            } else { // Force expand
+                childrenContainer.classList.remove("collapsed");
+                isCollapsed = false;
+            }
+            toggleIcon.classList.toggle("collapsed", isCollapsed);
+            toggleIcon.innerHTML = isCollapsed
+                ? `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>`
+                : `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" /></svg>`;
+        }
+      }
+      function renderTree(nodes) {
+        if (!Array.isArray(nodes)) {
+            console.error("renderTree called with invalid data:", nodes);
+            return '<p class="text-[var(--text-red-accent)] p-2">Error: Invalid tree data format.</p>';
+        }
+        return nodes.map((n) => {
+            const hasChildrenOrArtifacts = (n.children && n.children.length > 0) || (n.artifacts && n.artifacts.length > 0);
+            const childrenHTML = n.children ? renderTree(n.children) : "";
+            const nodeNameSafe = escapeJSString(n.name);
+
+            const artifactsHTML = n.artifacts && Array.isArray(n.artifacts) ? n.artifacts.map(a => {
+                const titleContent = escapeJSString(a.title);
+                const descriptionContent = escapeJSString(a.description || "");
+                const linkContent = escapeJSString(a.link || "#");
+                return `
+                    <div class="tree-artifact-wrapper" data-artifact-id="${a.id}" data-node-id="${a.id}" data-node-name="${titleContent}" data-node-type="ARTIFACT" data-parent-node-id="${n.id}">
+                        <div class="node-content group hover:bg-[var(--bg-card-hover)] rounded-md px-1 py-0.5">
+                            <span class="tree-artifact-text clickable flex items-center text-sm flex-grow" title="View details for: ${titleContent}" onclick="showArtifactDetailsModal('${titleContent}', '${descriptionContent}', '${linkContent}')">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 tree-artifact-icon flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+                                <span>${titleContent}</span>
+                            </span>
+                            <div class="actions opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button title="Delete file" class="action-icon-btn delete" onclick="event.stopPropagation(); openDeleteConfirmationModal(${a.id}, 'artifact', '${titleContent}')"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>
+                            </div>
+                        </div>
+                    </div>`;
+                }).join("") : "";
+
+            return `
+                <div class="tree-node" data-node-id="${n.id}" data-node-name="${nodeNameSafe}" data-node-type="NODE">
+                    <div class="node-content group hover:bg-[var(--bg-card-hover)] rounded-md px-1 py-0.5">
+                        <span class="font-medium tree-node-text cursor-pointer flex items-center flex-grow" onclick="toggleTreeNode(${n.id})">
+                            ${hasChildrenOrArtifacts ? `<span id="toggle-icon-${n.id}" class="tree-toggle-icon"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" /></svg></span>` : '<span class="tree-toggle-icon w-5 h-5 mr-1"></span>'}
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1 tree-node-icon flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" /></svg>
+                            <span>${nodeNameSafe}</span> <span class="text-xs text-[var(--text-tertiary)] ml-1.5">(ID: ${n.id})</span>
+                        </span>
+                        <div class="actions opacity-0 group-hover:opacity-100 transition-opacity space-x-1">
+                            <button title="Add item to this folder" class="action-icon-btn add" onclick="event.stopPropagation(); showInlineForm(${n.id}, this)"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></button>
+                            <button title="Delete folder" class="action-icon-btn delete" onclick="event.stopPropagation(); openDeleteConfirmationModal(${n.id}, 'node', '${nodeNameSafe}')"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>
+                        </div>
+                    </div>
+                    <div id="form-${n.id}" class="form-inline mt-2 ml-5 p-4 bg-[var(--bg-inline-form)] rounded-lg border border-[var(--border-primary)] shadow-md" style="display:none;">
+                        <input type="text" placeholder="Name (Folder/File)" id="name-${n.id}" class="input-field text-sm">
+                        <select id="type-${n.id}" class="input-field text-sm" onchange="toggleFileInput(${n.id})"><option value="FOLDER">FOLDER</option><option value="SUBFOLDER">SUBFOLDER</option><option value="FILE">FILE</option></select>
+                        <textarea placeholder="Description (Optional)" id="description-${n.id}" class="input-field text-sm" rows="2"></textarea>
+                        <div id="file-method-options-${n.id}" style="display:none;">
+                            <div class="mb-2"><label class="label-text text-xs">File Source:</label><select id="file-source-${n.id}" class="input-field text-xs py-1" onchange="toggleLinkOrUpload(${n.id})"><option value="link">Enter Link</option><option value="upload">Upload File</option></select></div>
+                            <div id="link-input-container-${n.id}"><input type="text" placeholder="Link (e.g., https://...)" id="link-${n.id}" class="input-field text-sm"></div>
+                            <div id="upload-input-container-${n.id}" style="display:none;"><input type="file" id="file-upload-${n.id}" class="input-field text-sm p-2"></div>
+                        </div>
+                        <button onclick="submitInlineForm(${n.id}, this)" class="submit-button text-sm w-full py-2"><span class="button-text">Add Item</span></button>
+                    </div>
+                    <div class="tree-children-container collapsed" id="children-${n.id}">${childrenHTML}${artifactsHTML}</div>
+                </div>`;
+            }).join("");
+      }
+      async function fetchNodeName(nodeId) {
+        if (!nodeId || String(nodeId).toLowerCase() === "null" || typeof nodeId === "undefined") { return "Global / Unspecified Node"; }
+        const localNode = flatNodeList.find((n) => String(n.id) === String(nodeId));
+        if (localNode) { return `${localNode.name.replace(/—/g, "").trim()} (ID: ${nodeId})`;} // Use name which includes (Folder) or (File)
+        // Fallback to API if not in flatNodeList (should be rare if flatNodeList is up-to-date)
+        try {
+            let res = await secureFetch(`${BASE}/api/nodes/${nodeId}`);
+            if (res.ok) { const data = await res.json(); return data.name ? `${data.name} (Folder ID: ${data.id})` : `Item ${nodeId}`; }
+            // Try fetching as artifact if node fetch failed
+            res = await secureFetch(`${BASE}/api/artifacts/${nodeId}`); // Assuming such an endpoint exists or is needed
+            if (res.ok) { const data = await res.json(); return data.title ? `${data.title} (File ID: ${data.id})` : `Item ${nodeId}`; }
+            console.warn(`Node/Artifact fetch failed for ID ${nodeId} (status: ${res.status}).`); return `Item ${nodeId}`;
+        } catch (error) { console.error(`Error fetching details for ID ${nodeId}:`, error); window.showNotification(`Error: ${error.message}`, "error"); return `Item ${nodeId}`; }
       }
 
+      // --- User Management ---
+      let allUsersMasterList = [];
+      let currentUsersToDisplay = [];
+      let displayedUserCount = 0;
+      const usersPerPage = 10; 
+      let isLoadingUsers = false;
+      const userSearchInput = document.getElementById("search-users-input");
+      const userListContainer = document.getElementById("userListContainer");
+      const userListElement = document.getElementById("userList");
+      const userListLoadingIndicator = document.getElementById("user-list-loading-indicator");
+
+      async function fetchUsers() {
+        if (isLoadingUsers) return; // Prevent multiple simultaneous fetches
+        isLoadingUsers = true;
+        if (userListLoadingIndicator) userListLoadingIndicator.style.display = "block";
+
+        try {
+          const res = await secureFetch(`${BASE}/api/users`);
+          if (!res.ok) {
+            let errorMsg = `HTTP error! status: ${res.status}`;
+            try { const errData = await res.json(); errorMsg += ` - ${errData.message || errData.error || JSON.stringify(errData)}`; } catch (e) { /* ignore */ }
+            throw new Error(errorMsg);
+          }
+          const users = await res.json();
+          allUsersMasterList = users.sort((a, b) => (a.email > b.email) ? 1 : -1); // Sort by email
+          applyUserSearchFilter(); // This will reset and render the first page
+        } catch (error) {
+          console.error("Failed to fetch users:", error);
+          window.showNotification(`Error loading users: ${error.message}`, "error");
+          if(userListElement) userListElement.innerHTML = `<p class="text-[var(--text-red-accent)] p-2 text-center">Failed to load users.</p>`;
+        } finally {
+          isLoadingUsers = false;
+          if (userListLoadingIndicator) userListLoadingIndicator.style.display = "none";
+        }
+      }
+
+      function applyUserSearchFilter() {
+        const searchTerm = userSearchInput.value.toLowerCase().trim();
+        currentUsersToDisplay = searchTerm === "" 
+            ? [...allUsersMasterList] 
+            : allUsersMasterList.filter(user => 
+                (user.email && user.email.toLowerCase().includes(searchTerm)) ||
+                (user.name && user.name.toLowerCase().includes(searchTerm))
+            );
+        if (userListElement) userListElement.innerHTML = ""; // Clear previous results
+        displayedUserCount = 0;
+        renderPaginatedUsers(); 
+      }
+
+      if(userSearchInput) userSearchInput.addEventListener("input", debounce(applyUserSearchFilter, 300));
+
+      async function renderPaginatedUsers(loadMore = false) {
+        if (isLoadingUsers && loadMore) { // Prevent multiple scroll-triggered loads if a fetch or another pagination is already in progress
+            console.log("RenderPaginatedUsers: A user list operation is already in progress.");
+            return; 
+        }
+
+        if (loadMore) {
+            isLoadingUsers = true; // Set lock for this pagination operation
+            if (userListLoadingIndicator) userListLoadingIndicator.style.display = "block";
+        }
+        
+        const usersToRender = currentUsersToDisplay.slice(displayedUserCount, displayedUserCount + usersPerPage);
+
+        if (usersToRender.length === 0) {
+            if (displayedUserCount === 0 && userListElement) { // Only show "no users" if the list is truly empty after filter
+                userListElement.innerHTML = `<p class="text-[var(--text-tertiary)] p-3 text-center">No users found.</p>`;
+            }
+            if (loadMore) { // If it was a loadMore call, release lock and hide indicator
+                isLoadingUsers = false; 
+                if (userListLoadingIndicator) userListLoadingIndicator.style.display = "none";
+            }
+            return;
+        }
+
+        const userListPromises = usersToRender.map(async (u) => {
+            let nodeAccessSummary = "No specific node roles.";
+            if (u.roles && u.roles.length > 0) {
+                nodeAccessSummary = `Node Access: ${u.roles.length} role${u.roles.length > 1 ? "s" : ""}`;
+            }
+            // Assuming u.role is the global role from your User model (if you added it)
+            const globalRoleDisplay = u.role ? `Global: ${u.role}` : "No Global Role"; 
+            return `
+                <li class="user-list-item p-4 rounded-lg shadow-md flex flex-col sm:flex-row justify-between sm:items-center space-y-3 sm:space-y-0">
+                    <div class="flex-grow">
+                        <span class="font-semibold user-email-text block text-md">${escapeJSString(u.email)}</span>
+                        <span class="text-sm user-role-text block">${globalRoleDisplay}</span>
+                        <span class="user-node-role-summary block mt-1">${nodeAccessSummary}</span>
+                    </div>
+                    <div class="user-actions space-x-2 flex-shrink-0 mt-3 sm:mt-0">
+                        <button class="user-action-button manage-access" title="Manage User Access" onclick="openAccessModal('${escapeJSString(u.email)}')">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                            Manage Access
+                        </button>
+                        <button class="user-action-button delete-user" title="Delete User & All Access" onclick="openDeleteConfirmationModal('${u.id}', 'user', '${escapeJSString(u.email)}')">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                            Delete User
+                        </button>
+                    </div>
+                </li>`;
+        });
+        const userListHtmlChunk = await Promise.all(userListPromises);
+        if (userListElement) userListElement.insertAdjacentHTML("beforeend", userListHtmlChunk.join(""));
+        displayedUserCount += usersToRender.length;
+
+        if (loadMore) { // If it was a loadMore call, release lock and hide indicator
+            isLoadingUsers = false; 
+            if (userListLoadingIndicator) userListLoadingIndicator.style.display = "none";
+        }
+      }
+      
+      if(userListContainer) {
+        userListContainer.addEventListener("scroll", () => {
+            if (isLoadingUsers) return; // Prevent multiple triggers if already loading (either main fetch or pagination)
+            const { scrollTop, scrollHeight, clientHeight } = userListContainer;
+            if (scrollTop + clientHeight >= scrollHeight - 100) { // Load more when near bottom
+                if (displayedUserCount < currentUsersToDisplay.length) {
+                    renderPaginatedUsers(true); // Pass true to indicate it's a scroll-triggered load
+                }
+            }
+        });
+      }
+      
+      function deleteUser(userId, userEmail) { // Changed to accept userId for consistency
+        openDeleteConfirmationModal(userId, 'user', userEmail);
+      }
+
+      // --- Inline Form Logic (existing code) ---
+      function showInlineForm(parentId, buttonElement) { /* ... */ }
+      function toggleFileInput(parentId) { /* ... */ }
+      function toggleLinkOrUpload(parentId) { /* ... */ }
+      async function submitInlineForm(parentId, buttonElement) { /* ... */ }
+      
+      // --- Delete Confirmation Modal ---
+      const deleteConfirmationModal = document.getElementById("delete-confirmation-modal");
+      const deleteModalTitle = document.getElementById("delete-modal-title");
+      const deleteModalMessage = document.getElementById("delete-modal-message");
+      const deleteConfirmInput = document.getElementById("delete-confirm-input");
+      const confirmDeleteButton = document.getElementById("confirm-delete-button");
+      let itemToDelete = { id: null, type: null, name: "" };
+
+      function openDeleteConfirmationModal(itemId, itemType, itemName) {
+        itemToDelete = { id: itemId, type: itemType, name: itemName };
+        deleteModalTitle.textContent = `Confirm Deletion: ${escapeJSString(itemName)}`;
+        deleteModalMessage.textContent = `Are you sure you want to delete the ${itemType} "${escapeJSString(itemName)}"? This action cannot be undone.`;
+        if (itemType === 'node') deleteModalMessage.textContent += " All its contents will also be deleted.";
+        deleteConfirmInput.value = ""; 
+        confirmDeleteButton.disabled = true; 
+        deleteConfirmationModal.classList.add("active"); 
+        deleteConfirmInput.focus();
+      }
+      function closeDeleteConfirmationModal() { deleteConfirmationModal.classList.remove("active"); }
+      deleteConfirmInput.addEventListener("input", () => { confirmDeleteButton.disabled = deleteConfirmInput.value.trim().toLowerCase() !== "delete"; });
+      
+      confirmDeleteButton.addEventListener("click", async () => {
+        if (deleteConfirmInput.value.trim().toLowerCase() !== "delete" || !itemToDelete.id) { 
+            window.showNotification("Deletion not confirmed correctly.", "error"); 
+            return; 
+        }
+        const originalButtonText = confirmDeleteButton.querySelector(".button-text")?.textContent || confirmDeleteButton.textContent;
+        window.setButtonLoading(confirmDeleteButton, true, originalButtonText);
+        try {
+            let endpoint;
+            if (itemToDelete.type === "node") {
+                endpoint = `${BASE}/api/nodes/${itemToDelete.id}`;
+            } else if (itemToDelete.type === "artifact") {
+                endpoint = `${BASE}/api/artifacts/${itemToDelete.id}`;
+            } else if (itemToDelete.type === "user") {
+                endpoint = `${BASE}/api/users/${itemToDelete.id}`; // Assuming user ID is passed, not email
+            } else {
+                throw new Error("Unknown item type for deletion.");
+            }
+            
+            const response = await secureFetch(endpoint, { method: "DELETE" });
+            if (!response.ok) { 
+                const err = await response.json().catch(()=>({message: response.statusText})); 
+                throw new Error(`Failed to delete: ${err.message || response.statusText}`);
+            }
+            window.showNotification(`${itemToDelete.type.charAt(0).toUpperCase() + itemToDelete.type.slice(1)} "${escapeJSString(itemToDelete.name)}" deleted successfully. ✅`, "success");
+            
+            if (itemToDelete.type === 'user') {
+                fetchUsers(); // Refresh user list
+            } else {
+                fetchTree(); // Refresh tree for node/artifact deletion
+            }
+            closeDeleteConfirmationModal();
+        } catch (error) { 
+            console.error(`Error deleting ${itemToDelete.type}:`, error); 
+            window.showNotification(`Error: ${error.message}`, "error");
+        }
+        finally { window.setButtonLoading(confirmDeleteButton, false, originalButtonText); }
+      });
+
+      async function promptNewRoot() {
+        const name = prompt("Enter new root folder name (e.g., Vertical name):");
+        if (!name?.trim()) return;
+        try {
+          const response = await secureFetch(`${BASE}/api/nodes`, { 
+            method: "POST", 
+            body: JSON.stringify({ name: name.trim(), type: "VERTICAL", parentId: null, description: "Root Vertical Folder" }) 
+          });
+          if (!response.ok) { const err = await response.json().catch(()=>({message: response.statusText})); throw new Error(`Failed to create root folder: ${err.message || response.statusText}`);}
+          window.showNotification("New root folder created! ✅", "success"); fetchTree();
+        } catch (error) { console.error("Error creating new root:", error); window.showNotification(`Error: ${error.message}`, "error"); }
+>>>>>>> 87d6ce0b22bf1e083d0933171f4471f8cb46d2aa
+      }
+      
+      // --- Add User Form ---
+      document.getElementById("addUserForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const submitButton = e.target.querySelector('button[type="submit"]');
+        const originalButtonText = submitButton.querySelector(".button-text")?.textContent || submitButton.textContent;
+        window.setButtonLoading(submitButton, true, originalButtonText);
+
+<<<<<<< HEAD
       // Reset and hide the form
       const formElement = document.getElementById(`form-${parentId}`);
       if (formElement) {
@@ -3288,4 +3898,161 @@ function renderTree(nodes) {
   }
 </script>
 </body>
+=======
+        const email = document.getElementById("newUserEmail").value.trim();
+        const globalRole = document.getElementById("newUserRole").value; // This is for the User.role field
+        const selectedNodeIdForAccess = document.getElementById("newUserNodeAccess").value;
+        const selectedNodeRoleForAccess = document.getElementById("newUserNodeRole").value;
+        const applyGlobalToAllNodes = document.getElementById("applyGlobalRoleToAllNodesCheckbox").checked;
+
+        if (!email || !globalRole) {
+          window.showNotification("Email and Global Role are required.", "error");
+          window.setButtonLoading(submitButton, false, originalButtonText);
+          return;
+        }
+
+        try {
+          // 1. Create the user with the global role
+          // Ensure your POST /api/users endpoint can handle a 'role' field in the body for global role
+          let userCreationResponse = await secureFetch(`${BASE}/api/users`, {
+            method: "POST",
+            body: JSON.stringify({ email, name: email.split('@')[0], role: globalRole }), // Sending globalRole
+          });
+
+          if (!userCreationResponse.ok) {
+            const errorData = await userCreationResponse.json().catch(() => ({ message: userCreationResponse.statusText }));
+            throw new Error(`Failed to add user: ${errorData.message || userCreationResponse.statusText}`);
+          }
+          const createdUser = await userCreationResponse.json();
+          let overallSuccessMessage = `User ${createdUser.email} added with global role ${globalRole}. ✅`;
+
+          // 2. Handle node-specific access
+          if (selectedNodeIdForAccess) {
+            // Grant access to a single selected node
+            const accessResponse = await secureFetch(`${BASE}/api/access`, {
+              method: "PUT", // Or POST depending on your /api/access logic for initial grant
+              body: JSON.stringify({
+                email, // Email of the newly created or existing user
+                nodeId: parseInt(selectedNodeIdForAccess),
+                role: selectedNodeRoleForAccess,
+              }),
+            });
+            if (!accessResponse.ok) {
+              const errorData = await accessResponse.json().catch(() => ({ message: accessResponse.statusText }));
+              overallSuccessMessage += `\n⚠️ Could not grant initial node access to node ${selectedNodeIdForAccess}: ${errorData.message || accessResponse.statusText}`;
+              window.showNotification(overallSuccessMessage, "error", 7000); 
+            } else {
+              overallSuccessMessage += ` Initial access to node ${selectedNodeIdForAccess} as ${selectedNodeRoleForAccess} granted.`;
+                window.showNotification(overallSuccessMessage, "success", 7000);
+            }
+          } else if (applyGlobalToAllNodes) {
+            // Grant selected global role to all nodes
+            window.showNotification(`User created. Applying '${globalRole}' role to all nodes for ${email}. This may take a moment...`, "info", 8000);
+            
+            if (!flatNodeList || flatNodeList.length === 0) {
+                console.warn("flatNodeList is empty for applying global role to all nodes.");
+                overallSuccessMessage += "\n⚠️ No nodes found to apply global role to (tree data might be loading or empty).";
+                window.showNotification(overallSuccessMessage, "warn", 7000);
+            } else {
+                let nodesProcessedCount = 0;
+                let nodesFailedCount = 0;
+                for (const item of flatNodeList) {
+                    if (item.type === "NODE") { // Only apply to actual folders/nodes from the flat list
+                        try {
+                            const nodeAccessResponse = await secureFetch(`${BASE}/api/access`, {
+                                method: "PUT", // Use PUT to update/create access
+                                body: JSON.stringify({
+                                    email,
+                                    nodeId: parseInt(item.id),
+                                    role: globalRole, 
+                                }),
+                            });
+                            if (nodeAccessResponse.ok) {
+                                nodesProcessedCount++;
+                            } else {
+                                nodesFailedCount++;
+                                const errorData = await nodeAccessResponse.json().catch(() => ({ message: nodeAccessResponse.statusText }));
+                                console.warn(`Failed to apply role to node ${item.id} ('${item.name}'): ${errorData.message || nodeAccessResponse.statusText}`);
+                            }
+                        } catch (loopError) {
+                            nodesFailedCount++;
+                            console.error(`Error applying role to node ${item.id} ('${item.name}'):`, loopError);
+                        }
+                    }
+                }
+                if (nodesFailedCount > 0) {
+                    overallSuccessMessage += `\n⚠️ Applied '${globalRole}' to ${nodesProcessedCount} nodes, but failed for ${nodesFailedCount}. Check console.`;
+                    window.showNotification(overallSuccessMessage, "error", 10000);
+                } else {
+                    overallSuccessMessage += `\nSuccessfully applied '${globalRole}' role to all ${nodesProcessedCount} nodes.`;
+                    window.showNotification(overallSuccessMessage, "success", 10000);
+                }
+            }
+          } else {
+            // Just user creation, no specific node access or apply-to-all
+            window.showNotification(overallSuccessMessage, "success");
+          }
+
+          fetchUsers(); // Refresh user list
+          document.getElementById("addUserForm").reset();
+          const applyToAllCheckbox = document.getElementById("applyGlobalRoleToAllNodesCheckbox");
+          if (applyToAllCheckbox) applyToAllCheckbox.checked = false;
+
+        } catch (error) {
+          console.error("Error in add user process:", error);
+          window.showNotification(`Error: ${error.message}`, "error", 7000);
+        } finally {
+          window.setButtonLoading(submitButton, false, originalButtonText);
+        }
+      });
+
+      // --- Access Management Modal Logic ---
+      const accessModal = document.getElementById("access-management-modal");
+      const modalUserEmailSpan = document.getElementById("modal-user-email");
+      const modalCurrentAccessDiv = document.getElementById("access-management-modal-current-access");
+      const modalEditingUserEmailHidden = document.getElementById("modal-editing-user-email-hidden");
+      async function openAccessModal(email) { /* ... */ }
+      function closeAccessModal() { /* ... */ }
+      async function loadUserAccessRolesForModal(email) { /* ... */ }
+      async function updateNodeAccessInModal(selectElement, email, nodeId) { /* ... */ }
+      async function revokeNodeAccessInModal(email, nodeId) { /* ... */ }
+      document.getElementById("grantNewAccessForm").addEventListener("submit", async (e) => { /* ... */ });
+      
+      // --- Artifact Details Modal Logic ---
+      const artifactDetailsModalEl = document.getElementById("artifact-details-modal");
+      function showArtifactDetailsModal(title, description, link) { /* ... */ }
+      function closeArtifactDetailsModal() { /* ... */ }
+
+      // --- User Menu Dropdown Logic ---
+      if (userMenuButton && userDropdownMenu) { /* ... */ }
+      if (logoutButtonDropdown) { /* ... */ }
+
+      function initializeAdminPanel() {
+        console.log("Initializing Admin Panel data...");
+        if (firebaseAuth && firebaseAuth.currentUser) {
+          fetchTree(); 
+          fetchUsers(); 
+        } else {
+          console.log("User not logged in, skipping admin data fetch.");
+          if(userListElement) userListElement.innerHTML = `<p class="text-[var(--text-tertiary)] p-3 text-center">Please log in to view users.</p>`;
+          if(userListLoadingIndicator) userListLoadingIndicator.style.display = "none";
+          if(document.getElementById("tree")) document.getElementById("tree").innerHTML = `<p class="text-[var(--text-tertiary)] p-3 text-center">Please log in to view folder structure.</p>`;
+        }
+      }
+      
+      document.addEventListener("keydown", (event) => { /* ... (modal closing) ... */ });
+
+      function debounce(func, delay) {
+        let timeoutId;
+        return function(...args) {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => {
+                func.apply(this, args);
+            }, delay);
+        };
+      }
+
+    </script>
+  </body>
+>>>>>>> 87d6ce0b22bf1e083d0933171f4471f8cb46d2aa
 </html>
