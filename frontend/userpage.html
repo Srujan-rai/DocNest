@@ -172,7 +172,9 @@
         background-color: var(--bg-card);
         border: 1px solid var(--border-card);
         border-radius: 0.75rem;
-        padding: 1.25rem;
+        padding: 0.4rem;
+        padding-left: 1.25rem;
+        padding-right: 1rem;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
@@ -812,17 +814,19 @@
         class="mb-8 flex flex-col sm:flex-row justify-between items-center gap-4 pb-6 border-b border-[var(--border-primary)]"
       >
         <div class="flex items-center">
-          <img
-            id="user-page-logo"
-            src="https://niveussolutions.com/wp-content/uploads/2025/02/Niveus-ntt-data.png"
-            alt="DocNest Logo"
-            class="h-12 w-auto mr-3 pt-3"
-          />
-          <h1
-            class="text-3xl sm:text-4xl font-extrabold tracking-tight text-[var(--text-card-header)]"
-          >
-            DocNest KB
-          </h1>
+          <a href="/userpage.html" class="flex items-center">
+            <img
+              id="user-page-logo"
+              src="https://niveussolutions.com/wp-content/uploads/2025/02/Niveus-ntt-data.png"
+              alt="DocNest Logo"
+              class="h-12 w-auto mr-3 pt-3"
+            />
+            <h1
+              class="text-3xl sm:text-4xl font-extrabold tracking-tight text-[var(--text-card-header)]"
+            >
+              DocNest KB
+            </h1>
+          </a>
         </div>
         <div class="header-controls flex items-center gap-3">
           <div id="search-input-wrapper" class="relative">
@@ -997,10 +1001,56 @@
           class="mt-8 pt-6 border-t border-[var(--border-primary)]"
           style="display: none"
         >
+          <div
+            id="node-graph-controls"
+            class="flex items-center justify-end gap-2 mb-2"
+            style="display: none"
+          >
+            <button
+              id="zoom-in-btn"
+              title="Zoom In"
+              class="submit-button secondary text-sm py-1 px-3"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"
+                />
+              </svg>
+            </button>
+            <button
+              id="zoom-out-btn"
+              title="Zoom Out"
+              class="submit-button secondary text-sm py-1 px-3"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM13 10H7"
+                />
+              </svg>
+            </button>
+          </div>
           <h3
             class="text-xl md:text-2xl font-bold text-[var(--text-card-header)] mb-4"
           >
-            Folder hierarchy
+            Folder Hierarchy
           </h3>
           <div
             id="node-graph-loading"
@@ -1082,9 +1132,8 @@
         messagingSenderId: "102395439437",
         appId: "1:102395439437:web:84e6676388b5d54395af04",
         measurementId: "G-YRMBR8BVSE",
-      };
+      }; // --- Global Helper Functions (Toast, Button Loading, Escape, Debounce) ---
 
-      // --- Global Helper Functions (Toast, Button Loading, Escape, Debounce) ---
       window.showNotification = function (
         message,
         type = "success",
@@ -1175,9 +1224,114 @@
           }, delay);
         };
       }
-      // --- End Global Helper Functions ---
 
-      // --- Firebase Initialization ---
+      function formatDateForDisplay(dateString) {
+        if (!dateString) return "N/A";
+        try {
+          const date = new Date(dateString);
+          if (isNaN(date.getTime())) return "Invalid Date"; // Check for invalid date // Example: Jan 1, 2023, 5:30 PM
+          return date.toLocaleString(undefined, {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true,
+          });
+        } catch (e) {
+          console.warn("Failed to format date:", dateString, e);
+          return dateString; // return original if formatting fails
+        }
+      } // Helper to get all artifacts recursively from a folder node using its ID and the main tree data
+
+      function getAllArtifactsFromRawNodeRecursive(
+        folderNodeId,
+        treeData,
+        allArtifacts = [],
+        visitedFolderIds = new Set()
+      ) {
+        if (!folderNodeId || visitedFolderIds.has(folderNodeId)) {
+          return allArtifacts;
+        }
+        visitedFolderIds.add(folderNodeId);
+
+        const folderNode = findNodeInTree(folderNodeId, treeData); // findNodeInTree is an existing function
+        if (!folderNode) return allArtifacts;
+
+        if (folderNode.artifacts && Array.isArray(folderNode.artifacts)) {
+          allArtifacts.push(
+            ...folderNode.artifacts.map((a) => ({
+              ...a,
+              parentNodeName: folderNode.name,
+              parentNodeId: folderNode.id,
+            }))
+          ); // Add parent info
+        }
+
+        if (folderNode.children && Array.isArray(folderNode.children)) {
+          for (const childNode of folderNode.children) {
+            getAllArtifactsFromRawNodeRecursive(
+              childNode.id,
+              treeData,
+              allArtifacts,
+              visitedFolderIds
+            );
+          }
+        }
+        return allArtifacts;
+      }
+
+      function getCalculatedFolderUpdatedAt(folderNodeFromTree) {
+        if (!folderNodeFromTree || folderNodeFromTree.id === null) return null; // Do not calculate for the root "Knowledge Base"
+
+        const allContainedArtifacts = getAllArtifactsFromRawNodeRecursive(
+          folderNodeFromTree.id,
+          fullTreeData,
+          [],
+          new Set()
+        );
+
+        if (allContainedArtifacts.length === 0) {
+          // If no artifacts, consider the folder's own creation time as its "update" time, or null
+          return folderNodeFromTree.createdAt
+            ? new Date(folderNodeFromTree.createdAt).toISOString()
+            : null;
+        }
+
+        let mostRecentArtifactUpdate = null;
+        if (folderNodeFromTree.createdAt) {
+          // Initialize with folder's own creation date if available
+          mostRecentArtifactUpdate = new Date(folderNodeFromTree.createdAt);
+        }
+
+        for (const artifact of allContainedArtifacts) {
+          if (artifact.updatedAt) {
+            const artifactDate = new Date(artifact.updatedAt);
+            if (!isNaN(artifactDate.getTime())) {
+              if (
+                !mostRecentArtifactUpdate ||
+                artifactDate > mostRecentArtifactUpdate
+              ) {
+                mostRecentArtifactUpdate = artifactDate;
+              }
+            }
+          } else if (artifact.createdAt) {
+            // Fallback to createdAt if updatedAt is missing for an artifact
+            const artifactCreationDate = new Date(artifact.createdAt);
+            if (!isNaN(artifactCreationDate.getTime())) {
+              if (
+                !mostRecentArtifactUpdate ||
+                artifactCreationDate > mostRecentArtifactUpdate
+              ) {
+                mostRecentArtifactUpdate = artifactCreationDate;
+              }
+            }
+          }
+        }
+        return mostRecentArtifactUpdate
+          ? mostRecentArtifactUpdate.toISOString()
+          : null;
+      } // --- End Global Helper Functions --- // --- Firebase Initialization ---
       let firebaseApp;
       let firebaseAuth;
 
@@ -1185,8 +1339,7 @@
         // Check against the common placeholder
         console.warn(
           "User Page: Firebase API Key is a placeholder. Real functionality will be limited."
-        );
-        // Proceed with initialization for local testing, but it won't connect to Firebase.
+        ); // Proceed with initialization for local testing, but it won't connect to Firebase.
         try {
           firebaseApp = firebase.initializeApp(firebaseConfig);
           firebaseAuth = firebase.auth();
@@ -1224,10 +1377,7 @@
               '<div style="padding: 20px; text-align: center; font-size: 1.2em; color: red;">Application cannot start: Firebase configuration is missing or invalid.</div>';
           }
         }
-      }
-      // --- End Firebase Initialization ---
-
-      // --- DOM Elements ---
+      } // --- End Firebase Initialization --- // --- DOM Elements ---
       const userMenuButton = document.getElementById("user-menu-button");
       const userDisplayNameSpan = document.getElementById("user-display-name");
       const userDropdownMenu = document.getElementById("user-dropdown-menu");
@@ -1253,22 +1403,14 @@
         "current-folder-name"
       );
       const loadingPlaceholder = document.getElementById("loading-placeholder");
-      const backButton = document.getElementById("back-button");
-      // --- End DOM Elements ---
-
-      // --- Global State ---
+      const backButton = document.getElementById("back-button"); // --- End DOM Elements --- // --- Global State ---
       let currentUserRoles = [];
       let fullTreeData = [];
       let currentPath = [];
       let currentViewNodeId = null;
-      let isSearchViewActive = false;
-      // --- End Global State ---
-
-      // ================================================================
-      // DYNAMIC BACKEND URL CONFIGURATION
-      // ================================================================
+      let isSearchViewActive = false; // --- End Global State --- // ================================================================ // DYNAMIC BACKEND URL CONFIGURATION // ================================================================
       let BASE_API_URL;
-      const localBaseUrl = "https://docnest-780614596615.asia-south1.run.app"; // Replace with your actual local backend URL if different
+      const localBaseUrl = "http://127.0.0.1:8000"; // Replace with your actual local backend URL if different
       const cloudRunBaseUrl =
         "https://docnest-780614596615.asia-south1.run.app"; // Replace with your actual Cloud Run URL
 
@@ -1284,8 +1426,9 @@
 
         if (
           cloudRunBaseUrl.includes("your-userpage-backend-url") || // Common placeholder
-          cloudRunBaseUrl.includes("your-actual-cloud-run-url") // Another placeholder
+          cloudRunBaseUrl.includes("your-actual-cloud-run-url")
         ) {
+          // Another placeholder
           const warningMessage =
             "CRITICAL: User Page Cloud Run URL (BASE_API_URL) is a placeholder! API calls will likely fail. Please update 'cloudRunBaseUrl' in the script.";
           console.error(warningMessage);
@@ -1299,10 +1442,7 @@
             loadingPlaceholder.style.display = "flex";
           }
         }
-      }
-      // ================================================================
-
-      // --- Authentication & Authorization ---
+      } // ================================================================ // --- Authentication & Authorization ---
       if (firebaseAuth) {
         firebaseAuth.onAuthStateChanged(async (user) => {
           if (user) {
@@ -1453,10 +1593,7 @@
           }
           throw networkError; // Re-throw to be caught by calling function
         }
-      }
-      // --- End Authentication & Authorization ---
-
-      // --- Initial Data Loading (Parallel) ---
+      } // --- End Authentication & Authorization --- // --- Initial Data Loading (Parallel) ---
       async function fetchRoles() {
         try {
           const response = await secureFetch(`${BASE_API_URL}/api/auth`, {
@@ -1471,8 +1608,9 @@
           const userData = await response.json();
           if (
             !userData ||
-            (userData.isUser !== true && userData.isAdmin !== true) // Check for basic user/admin flag
+            (userData.isUser !== true && userData.isAdmin !== true)
           ) {
+            // Check for basic user/admin flag
             console.warn(
               "User Page: User does not have sufficient privileges according to backend verification. Signing out."
             );
@@ -1575,10 +1713,7 @@
         } finally {
           if (loadingPlaceholder) loadingPlaceholder.style.display = "none";
         }
-      }
-      // --- End Initial Data Loading ---
-
-      // --- Permissions ---
+      } // --- End Initial Data Loading --- // --- Permissions ---
       function canPerformAction(nodeId, allowedRoles) {
         if (nodeId === null || typeof nodeId === "undefined") {
           // Cannot perform action on root via this check directly
@@ -1599,10 +1734,7 @@
       function canEditArtifactsInNode(parentNodeId) {
         // This checks permission on the parent node for actions on its artifacts
         return canPerformAction(String(parentNodeId), ["ADMIN", "EDITOR"]);
-      }
-      // --- End Permissions ---
-
-      // --- Navigation and Rendering ---
+      } // --- End Permissions --- // --- Navigation and Rendering ---
       function findNodeInTree(nodeId, nodesToSearch = fullTreeData) {
         if (
           nodeId === null ||
@@ -1778,8 +1910,9 @@
           if (
             nodeIdForPermissionCheck !== null && // Can't add to root via this button
             canAddContentToNode(nodeIdForPermissionCheck) &&
-            !isSearchViewActive // Don't show add button in search view
+            !isSearchViewActive
           ) {
+            // Don't show add button in search view
             addItemToFolderBtn.style.display = "inline-flex";
             addItemToFolderBtn.onclick = () => toggleAddItemForm(true);
           } else {
@@ -1810,7 +1943,6 @@
             ...nodeToDisplay.children.map((c) => ({
               ...c,
               itemType: "folder",
-              // Store actual parent ID for permissions, handling root (null) correctly
               parentIdActual: String(
                 nodeToDisplay.id === null ? "null" : nodeToDisplay.id
               ),
@@ -1820,8 +1952,8 @@
         if (nodeToDisplay.artifacts && Array.isArray(nodeToDisplay.artifacts)) {
           itemsToShow.push(
             ...nodeToDisplay.artifacts.map((a) => ({
-              ...a,
-              itemType: "artifact",
+              ...a, // This should include createdAt, updatedAt, creator for artifacts from backend
+              itemType: "artifact", // Explicitly set for clarity
               parentIdActual: String(
                 nodeToDisplay.id === null ? "null" : nodeToDisplay.id
               ),
@@ -1829,19 +1961,10 @@
           );
         }
 
-        itemsToShow.sort(customSortItems); // Apply custom sorting
+        itemsToShow.sort(customSortItems); // Apply custom sorting // All items are cards, remove list-view-only specific logic that changes display mode
 
-        // Determine if we should use list view (all artifacts) or grid view
-        const allArtifacts =
-          itemsToShow.length > 0 &&
-          itemsToShow.every((item) => item.itemType === "artifact");
-        if (allArtifacts) {
-          folderContentContainer.classList.add("list-view-only");
-          folderContentContainer.style.display = "block"; // For list view
-        } else {
-          folderContentContainer.classList.remove("list-view-only");
-          folderContentContainer.style.display = "grid"; // For grid view
-        }
+        folderContentContainer.classList.remove("list-view-only");
+        folderContentContainer.style.display = "grid"; // Ensure grid display for cards
 
         if (itemsToShow.length === 0) {
           folderContentContainer.innerHTML =
@@ -1849,149 +1972,116 @@
         } else {
           itemsToShow.forEach((item) => {
             const itemName = escapeJSString(item.name || item.title); // Use name for folder, title for artifact
-            // Get the parent ID for permission checks on actions like delete
             const parentIdForPerms = String(
               item.parentIdActual === null || item.parentIdActual === "null"
                 ? null
                 : item.parentIdActual
             );
 
+            const card = document.createElement("div");
+            card.classList.add("item-card"); // Use item-card for both folders and files
+            card.dataset.itemId = String(item.id);
+            card.dataset.itemType = item.itemType;
+
+            let iconSVG,
+              itemTypeDisplay,
+              itemDescriptionHTML,
+              actionsDivContent = "";
+            let iconColorClass = "";
+
             if (item.itemType === "folder") {
-              const card = document.createElement("div");
-              card.classList.add("item-card");
-              card.dataset.itemId = item.id;
-              card.dataset.itemType = item.itemType;
+              iconSVG = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 0 1 4.5 9.75h15A2.25 2.25 0 0 1 21.75 12v.75m-8.69-6.44-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z" /></svg>`;
+              itemTypeDisplay = "Folder";
+              iconColorClass = "text-[var(--text-yellow-accent)]";
 
-              const iconSVG = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 0 1 4.5 9.75h15A2.25 2.25 0 0 1 21.75 12v.75m-8.69-6.44-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z" /></svg>`;
-              let actionsDivContent = "";
-              if (
-                canDeleteNode(String(item.id)) && // Permission to delete this specific folder
-                String(item.id) !== "null" && // Cannot delete root representation
-                parentIdForPerms !== "null" // Safety: implies it's not a direct root child if this matters for delete logic
-              ) {
-                actionsDivContent += `<button title="Delete folder" class="action-icon-btn delete" onclick="event.stopPropagation(); deleteNode('${String(
-                  item.id
-                )}')"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>`;
-              }
-
-              let folderDescriptionHTML = "";
               if (
                 item.description &&
                 typeof item.description === "string" &&
                 item.description.trim() !== ""
               ) {
-                folderDescriptionHTML = `<div class="item-card-description">${escapeJSString(
+                itemDescriptionHTML = `<div class="item-card-description">${escapeJSString(
                   item.description
                 ).replace(/\n/g, "<br>")}</div>`;
               } else {
-                folderDescriptionHTML = `<div class="item-card-description"><em>No description provided.</em></div>`;
+                itemDescriptionHTML = `<div class="item-card-description"><em>No description provided.</em></div>`;
               }
 
-              card.innerHTML = `
-                <div>
-                    <div class="item-card-icon-wrapper">
-                        <span class="item-card-icon text-[var(--text-yellow-accent)]">${iconSVG}</span>
-                    </div>
-                    <h3 class="item-card-name">${itemName}</h3>
-                    <p class="item-card-type">Folder</p>
-                    ${folderDescriptionHTML}
-                </div>
-                ${
-                  actionsDivContent
-                    ? `<div class="item-card-actions">${actionsDivContent}</div>`
-                    : ""
-                }
-              `;
-              card.onclick = () => navigateToFolder(item.id);
-              folderContentContainer.appendChild(card);
-            } else {
-              // Artifact rendering
-              const listItem = document.createElement("div");
-              listItem.classList.add("artifact-list-item");
-              listItem.dataset.itemId = String(item.id); // Ensure artifact ID is string
-
-              const fileIconSVG = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>`;
-              let artifactActionsHtml = "";
-              // parentIdForPerms here refers to the artifact's parent folder ID
-              if (canEditArtifactsInNode(parentIdForPerms)) {
-                artifactActionsHtml += `<button title="Delete file" class="action-icon-btn delete" onclick="event.stopPropagation(); deleteArtifact('${String(
-                  item.id // The artifact's ID
-                )}', '${parentIdForPerms}')"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>`;
-              }
-              artifactActionsHtml += `<button title="View details in modal" class="action-icon-btn" onclick="event.stopPropagation(); showArtifactDetailsModal('${escapeJSString(
-                item.title
-              )}', '${escapeJSString(item.description)}', '${escapeJSString(
-                item.link
-              )}')"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" /></svg></button>`;
-
-              let processedLink = item.link || "#";
               if (
-                processedLink &&
-                !processedLink.startsWith("http://") &&
-                !processedLink.startsWith("https://") &&
-                processedLink !== "#"
+                canDeleteNode(String(item.id)) &&
+                String(item.id) !== "null" &&
+                parentIdForPerms !== "null"
               ) {
-                processedLink = `https://${processedLink}`;
+                actionsDivContent += `<button title="Delete folder" class="action-icon-btn delete" onclick="event.stopPropagation(); deleteNode('${String(
+                  item.id
+                )}')"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>`;
               }
-              const linkTarget =
-                processedLink === "#" || !item.link ? "" : "target='_blank'";
-              const linkRel =
-                processedLink === "#" || !item.link
-                  ? ""
-                  : "rel='noopener noreferrer'";
+              card.onclick = () => navigateToFolder(item.id);
+            } else {
+              // Artifact (File)
+              iconSVG = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>`;
+              itemTypeDisplay = item.type || "File"; // Use artifact's specific type if available, fallback to "File"
+              iconColorClass = "text-[var(--text-blue-accent)]";
 
-              listItem.innerHTML = `
-                <div class="artifact-header">
-                    <span class="artifact-icon">${fileIconSVG}</span>
-                    <span class="artifact-title">${itemName}</span>
-                    <div class="artifact-actions">${artifactActionsHtml}</div>
-                    <span class="artifact-dropdown-arrow">▼</span>
-                </div>
-                <div class="artifact-description" style="display:none;">
-                    <p>${
-                      item.description &&
-                      typeof item.description === "string" &&
-                      item.description.trim() !== ""
-                        ? escapeJSString(item.description).replace(
-                            /\n/g,
-                            "<br>"
-                          )
-                        : "<em>No description provided.</em>"
-                    }</p>
-                    ${
-                      item.link && item.link !== "#"
-                        ? `<a href="${processedLink}" ${linkTarget} ${linkRel} class="artifact-link submit-button primary" onclick="event.stopPropagation();">Go to Resource <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 inline-block ml-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg></a>`
-                        : ""
-                    }
-                </div>
-              `;
-              const header = listItem.querySelector(".artifact-header");
-              const descriptionDiv = listItem.querySelector(
-                ".artifact-description"
-              );
-              const arrow = listItem.querySelector(".artifact-dropdown-arrow");
+              if (
+                item.description &&
+                typeof item.description === "string" &&
+                item.description.trim() !== ""
+              ) {
+                itemDescriptionHTML = `<div class="item-card-description">${escapeJSString(
+                  item.description
+                ).replace(/\n/g, "<br>")}</div>`;
+              } else {
+                itemDescriptionHTML = `<div class="item-card-description"><em>No description provided.</em></div>`;
+              } // Actions for artifact card // parentIdForPerms here refers to the artifact's parent folder ID
 
-              header.addEventListener("click", (e) => {
-                // Prevent toggle if an action button inside header was clicked
+              if (canEditArtifactsInNode(parentIdForPerms)) {
+                actionsDivContent += `<button title="Delete file" class="action-icon-btn delete" onclick="event.stopPropagation(); deleteArtifact('${String(
+                  item.id
+                )}', '${parentIdForPerms}')"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>`;
+              } // Direct link action icon
+              if (item.link && item.link !== "#") {
+                let processedLink = item.link;
                 if (
-                  e.target.closest(".action-icon-btn") ||
-                  e.target.closest("a.artifact-link") // Should not be in header, but good check
+                  !processedLink.startsWith("http://") &&
+                  !processedLink.startsWith("https://")
                 ) {
-                  return;
+                  processedLink = `https://${processedLink}`;
                 }
-                const isHidden = descriptionDiv.style.display === "none";
-                descriptionDiv.style.display = isHidden ? "block" : "none";
-                arrow.classList.toggle("expanded", isHidden);
-              });
-              folderContentContainer.appendChild(listItem);
+                actionsDivContent += `<a href="${processedLink}" target="_blank" rel="noopener noreferrer" title="Open Resource: ${escapeJSString(
+                  item.link
+                )}" class="action-icon-btn" onclick="event.stopPropagation();"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.586 2.586a2 2 0 012.828 0L18 5.172a2 2 0 010 2.828l-7.414 7.414a2 2 0 01-2.828 0L5.172 13a2 2 0 010-2.828l2.586-2.586a2 2 0 012.828 0L12 8.586l1.414-1.414L12.586 2.586zM10 5a1 1 0 00-1 1v.01L9 6a1 1 0 00-1 1v.01L8 7a1 1 0 00-1 1v4a1 1 0 001 1h4a1 1 0 001-1V9.01l.01-.01A1 1 0 0013 8l.01-.01A1 1 0 0014 7l.01-.01A1 1 0 0015 6l-.01-.01A1 1 0 0014 5h-4z" clip-rule="evenodd" /></svg></a>`;
+              } // Main card click opens modal for artifacts
+              card.onclick = () =>
+                showArtifactDetailsModal(
+                  item.title,
+                  item.description,
+                  item.link,
+                  item.createdAt,
+                  item.updatedAt,
+                  item.creator
+                );
             }
+
+            card.innerHTML = `
+                      <div>
+                          <div class="item-card-icon-wrapper">
+                              <span class="item-card-icon ${iconColorClass}">${iconSVG}</span>
+                          </div>
+                          <h3 class="item-card-name">${itemName}</h3>
+                          <p class="item-card-type">${itemTypeDisplay}</p>
+                          ${itemDescriptionHTML}
+                      </div>
+                      ${
+        actionsDivContent
+          ? `<div class="item-card-actions">${actionsDivContent}</div>`
+          : ""
+      }
+                  `;
+            folderContentContainer.appendChild(card);
           });
         }
         if (loadingPlaceholder) loadingPlaceholder.style.display = "none"; // Hide loading after rendering
-      }
-      // --- End Navigation and Rendering ---
-
-      // --- Node Graph Visualization ---
+      } // --- End Navigation and Rendering --- // --- Node Graph Visualization ---
       async function displayNodeGraph(nodeId) {
         const graphSection = document.getElementById("node-graph-section");
         const graphContainer = document.getElementById(
@@ -2001,21 +2091,24 @@
           document.getElementById("node-graph-loading");
         const graphErrorPlaceholder =
           document.getElementById("node-graph-error");
+        const graphControls = document.getElementById("node-graph-controls"); // Get controls div
 
         if (
           !graphSection ||
           !graphContainer ||
           !graphLoadingPlaceholder ||
-          !graphErrorPlaceholder
+          !graphErrorPlaceholder ||
+          !graphControls
         ) {
-          console.error("Graph display elements not found.");
+          console.error("Graph display or control elements not found.");
           return;
         }
 
-        graphErrorPlaceholder.style.display = "none"; // Clear previous errors
-        graphContainer.innerHTML = ""; // Clear previous graph
-        graphLoadingPlaceholder.style.display = "flex"; // Show loading
-        graphSection.style.display = "block"; // Show graph section
+        graphErrorPlaceholder.style.display = "none";
+        graphContainer.innerHTML = "";
+        graphLoadingPlaceholder.style.display = "flex";
+        graphSection.style.display = "block";
+        graphControls.style.display = "flex"; // Show graph controls
 
         try {
           const response = await secureFetch(
@@ -2029,23 +2122,22 @@
           }
           const rawApiGraphData = await response.json();
 
-          // Check if the central node data is actually returned
           if (!rawApiGraphData || typeof rawApiGraphData.id === "undefined") {
             graphErrorPlaceholder.textContent =
               "No graph data available for this node or the folder is empty.";
             graphErrorPlaceholder.style.display = "block";
             graphLoadingPlaceholder.style.display = "none";
-            graphContainer.innerHTML = ""; // Ensure container is empty
+            graphContainer.innerHTML = ""; // Keep controls visible even if there's no graph data, or hide them: // graphControls.style.display = "none";
             return;
           }
           renderD3TreeGraph(rawApiGraphData, graphContainer, String(nodeId));
-          graphLoadingPlaceholder.style.display = "none"; // Hide loading
+          graphLoadingPlaceholder.style.display = "none";
         } catch (error) {
           console.error("Error fetching or rendering node graph:", error);
           graphErrorPlaceholder.textContent = `Error loading graph: ${error.message}`;
           graphErrorPlaceholder.style.display = "block";
           graphLoadingPlaceholder.style.display = "none";
-          graphContainer.innerHTML = ""; // Ensure container is empty on error
+          graphContainer.innerHTML = ""; // graphControls.style.display = "none"; // Optionally hide controls on error
         }
       }
 
@@ -2055,7 +2147,9 @@
         const graphContainer = document.getElementById(
           "node-graph-visualization"
         );
-        if (graphContainer) graphContainer.innerHTML = ""; // Clear SVG content
+        if (graphContainer) graphContainer.innerHTML = "";
+        const graphControls = document.getElementById("node-graph-controls"); // Get controls div
+        if (graphControls) graphControls.style.display = "none"; // Hide graph controls
       }
 
       function renderD3TreeGraph(
@@ -2063,28 +2157,26 @@
         containerElement,
         centerNodeOriginalIdStr
       ) {
-        containerElement.innerHTML = ""; // Clear previous graph
+        containerElement.innerHTML = "";
         const centerNodeOriginalId = parseInt(centerNodeOriginalIdStr);
 
         const containerRect = containerElement.getBoundingClientRect();
-        const width = containerRect.width || 800; // Fallback width
-        const height = containerRect.height || 500; // Fallback height
+        const width = containerRect.width || 800;
+        const height = containerRect.height || 500;
 
         const svg = d3
           .select(containerElement)
           .append("svg")
           .attr("width", "100%")
           .attr("height", "100%")
-          .attr("viewBox", `0 0 ${width} ${height}`) // Use viewBox for responsiveness
+          .attr("viewBox", `0 0 ${width} ${height}`)
           .attr("preserveAspectRatio", "xMidYMid meet");
 
-        const mainGroup = svg.append("g"); // Group for zoom/pan
+        const mainGroup = svg.append("g");
 
-        // Helper to get children, combining sub-folders and artifacts
         const getChildren = (d) => {
           let combinedChildren = [];
           if (d.children && Array.isArray(d.children)) {
-            // Map to ensure new objects for hierarchy, preventing modification of original data
             combinedChildren = combinedChildren.concat(
               d.children.map((child) => ({ ...child }))
             );
@@ -2092,47 +2184,42 @@
           if (d.artifacts && Array.isArray(d.artifacts)) {
             const mappedArtifacts = d.artifacts.map((artifact) => ({
               ...artifact,
-              name: artifact.title, // Use title as name for artifacts in graph
-              type: artifact.type || "FILE", // Ensure type for artifacts
-              children: [], // Artifacts are leaf nodes
+              name: artifact.title,
+              type: artifact.type || "FILE",
+              children: [],
             }));
             combinedChildren = combinedChildren.concat(mappedArtifacts);
           }
-          return combinedChildren.length ? combinedChildren : null; // d3.hierarchy expects null for no children
+          return combinedChildren.length ? combinedChildren : null;
         };
 
         const root = d3.hierarchy(apiNodeData, getChildren);
 
-        // Assign displayType for styling if not already present
         root.each((d) => {
-          const type = d.data.type || "UNKNOWN"; // Fallback type
+          const type = d.data.type || "UNKNOWN";
           d.data.displayType =
             type === "FILE" || type === "ARTIFACT" ? "ARTIFACT" : "FOLDER";
         });
 
         const nodeHeight = 35;
         const nodeWidth = 200;
-        const treeLayout = d3.tree().nodeSize([nodeHeight, nodeWidth]); // Vertical and horizontal spacing
+        const treeLayout = d3.tree().nodeSize([nodeHeight, nodeWidth]);
         treeLayout(root);
 
-        // Calculate initial translation to center the root node, considering tree's natural layout
         let x0 = Infinity;
         let x1 = -Infinity;
         root.each((d) => {
-          // Find extent of x coordinates (which become y in horizontal tree)
           if (d.x < x0) x0 = d.x;
           if (d.x > x1) x1 = d.x;
         });
 
-        const initialX = 50; // Margin from the left
-        const initialY = height / 2 - root.x; // Center vertically; root.x is its y-position in horizontal
+        const initialX = 50;
+        const initialY = height / 2 - root.x;
 
-        // Set initial transform for zoom
         const initialTransform = d3.zoomIdentity
           .translate(initialX, initialY)
           .scale(0.9);
 
-        // Draw links
         mainGroup
           .append("g")
           .attr("class", "graph-links")
@@ -2143,12 +2230,11 @@
           .attr(
             "d",
             d3
-              .linkHorizontal() // Use horizontal link generator
-              .x((d) => d.y) // Source and target y become x
+              .linkHorizontal()
+              .x((d) => d.y)
               .y((d) => d.x)
-          ); // Source and target x become y
+          );
 
-        // Draw nodes
         const node = mainGroup
           .append("g")
           .attr("class", "graph-nodes")
@@ -2165,7 +2251,32 @@
                   : ""
               }`
           )
-          .attr("transform", (d) => `translate(${d.y},${d.x})`); // y becomes x, x becomes y
+          .attr("transform", (d) => `translate(${d.y},${d.x})`) // MODIFICATION START: Added cursor style and click listener
+          .style("cursor", "pointer")
+          .on("click", (event, d) => {
+            event.stopPropagation(); // Prevent the zoom event from firing on click
+
+            const clickedNodeData = d.data; // Check if the clicked item is a folder or an artifact (file)
+
+            if (clickedNodeData.displayType === "FOLDER") {
+              // If it's a folder, navigate to that folder view
+              // Avoid navigating to the same folder again if it's the center node
+              if (clickedNodeData.id !== centerNodeOriginalId) {
+                navigateToFolder(clickedNodeData.id);
+              }
+            } else if (clickedNodeData.displayType === "ARTIFACT") {
+              // If it's a file/artifact, show the details modal.
+              showArtifactDetailsModal(
+                clickedNodeData.name, // The 'name' for artifacts is mapped from 'title'
+                clickedNodeData.description,
+                clickedNodeData.link,
+                clickedNodeData.createdAt,
+                clickedNodeData.updatedAt,
+                clickedNodeData.creator
+              );
+            }
+          });
+        // MODIFICATION END
 
         node
           .append("circle")
@@ -2187,7 +2298,7 @@
               return "var(--text-yellow-accent)";
             if (d.data.displayType === "ARTIFACT")
               return "var(--text-green-accent)";
-            return "var(--text-secondary)"; // Fallback
+            return "var(--text-secondary)";
           })
           .attr("stroke", (d) =>
             d.data.id === centerNodeOriginalId &&
@@ -2198,11 +2309,10 @@
 
         node
           .append("text")
-          .attr("dy", "0.31em") // Vertical alignment
+          .attr("dy", "0.31em")
           .attr("x", (d) => {
-            // Position text left or right of node based on children
             const effectiveChildren = getChildren(d.data);
-            return effectiveChildren && effectiveChildren.length > 0 ? -12 : 12; // -12 for parent, +12 for leaf
+            return effectiveChildren && effectiveChildren.length > 0 ? -12 : 12;
           })
           .attr("text-anchor", (d) => {
             const effectiveChildren = getChildren(d.data);
@@ -2212,13 +2322,13 @@
           })
           .text((d) => d.data.name)
           .clone(true)
-          .lower() // Create a "halo" for text readability
+          .lower()
           .attr("stroke-linejoin", "round")
           .attr("stroke-width", 3)
-          .attr("stroke", "var(--bg-primary)"); // Halo color matching background
+          .attr("stroke", "var(--bg-primary)");
 
         node
-          .append("title") // Tooltip on hover
+          .append("title")
           .text(
             (d) =>
               `${d.data.displayType}: ${d.data.name}\nID: ${
@@ -2226,43 +2336,87 @@
               }\nDescription: ${d.data.description || "N/A"}`
           );
 
-        // Setup zoom and pan
-        const zoom = d3
+        const zoomBehavior = d3
           .zoom()
-          .scaleExtent([0.1, 5]) // Min/max zoom scale
+          .scaleExtent([0.1, 5])
           .on("zoom", (event) => {
             mainGroup.attr("transform", event.transform);
           });
 
-        svg.call(zoom).call(zoom.transform, initialTransform); // Apply initial transform
-      }
+        svg.call(zoomBehavior).call(zoomBehavior.transform, initialTransform);
 
-      // --- End Node Graph Visualization ---
+        const zoomInButton = document.getElementById("zoom-in-btn");
+        const zoomOutButton = document.getElementById("zoom-out-btn");
+        const zoomFactor = 1.2;
 
-      // --- Current Folder Overview Display ---
+        if (zoomInButton) {
+          zoomInButton.onclick = () => {
+            svg
+              .transition()
+              .duration(250)
+              .call(zoomBehavior.scaleBy, zoomFactor);
+          };
+        }
+        if (zoomOutButton) {
+          zoomOutButton.onclick = () => {
+            svg
+              .transition()
+              .duration(250)
+              .call(zoomBehavior.scaleBy, 1 / zoomFactor);
+          };
+        }
+      } // --- End Node Graph Visualization --- // --- Current Folder Overview Display ---
       function displayCurrentFolderOverview(folderObject) {
         const OVERVIEW_CONTAINER_ID = "current-folder-overview-container";
         const existingOverview = document.getElementById(OVERVIEW_CONTAINER_ID);
         if (existingOverview) {
           existingOverview.remove(); // Clear previous overview
-        }
+        } // Only display if the folderObject exists
 
-        // Only display if the folderObject exists and has a non-empty description
-        if (
-          folderObject &&
-          folderObject.description &&
-          typeof folderObject.description === "string" &&
-          folderObject.description.trim() !== ""
-        ) {
+        if (folderObject) {
           const overviewContainer = document.createElement("div");
-          overviewContainer.id = OVERVIEW_CONTAINER_ID;
-          // Styles are applied via CSS using the ID
+          overviewContainer.id = OVERVIEW_CONTAINER_ID; // Styles are applied via CSS using the ID (as per existing structure)
+          let descriptionContent = "<em>No description provided.</em>";
+          if (
+            folderObject.description &&
+            typeof folderObject.description === "string" &&
+            folderObject.description.trim() !== ""
+          ) {
+            descriptionContent = escapeJSString(
+              folderObject.description
+            ).replace(/\n/g, "<br>");
+          }
 
-          overviewContainer.innerHTML = `
-                <p class="readme-text">${escapeJSString(
-                  folderObject.description
-                ).replace(/\n/g, "<br>")}</p>
-            `;
+          let detailsHtml = `<p class="readme-text">${descriptionContent}</p>`;
+          let metadataHtml =
+            '<div style="margin-top: 1rem; font-size: 0.8rem; color: var(--text-tertiary); line-height: 1.5;">'; // Only show metadata if it's a specific folder, not the root "Knowledge Base" view
+
+          if (folderObject.id !== null) {
+            if (folderObject.creator) {
+              metadataHtml += `<div><strong>Created by:</strong> ${escapeJSString(
+                folderObject.creator
+              )}</div>`;
+            }
+            if (folderObject.createdAt) {
+              metadataHtml += `<div><strong>Created at:</strong> ${formatDateForDisplay(
+                folderObject.createdAt
+              )}</div>`;
+            } // Calculate and display updatedAt for folders // folderObject here is the node from findNodeInTree, which has children and artifacts directly if it's not a leaf
+
+            const calculatedUpdatedAt =
+              getCalculatedFolderUpdatedAt(folderObject);
+            if (calculatedUpdatedAt) {
+              metadataHtml += `<div><strong>Last updated:</strong> ${formatDateForDisplay(
+                calculatedUpdatedAt
+              )}</div>`;
+            } else {
+              metadataHtml += `<div><strong>Last updated:</strong> N/A</div>`;
+            }
+          }
+          metadataHtml += "</div>";
+
+          overviewContainer.innerHTML =
+            detailsHtml + (folderObject.id !== null ? metadataHtml : "");
 
           const currentFolderHeader = document.getElementById(
             "current-folder-header"
@@ -2279,22 +2433,17 @@
             );
           }
         }
-      }
-      // --- End Current Folder Overview Display ---
-
+      } // --- End Current Folder Overview Display ---
       function customSortItems(a, b) {
         const aIsFolder = a.itemType === "folder";
-        const bIsFolder = b.itemType === "folder";
+        const bIsFolder = b.itemType === "folder"; // Folders first
 
-        // Folders first
         if (aIsFolder && !bIsFolder) return -1;
-        if (!aIsFolder && bIsFolder) return 1;
+        if (!aIsFolder && bIsFolder) return 1; // Then sort by name (or title for artifacts)
 
-        // Then sort by name (or title for artifacts)
         const nameA = (a.name || a.title || "").toString();
-        const nameB = (b.name || b.title || "").toString();
+        const nameB = (b.name || b.title || "").toString(); // Simple numeric prefix sort (e.g., "1. Topic", "10. Another Topic")
 
-        // Simple numeric prefix sort (e.g., "1. Topic", "10. Another Topic")
         const numRegex = /^(\d+)/;
         const matchA = nameA.match(numRegex);
         const matchB = nameB.match(numRegex);
@@ -2304,26 +2453,24 @@
 
         if (numA !== null && numB !== null) {
           // Both have numeric prefixes
-          if (numA !== numB) return numA - numB;
-          // If numbers are the same, sort by the rest of the string
+          if (numA !== numB) return numA - numB; // If numbers are the same, sort by the rest of the string
           const restA = nameA.substring(matchA[1].length).trim().toLowerCase();
           const restB = nameB.substring(matchB[1].length).trim().toLowerCase();
           return restA.localeCompare(restB);
         }
         if (numA !== null && numB === null) return -1; // Items with num prefix first
-        if (numA === null && numB !== null) return 1;
+        if (numA === null && numB !== null) return 1; // Default: alphabetical sort
 
-        // Default: alphabetical sort
         return nameA.toLowerCase().localeCompare(nameB.toLowerCase());
-      }
+      } // --- Inline Add Item Form Logic ---
 
-      // --- Inline Add Item Form Logic ---
       function toggleAddItemForm(show) {
         if (
           show &&
           currentViewNodeId !== null &&
-          String(currentViewNodeId) !== "null" // Ensure it's not the conceptual root
+          String(currentViewNodeId) !== "null"
         ) {
+          // Ensure it's not the conceptual root
           populateAddItemForm();
           if (addItemFormContainer)
             addItemFormContainer.style.display = "block";
@@ -2336,7 +2483,6 @@
       }
       function populateAddItemForm() {
         const parentId = currentViewNodeId;
-        // Prevent adding to the absolute root if 'null' represents it and it's disallowed
         if (parentId === null || String(parentId) === "null") {
           if (addItemFormContainer)
             addItemFormContainer.innerHTML =
@@ -2350,28 +2496,28 @@
 
         if (addItemFormContainer)
           addItemFormContainer.innerHTML = `
-            <h3 class="text-xl font-semibold mb-4 text-[var(--text-primary)]">Add to '${escapeJSString(
-              currentFolderName
-            )}'</h3>
-            <form onsubmit="event.preventDefault(); submitAddItemForm(this.querySelector('button[type=submit]'))">
-                <input type="hidden" id="addItemParentId" value="${parentId}">
-                <div class="mb-4"><label for="addItemName" class="label-text">Name (Folder/File)</label><input type="text" id="addItemName" class="input-field text-sm" required></div>
-                <div class="mb-4"><label for="addItemType" class="label-text">Type</label><select id="addItemType" class="input-field text-sm" onchange="toggleAddItemFileOptions()"><option value="SUBFOLDER">Subfolder</option><option value="FILE">File</option></select></div>
-                <div class="mb-4"><label for="addItemDescription" class="label-text">Description (Optional)</label><textarea id="addItemDescription" class="input-field text-sm" rows="2"></textarea></div>
-                <div id="addItemFileMethodOptions" style="display:none;" class="mt-2 mb-4">
-                    <div><label for="addItemFileSource" class="label-text text-xs">File Source:</label><select id="addItemFileSource" class="input-field text-xs py-1" onchange="toggleAddItemLinkOrUpload()"><option value="link">Enter Link</option><option value="upload">Upload File</option></select></div>
-                    <div id="addItemLinkInputContainer" class="mt-2"><input type="url" placeholder="Link (e.g., https://...)" id="addItemLink" class="input-field text-sm"></div>
-                    <div id="addItemUploadInputContainer" style="display:none;" class="mt-2"><input type="file" id="addItemFileUpload" class="input-field text-sm p-2"></div>
-                </div>
-                <div class="mt-6 flex items-center gap-3">
-                    <button type="submit" class="submit-button primary">
-                        <span class="button-text">Add Item</span>
-                    </button>
-                    <button type="button" class="submit-button secondary" onclick="toggleAddItemForm(false)">
-                        <span class="button-text">Cancel</span>
-                    </button>
-                </div>
-            </form>`;
+                  <h3 class="text-xl font-semibold mb-4 text-[var(--text-primary)]">Add to '${escapeJSString(
+        currentFolderName
+      )}'</h3>
+                  <form onsubmit="event.preventDefault(); submitAddItemForm(this.querySelector('button[type=submit]'))">
+                      <input type="hidden" id="addItemParentId" value="${parentId}">
+                      <div class="mb-4"><label for="addItemName" class="label-text">Name (Folder/File)</label><input type="text" id="addItemName" class="input-field text-sm" required></div>
+                      <div class="mb-4"><label for="addItemType" class="label-text">Type</label><select id="addItemType" class="input-field text-sm" onchange="toggleAddItemFileOptions()"><option value="SUBFOLDER">Subfolder</option><option value="FILE">File</option></select></div>
+                      <div class="mb-4"><label for="addItemDescription" class="label-text">Description (Optional)</label><textarea id="addItemDescription" class="input-field text-sm" rows="2"></textarea></div>
+                      <div id="addItemFileMethodOptions" style="display:none;" class="mt-2 mb-4">
+                          <div><label for="addItemFileSource" class="label-text text-xs">File Source:</label><select id="addItemFileSource" class="input-field text-xs py-1" onchange="toggleAddItemLinkOrUpload()"><option value="link">Enter Link</option><option value="upload">Upload File</option></select></div>
+                          <div id="addItemLinkInputContainer" class="mt-2"><input type="url" placeholder="Link (e.g., https://...)" id="addItemLink" class="input-field text-sm"></div>
+                          <div id="addItemUploadInputContainer" style="display:none;" class="mt-2"><input type="file" id="addItemFileUpload" class="input-field text-sm p-2"></div>
+                      </div>
+                      <div class="mt-6 flex items-center gap-3">
+                          <button type="submit" class="submit-button primary">
+                              <span class="button-text">Add Item</span>
+                          </button>
+                          <button type="button" class="submit-button secondary" onclick="toggleAddItemForm(false)">
+                              <span class="button-text">Cancel</span>
+                          </button>
+                      </div>
+                  </form>`;
         toggleAddItemFileOptions(); // Initialize based on default selection
       }
       function toggleAddItemFileOptions() {
@@ -2404,7 +2550,6 @@
         linkContainer.style.display = fileSource === "link" ? "block" : "none";
         uploadContainer.style.display =
           fileSource === "upload" ? "block" : "none";
-        // Clear the other input when switching
         if (
           fileSource === "link" &&
           document.getElementById("addItemFileUpload")
@@ -2441,7 +2586,6 @@
           return;
         }
         if (parentId === null) {
-          // Should be caught by populateAddItemForm, but good safeguard
           window.showNotification(
             "Cannot add item: A valid parent folder must be selected.",
             "error"
@@ -2453,13 +2597,19 @@
         try {
           let response;
           let endpoint;
-          let options = { method: "POST" };
+          let options = {
+            method: "POST",
+          };
           let bodyPayload;
 
           if (type === "FILE") {
             const fileSource =
               document.getElementById("addItemFileSource").value;
-            let commonPayload = { title: name, description, nodeId: parentId };
+            let commonPayload = {
+              title: name,
+              description,
+              nodeId: parentId,
+            };
 
             if (fileSource === "link") {
               const link = document.getElementById("addItemLink").value.trim();
@@ -2480,15 +2630,15 @@
               formData.append("file", file);
               formData.append("title", name);
               formData.append("description", description);
-              formData.append("nodeId", String(parentId)); // Ensure nodeId is string for FormData
+              formData.append("nodeId", String(parentId));
               endpoint = `${BASE_API_URL}/api/upload`;
-              options.body = formData; // Content-Type will be set by browser for FormData
+              options.body = formData;
             }
           } else {
             // SUBFOLDER
             bodyPayload = JSON.stringify({
               name,
-              type: "FOLDER", // Explicitly set type for backend
+              type: "FOLDER",
               parentId: parentId,
               description,
             });
@@ -2500,7 +2650,6 @@
 
           if (!response.ok) {
             const errorData = await response.json().catch(() => ({
-              // Fallback if JSON parsing fails
               detail: `Request failed with status ${response.status}. ${response.statusText}`,
             }));
             throw new Error(
@@ -2509,22 +2658,19 @@
             );
           }
           window.showNotification("Item added successfully! ✅", "success");
-          toggleAddItemForm(false); // Hide form
+          toggleAddItemForm(false);
           const formElement = document.getElementById("addItemName")?.form;
-          if (formElement) formElement.reset(); // Reset form fields
-          toggleAddItemFileOptions(); // Reset file options display
-          await fetchTreeDataOnly(); // Refresh tree data
-          navigateToFolder(currentViewNodeId); // Re-render current folder
+          if (formElement) formElement.reset();
+          toggleAddItemFileOptions();
+          await fetchTreeDataOnly();
+          navigateToFolder(currentViewNodeId);
         } catch (error) {
           console.error("User Page: Error submitting add item form:", error);
           window.showNotification(`Error: ${error.message}`, "error", 5000);
         } finally {
           window.setButtonLoading(buttonElement, false, originalButtonText);
         }
-      }
-      // --- End Inline Add Item Form Logic ---
-
-      // --- CRUD Operations (Delete) ---
+      } // --- End Inline Add Item Form Logic --- // --- CRUD Operations (Delete) ---
       async function deleteNode(nodeId) {
         if (
           !confirm(
@@ -2535,38 +2681,35 @@
         try {
           const response = await secureFetch(
             `${BASE_API_URL}/api/nodes/${nodeId}`,
-            { method: "DELETE" }
+            {
+              method: "DELETE",
+            }
           );
           if (!response.ok) {
-            const errorData = await response
-              .json()
-              .catch(() => ({ detail: response.statusText })); // Fallback error
+            const errorData = await response.json().catch(() => ({
+              detail: response.statusText,
+            }));
             throw new Error(errorData.detail || "Failed to delete folder.");
           }
           window.showNotification("Folder deleted successfully. ✅", "success");
 
-          // Determine where to navigate after deletion
           let parentToNavigateTo = null;
           const pathIndex = currentPath.findIndex(
             (p) => String(p.id) === String(nodeId)
           );
           if (pathIndex > 0) {
-            // If deleted node was in current path and not root
             parentToNavigateTo = currentPath[pathIndex - 1].id;
           } else if (String(currentViewNodeId) === String(nodeId)) {
-            // If deleted node was the one being viewed
-            // Navigate to its parent, or root if it was a top-level folder
             parentToNavigateTo =
               currentPath.length > 1
                 ? currentPath[currentPath.length - 2].id
                 : null;
           } else {
-            // Fallback, stay in current view if deleted node was not directly related to current path
             parentToNavigateTo = currentViewNodeId;
           }
 
-          await fetchTreeDataOnly(); // Refresh tree data
-          navigateToFolder(parentToNavigateTo); // Navigate to appropriate folder
+          await fetchTreeDataOnly();
+          navigateToFolder(parentToNavigateTo);
         } catch (error) {
           console.error("User Page: Error deleting node:", error);
           window.showNotification(`Error: ${error.message}`, "error");
@@ -2582,26 +2725,32 @@
         try {
           const response = await secureFetch(
             `${BASE_API_URL}/api/artifacts/${artifactId}`,
-            { method: "DELETE" }
+            {
+              method: "DELETE",
+            }
           );
           if (!response.ok) {
-            const errorData = await response
-              .json()
-              .catch(() => ({ detail: response.statusText }));
+            const errorData = await response.json().catch(() => ({
+              detail: response.statusText,
+            }));
             throw new Error(errorData.detail || "Failed to delete file.");
           }
           window.showNotification("File deleted successfully. ✅", "success");
-          await fetchTreeDataOnly(); // Refresh data
-          navigateToFolder(currentViewNodeId); // Re-render current folder
+          await fetchTreeDataOnly();
+          navigateToFolder(currentViewNodeId);
         } catch (error) {
           console.error("User Page: Error deleting artifact:", error);
           window.showNotification(`Error: ${error.message}`, "error");
         }
-      }
-      // --- End CRUD Operations ---
-
-      // --- Modals & UI Toggles ---
-      function showArtifactDetailsModal(title, description, link) {
+      } // --- End CRUD Operations --- // --- Modals & UI Toggles ---
+      function showArtifactDetailsModal(
+        title,
+        description,
+        link,
+        createdAt,
+        updatedAt,
+        creator
+      ) {
         const modal = document.getElementById("artifact-details-modal");
         if (!modal) return;
         const titleEl = document.getElementById("artifact-modal-title");
@@ -2610,43 +2759,111 @@
         );
         const linkEl = document.getElementById("artifact-modal-link");
 
+        const modalContentDiv = modal.querySelector(".modal-content");
+        let metadataContainer = modalContentDiv.querySelector(
+          ".artifact-metadata-container"
+        );
+
+        if (!metadataContainer) {
+          metadataContainer = document.createElement("div");
+          metadataContainer.className = "artifact-metadata-container";
+          metadataContainer.style.borderTop = "1px solid var(--border-input)";
+          metadataContainer.style.marginTop = "1rem";
+          metadataContainer.style.paddingTop = "1rem";
+          metadataContainer.style.fontSize = "0.875rem";
+          metadataContainer.style.color = "var(--text-secondary)";
+          metadataContainer.style.lineHeight = "1.6";
+
+          const buttonsDiv = modalContentDiv.querySelector(
+            ".mt-6.text-right.space-x-3"
+          );
+          if (buttonsDiv) {
+            modalContentDiv.insertBefore(metadataContainer, buttonsDiv);
+          } else {
+            const descriptionDiv = document.getElementById(
+              "artifact-details-modal-description"
+            );
+            if (descriptionDiv && descriptionDiv.parentElement) {
+              descriptionDiv.parentElement.appendChild(metadataContainer);
+            } else {
+              modalContentDiv.appendChild(metadataContainer);
+            }
+          }
+        }
+        metadataContainer.innerHTML = "";
+
         if (titleEl) titleEl.textContent = title || "Artifact Details";
-        if (descEl)
+        if (descEl) {
           descEl.innerHTML =
             description &&
             typeof description === "string" &&
             description.trim() !== ""
               ? escapeJSString(description).replace(/\n/g, "<br>")
               : "<em>No description provided.</em>";
+        }
+
+        let hasMetadata = false;
+        if (creator) {
+          const creatorP = document.createElement("p");
+          creatorP.style.marginBottom = "0.25rem";
+          creatorP.innerHTML = `<strong>Creator:</strong> ${escapeJSString(
+            creator
+          )}`;
+          metadataContainer.appendChild(creatorP);
+          hasMetadata = true;
+        }
+        if (createdAt) {
+          const createdAtP = document.createElement("p");
+          createdAtP.style.marginBottom = "0.25rem";
+          createdAtP.innerHTML = `<strong>Created At:</strong> ${formatDateForDisplay(
+            createdAt
+          )}`;
+          metadataContainer.appendChild(createdAtP);
+          hasMetadata = true;
+        }
+        if (updatedAt) {
+          const updatedAtP = document.createElement("p");
+          updatedAtP.style.marginBottom = "0.25rem";
+          updatedAtP.innerHTML = `<strong>Updated At:</strong> ${formatDateForDisplay(
+            updatedAt
+          )}`;
+          metadataContainer.appendChild(updatedAtP);
+          hasMetadata = true;
+        }
+
+        if (!hasMetadata) {
+          metadataContainer.innerHTML =
+            "<p><em>No metadata available.</em></p>";
+        }
+        metadataContainer.style.display = "block";
 
         let processedLink = link || "#";
         if (
-          // Ensure link is absolute or #
           processedLink &&
           !processedLink.startsWith("http://") &&
           !processedLink.startsWith("https://") &&
           processedLink !== "#"
         ) {
-          processedLink = `https://${processedLink}`; // Default to https if protocol missing
+          processedLink = `https://${processedLink}`;
         }
         if (linkEl) linkEl.href = processedLink;
 
         if (linkEl) {
-          // Enable/disable link button
           if (!link || link === "#") {
             linkEl.classList.add("opacity-50", "cursor-not-allowed");
-            linkEl.removeAttribute("target"); // Remove target if no link
-            linkEl.onclick = (e) => e.preventDefault(); // Prevent action
+            linkEl.removeAttribute("target");
+            linkEl.onclick = (e) => e.preventDefault();
             linkEl.title = "No link provided";
           } else {
             linkEl.classList.remove("opacity-50", "cursor-not-allowed");
-            linkEl.setAttribute("target", "_blank"); // Open in new tab
-            linkEl.onclick = null; // Restore default behavior
+            linkEl.setAttribute("target", "_blank");
+            linkEl.onclick = null;
             linkEl.title = `Go to: ${processedLink}`;
           }
         }
         modal.classList.add("active");
       }
+
       function closeArtifactDetailsModal() {
         const modal = document.getElementById("artifact-details-modal");
         if (modal) modal.classList.remove("active");
@@ -2656,16 +2873,15 @@
       const sunIconHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>`;
       const moonIconHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>`;
 
-      // Ensure these point to your actual logo URLs if they are different for themes
       const USER_PAGE_LIGHT_MODE_LOGO =
         "https://niveussolutions.com/wp-content/uploads/2025/02/Niveus-ntt-data.png";
       const USER_PAGE_DARK_MODE_LOGO =
-        "https://gitlab.niveussolutions.com/uploads/-/system/appearance/header_logo/1/Nivues_log.png"; // Example dark mode logo
+        "https://gitlab.niveussolutions.com/uploads/-/system/appearance/header_logo/1/Nivues_log.png";
 
       const userPageLogoElement = document.getElementById("user-page-logo");
 
       function applyTheme(theme) {
-        if (!userPageLogoElement) return; // Guard if logo element not found
+        if (!userPageLogoElement) return;
 
         if (theme === "light") {
           document.body.classList.add("light-theme");
@@ -2673,7 +2889,6 @@
           userPageLogoElement.src = USER_PAGE_LIGHT_MODE_LOGO;
           localStorage.setItem("userPageTheme", "light");
         } else {
-          // Default to dark
           document.body.classList.remove("light-theme");
           if (themeToggleButton) themeToggleButton.innerHTML = sunIconHTML;
           userPageLogoElement.src = USER_PAGE_DARK_MODE_LOGO;
@@ -2686,31 +2901,29 @@
             document.body.classList.contains("light-theme") ? "dark" : "light"
           );
         });
-        // Apply initial theme based on localStorage or system preference (defaulting to dark)
         applyTheme(
           localStorage.getItem("userPageTheme") ||
             (window.matchMedia("(prefers-color-scheme: dark)").matches
               ? "dark"
-              : "dark") // Default to dark if no preference or local storage
+              : "dark")
         );
       }
 
       if (userMenuButton && userDropdownMenu) {
         userMenuButton.addEventListener("click", (event) => {
-          event.stopPropagation(); // Prevent click from bubbling to document
+          event.stopPropagation();
           const isExpanded =
             userMenuButton.getAttribute("aria-expanded") === "true";
           userMenuButton.setAttribute("aria-expanded", String(!isExpanded));
           userDropdownMenu.classList.toggle("hidden");
         });
-        // Close dropdown if clicked outside
         document.addEventListener("click", (event) => {
           if (
             userDropdownMenu &&
             !userDropdownMenu.classList.contains("hidden") &&
             userMenuButton &&
-            !userMenuButton.contains(event.target) && // Click was not on the button
-            !userDropdownMenu.contains(event.target) // Click was not inside the dropdown
+            !userMenuButton.contains(event.target) &&
+            !userDropdownMenu.contains(event.target)
           ) {
             userDropdownMenu.classList.add("hidden");
             userMenuButton.setAttribute("aria-expanded", "false");
@@ -2721,9 +2934,8 @@
         logoutButtonDropdown.addEventListener("click", async () => {
           try {
             await firebaseAuth.signOut();
-            sessionStorage.removeItem("userToken"); // Clear token
+            sessionStorage.removeItem("userToken");
             window.showNotification("Logged out successfully.", "success");
-            // Redirect is handled by onAuthStateChanged
           } catch (error) {
             console.error("User Page: Error signing out:", error);
             window.showNotification(
@@ -2732,24 +2944,21 @@
             );
           }
         });
-      }
-      // --- End Modals & UI Toggles ---
-
-      // --- Search Functionality ---
-      let searchResults = []; // Holds current search results
+      } // --- End Modals & UI Toggles --- // --- Search Functionality ---
+      let searchResults = [];
 
       function highlightText(text, query) {
         if (!query || typeof text !== "string")
-          return escapeJSString(text || ""); // Return escaped original if no query or not string
-        const safeQuery = query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // Escape regex special chars
-        const regex = new RegExp(`(${safeQuery})`, "gi"); // Case-insensitive, global
+          return escapeJSString(text || "");
+        const safeQuery = query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        const regex = new RegExp(`(${safeQuery})`, "gi");
         return escapeJSString(text).replace(
           regex,
-          '<span class="highlight">$1</span>' // Wrap match in highlight span
+          '<span class="highlight">$1</span>'
         );
       }
 
-      const debouncedPerformGlobalSearch = debounce(performGlobalSearch, 350); // Debounce search input
+      const debouncedPerformGlobalSearch = debounce(performGlobalSearch, 350);
 
       if (searchInputElement) {
         searchInputElement.addEventListener("input", (e) => {
@@ -2758,31 +2967,32 @@
       }
 
       function performGlobalSearch(term) {
-        searchResults = []; // Clear previous results
+        searchResults = [];
         const searchTerm = term.trim().toLowerCase();
         if (!searchTerm) {
-          // If search is cleared, revert to folder view
           isSearchViewActive = false;
-          navigateToFolder(currentViewNodeId); // Re-render current folder (which will show its overview)
+          navigateToFolder(currentViewNodeId);
           return;
         }
         isSearchViewActive = true;
-        hideNodeGraph(); // Hide graph in search view
+        hideNodeGraph();
         const overviewContainer = document.getElementById(
           "current-folder-overview-container"
-        ); // Hide main folder overview in search
+        );
         if (overviewContainer) overviewContainer.remove();
 
         function recurseSearch(nodes, pathStack) {
           for (const node of nodes) {
-            if (!node) continue; // Skip if node is null/undefined
+            if (!node) continue;
             const currentItemPath = [
               ...pathStack,
-              { id: node.id, name: node.name },
+              {
+                id: node.id,
+                name: node.name,
+              },
             ];
 
             let folderMatchedByName = false;
-            // Match folder name
             if (node.name && node.name.toLowerCase().includes(searchTerm)) {
               searchResults.push({
                 item: node,
@@ -2793,7 +3003,6 @@
               folderMatchedByName = true;
             }
 
-            // Match folder description
             if (
               node.description &&
               typeof node.description === "string" &&
@@ -2804,7 +3013,6 @@
               );
 
               if (existingEntryIndex === -1) {
-                // If not already added (e.g., by name match)
                 searchResults.push({
                   item: node,
                   path: currentItemPath,
@@ -2812,7 +3020,6 @@
                   matchSource: "description",
                 });
               } else if (folderMatchedByName) {
-                // If already added for name, update matchSource if description also matches
                 if (searchResults[existingEntryIndex].matchSource === "name") {
                   searchResults[existingEntryIndex].matchSource =
                     "name, description";
@@ -2821,38 +3028,33 @@
                     "description"
                   )
                 ) {
-                  // If it was matched by something else (less likely for folder) and now description too
                   searchResults[existingEntryIndex].matchSource +=
                     ", description";
                 }
               }
             }
 
-            // Match artifacts within the folder
             if (node.artifacts && Array.isArray(node.artifacts)) {
               for (const artifact of node.artifacts) {
                 if (!artifact) continue;
                 let artifactAlreadyAdded = searchResults.some(
-                  (
-                    sr // Check if this artifact ID is already in results
-                  ) => sr.item.id === artifact.id && sr.itemType === "artifact"
+                  (sr) =>
+                    sr.item.id === artifact.id && sr.itemType === "artifact"
                 );
 
-                // Match artifact title
                 if (
                   artifact.title &&
                   artifact.title.toLowerCase().includes(searchTerm) &&
-                  !artifactAlreadyAdded // Add only if not already present
+                  !artifactAlreadyAdded
                 ) {
                   searchResults.push({
                     item: artifact,
-                    path: currentItemPath, // Path to parent folder
+                    path: currentItemPath,
                     itemType: "artifact",
                     matchSource: "title",
                   });
-                  artifactAlreadyAdded = true; // Mark as added to prevent duplicate from description match
+                  artifactAlreadyAdded = true;
                 }
-                // Match artifact description (only if not already added by title)
                 if (
                   artifact.description &&
                   typeof artifact.description === "string" &&
@@ -2868,29 +3070,32 @@
                 }
               }
             }
-            // Recurse into subfolders
             if (node.children && Array.isArray(node.children)) {
               recurseSearch(node.children, currentItemPath);
             }
           }
         }
-        recurseSearch(fullTreeData, [{ id: null, name: "Knowledge Base" }]); // Start search from root
+        recurseSearch(fullTreeData, [
+          {
+            id: null,
+            name: "Knowledge Base",
+          },
+        ]);
         renderSearchResults(searchResults, searchTerm);
       }
 
       function renderSearchResults(results, searchTerm = "") {
         if (!folderContentContainer) return;
 
-        // Clear current folder overview if it exists, as we are in search view
         const overviewElem = document.getElementById(
           "current-folder-overview-container"
         );
         if (overviewElem) overviewElem.remove();
 
-        folderContentContainer.innerHTML = ""; // Clear previous folder contents/search results
-        toggleAddItemForm(false); // Hide add item form in search view
-        if (backButton) backButton.style.display = "none"; // Hide back button in search view
-        if (addItemToFolderBtn) addItemToFolderBtn.style.display = "none"; // Hide add item button
+        folderContentContainer.innerHTML = "";
+        toggleAddItemForm(false);
+        if (backButton) backButton.style.display = "none";
+        if (addItemToFolderBtn) addItemToFolderBtn.style.display = "none";
 
         const resultsTitle =
           results.length > 0
@@ -2898,22 +3103,22 @@
             : `No Results for "${escapeJSString(searchTerm)}"`;
         if (currentFolderNameEl) currentFolderNameEl.textContent = resultsTitle;
         if (breadcrumbContainer)
-          // Simplified breadcrumb for search
           breadcrumbContainer.innerHTML = `<span class="breadcrumb-current">Search Results</span>`;
 
         if (results.length === 0) {
           folderContentContainer.innerHTML = `<p class="p-4 text-lg text-[var(--text-tertiary)] text-center">No items found matching your search.</p>`;
           return;
         }
+        folderContentContainer.style.display = "grid";
 
         results.forEach((result) => {
           const card = document.createElement("div");
-          card.classList.add("search-result-card"); // Use specific class for search results
+          card.classList.add("search-result-card");
 
-          const itemName = result.item.name || result.item.title; // Folder name or artifact title
+          const itemName = result.item.name || result.item.title;
           const itemTypeDisplay =
-            result.itemType.charAt(0).toUpperCase() + result.itemType.slice(1); // "Folder" or "Artifact"
-          let displayPathString = result.path.map((p) => p.name).join(" > "); // e.g., "KB > Folder A > SubFolder B"
+            result.itemType.charAt(0).toUpperCase() + result.itemType.slice(1);
+          let displayPathString = result.path.map((p) => p.name).join(" > ");
 
           const iconClass =
             result.itemType === "folder"
@@ -2924,7 +3129,6 @@
               ? `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 0 1 4.5 9.75h15A2.25 2.25 0 0 1 21.75 12v.75m-8.69-6.44-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z" /></svg>`
               : `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>`;
 
-          // Display description for both folders and artifacts in search results
           let descriptionHTML = "";
           if (
             result.item.description &&
@@ -2936,67 +3140,60 @@
               searchTerm
             )}</p>`;
           } else {
-            // Consistent message for no description
-            descriptionHTML = `<p class="search-result-description"><em>No description provided for this ${result.itemType}.</em></p>`;
+            descriptionHTML = `<p class="search-result-description"><em>No description provided.</em></p>`;
           }
 
           card.innerHTML = `
-            <div> 
-                <div class="item-card-icon-wrapper"><span class="search-result-icon ${iconClass}">${iconSVG}</span></div>
-                <h3 class="search-result-name">${highlightText(
-                  itemName,
-                  searchTerm
-                )}</h3>
-                <p class="search-result-type">${itemTypeDisplay}</p>
-                ${descriptionHTML} 
-                <p class="search-result-path">In: ${escapeJSString(
-                  displayPathString
-                )}</p>
-            </div>
-          `;
+                  <div>
+                    <div class="item-card-icon-wrapper"><span class="search-result-icon ${iconClass}">${iconSVG}</span></div>
+                    <h3 class="search-result-name">${highlightText(
+        itemName,
+        searchTerm
+      )}</h3>
+                    <p class="search-result-type">${itemTypeDisplay}</p>
+                    ${descriptionHTML}
+                    <p class="search-result-path">In: ${escapeJSString(
+        displayPathString
+      )}</p>
+                  </div>`;
+
           card.onclick = () => {
-            isSearchViewActive = false; // Exit search view on click
-            if (searchInputElement) searchInputElement.value = ""; // Clear search input
+            isSearchViewActive = false;
+            if (searchInputElement) searchInputElement.value = "";
             if (result.itemType === "folder") {
-              navigateToFolder(result.item.id); // Navigate to the folder
+              navigateToFolder(result.item.id);
             } else {
-              // Artifact
-              // Navigate to the artifact's parent folder first
               const parentFolderId =
-                result.path.length > 1 // Path includes root, then folders
-                  ? result.path[result.path.length - 1].id // Last element in path is the direct parent folder
-                  : null; // Should not happen for an artifact if path is correct
+                result.path.length > 1
+                  ? result.path[result.path.length - 1].id
+                  : null;
               navigateToFolder(parentFolderId);
-              // Then show artifact details modal (with a slight delay for folder to render)
               setTimeout(() => {
                 showArtifactDetailsModal(
                   result.item.title,
                   result.item.description,
-                  result.item.link
+                  result.item.link,
+                  result.item.createdAt,
+                  result.item.updatedAt,
+                  result.item.creator
                 );
               }, 100);
             }
           };
           folderContentContainer.appendChild(card);
         });
-      }
-      // --- End Search Functionality ---
-
-      // --- Global Event Listeners (Escape key) ---
+      } // --- End Search Functionality --- // --- Global Event Listeners (Escape key) ---
       document.addEventListener("keydown", (event) => {
         if (event.key === "Escape") {
-          // Close artifact details modal
           const artifactModal = document.getElementById(
             "artifact-details-modal"
           );
           if (artifactModal?.classList.contains("active")) {
             closeArtifactDetailsModal();
           }
-          // Close add item form
           if (addItemFormContainer?.style.display === "block") {
             toggleAddItemForm(false);
           }
-          // Close user dropdown menu
           if (
             userDropdownMenu &&
             !userDropdownMenu.classList.contains("hidden")
@@ -3006,8 +3203,7 @@
               userMenuButton.setAttribute("aria-expanded", "false");
           }
         }
-      });
-      // --- End Global Event Listeners ---
+      }); // --- End Global Event Listeners ---
     </script>
   </body>
 </html>

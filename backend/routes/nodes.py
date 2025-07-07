@@ -161,7 +161,7 @@ async def update_node(node_id: int, payload: NodeUpdate, user=Depends(get_curren
 
 
 async def build_node_graph(node_id: int, user_id: int) -> Optional[NodeGraph]:
-    # Check access for current node
+    # Step 1: Check user access
     access = await db.access.find_first(
         where={
             "userId": user_id,
@@ -172,25 +172,24 @@ async def build_node_graph(node_id: int, user_id: int) -> Optional[NodeGraph]:
     if not access:
         return None
 
-    # Fetch node data
+    # Step 2: Fetch full node object
     node = await db.node.find_unique(where={"id": node_id})
     if not node:
         return None
 
-    # Fetch children nodes
+    # Step 3: Fetch all children
     children = await db.node.find_many(where={"parentId": node_id})
 
-    # Recursively build children graph if accessible
+    # Step 4: Recursively build child graphs
     visible_children = []
     for child in children:
         child_graph = await build_node_graph(child.id, user_id)
         if child_graph:
             visible_children.append(child_graph)
 
-    # Fetch artifacts for this node
+    # Step 5: Fetch artifacts
     artifacts_raw = await db.artifact.find_many(where={"nodeId": node_id})
-    
-    # Map artifacts to Pydantic models if needed
+
     artifacts = [
         ArtifactModel(
             id=a.id,
@@ -205,6 +204,7 @@ async def build_node_graph(node_id: int, user_id: int) -> Optional[NodeGraph]:
         for a in artifacts_raw
     ]
 
+    # Step 6: Return the NodeGraph object
     return NodeGraph(
         id=node.id,
         name=node.name,
@@ -213,8 +213,7 @@ async def build_node_graph(node_id: int, user_id: int) -> Optional[NodeGraph]:
         parentId=node.parentId,
         createdAt=node.createdAt.isoformat(),
         children=visible_children,
-        artifacts=artifacts,
-        access=None
+        artifacts=artifacts
     )
 
 # Endpoint to get graph starting at node_id, filtered by user access
